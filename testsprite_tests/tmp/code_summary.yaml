@@ -1,0 +1,67 @@
+version: "2"
+type: frontend
+tech_stack:
+  - JavaScript
+  - React
+  - Vite
+  - CSS Modules
+  - Zustand
+  - Supabase
+  - Framer Motion
+  - Lucide React
+  - Recharts
+  - Three.js
+routes:
+  - path: /auth
+    file: src/pages/Auth/AuthPage.jsx
+    auth_required: false
+    description: Login and Signup page
+  - path: /
+    file: src/pages/Dashboard/DashboardPage.jsx
+    auth_required: true
+    description: Main dashboard overview
+  - path: /shop
+    file: src/pages/Shop/ShopPage.jsx
+    auth_required: true
+    description: Aura Marketplace for redeeming points
+  - path: /habits
+    file: src/pages/Habits/HabitsPage.jsx
+    auth_required: true
+    description: Daily habit tracking and completion
+  - path: /leaderboard
+    file: src/pages/Leaderboard/LeaderboardPage.jsx
+    auth_required: true
+    description: Global rankings and competitive stats
+features:
+  - name: User Authentication
+    description: Login and signup functionality using Supabase
+    files:
+      - src/pages/Auth/AuthPage.jsx
+      - src/store/userStore.js
+    entry_route: /auth
+    user_interactions:
+      - Fill email and password fields
+      - Click Toggle (LOGIN/JOIN)
+      - Click ORBITAL ACCESS button
+    auth_required: false
+  - name: Aura Marketplace (Shop)
+    description: Redeem Aura Points for rewards like Gift Cards and Subscriptions
+    files:
+      - src/pages/Shop/ShopPage.jsx
+      - src/pages/Shop/Shop.module.css
+    entry_route: /shop
+    user_interactions:
+      - View list of available rewards
+      - Click REDEEM button on a reward
+      - Confirm redemption in alert
+    auth_required: true
+  - name: Habit Tracking
+    description: Track and complete daily habits
+    files:
+      - src/pages/Habits/HabitsPage.jsx
+    entry_route: /habits
+    user_interactions:
+      - View list of active habits
+      - Mark habits as complete
+    auth_required: true
+known_limitations: []

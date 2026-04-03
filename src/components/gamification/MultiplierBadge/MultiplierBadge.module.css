@@ -1,0 +1,27 @@
+.container {
+  background: var(--bg-surface);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-family: 'Outfit', sans-serif;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 0 15px var(--mult-glow);
+}

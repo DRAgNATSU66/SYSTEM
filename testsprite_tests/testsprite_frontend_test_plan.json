@@ -1,0 +1,754 @@
+[
+  {
+    "id": "TC001",
+    "title": "Log in and access authenticated dashboard",
+    "description": "Verifies a returning user can log in from the auth page and is taken to the authenticated dashboard successfully.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Switch to Login mode"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the auth form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the dashboard"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "Complete a habit and see streak/score update on habits page",
+    "description": "Verifies an authenticated user can mark a habit complete and the UI reflects the updated habit state and streak/score impact.",
+    "category": "Habit Tracking",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Switch to Login mode"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the auth form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to habits"
+      },
+      {
+        "type": "action",
+        "description": "Mark the first available active habit as complete"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the habit is shown as completed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the habit streak or today's score reflects the completion"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Unauthenticated user is gated from the shop",
+    "description": "Verifies an unauthenticated user cannot access the shop and is redirected to the authentication page.",
+    "category": "Aura Marketplace (Shop)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /shop"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the authentication page is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Complete habit then verify dashboard updates after returning",
+    "description": "Verifies a user can complete a habit on the habits page and, after returning to the dashboard, sees today’s score or streak visualizations reflect the completion.",
+    "category": "Habit Tracking",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Switch to Login mode"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the auth form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to habits"
+      },
+      {
+        "type": "action",
+        "description": "Mark the first available active habit as complete"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify today's score or streak visualizations reflect the habit completion"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Unauthenticated user is gated from the leaderboard",
+    "description": "Verifies an unauthenticated user cannot access the leaderboard and is redirected to the authentication page.",
+    "category": "Leaderboard & Aura History",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /leaderboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the authentication page is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Redeem a reward and see Aura Points balance update",
+    "description": "Verifies a logged-in user can redeem a reward from the shop and their Aura Points balance updates after confirming redemption.",
+    "category": "Aura Marketplace (Shop)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the shop"
+      },
+      {
+        "type": "action",
+        "description": "Select a reward to redeem"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the redemption"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the Aura Points balance displayed in the shop decreases after redemption"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Dashboard daily overview renders key sections",
+    "description": "Verifies an authenticated user can view today’s score/rank, core stat cards, charts, and today’s permanent tasks on the dashboard.",
+    "category": "Dashboard (Daily Overview)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Switch to Login mode"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the auth form"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to today's permanent tasks section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify today's score and rank summary is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dashboard charts and today's tasks are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Sign up and land on dashboard",
+    "description": "Verifies a new user can create an account via signup and is taken to the authenticated dashboard.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Switch to Signup mode"
+      },
+      {
+        "type": "action",
+        "description": "Fill a unique email into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid password into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the signup form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the dashboard"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Block redemption when the user has insufficient Aura Points",
+    "description": "Verifies the shop prevents redeeming a reward that costs more than the user's available Aura Points and shows an insufficient-points validation message.",
+    "category": "Aura Marketplace (Shop)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the shop"
+      },
+      {
+        "type": "action",
+        "description": "Capture the current Aura Points balance displayed in the shop"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to redeem a reward that costs more Aura Points than available"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an insufficient-points validation message is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the Aura Points balance displayed in the shop is unchanged"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Open task detail overlay from dashboard",
+    "description": "Verifies an authenticated user can open a task detail overlay from today’s tasks and see metadata including score contribution and streak information.",
+    "category": "Dashboard (Daily Overview)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Switch to Login mode"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the auth form"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to today's permanent tasks section"
+      },
+      {
+        "type": "action",
+        "description": "Click a task to open its details"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a task detail overlay is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the overlay shows score contribution and streak metadata"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "Aura Points balance stays consistent after redemption when navigating away and back",
+    "description": "Verifies the updated Aura Points balance after a successful redemption remains consistent when navigating to another page and returning to the shop.",
+    "category": "Aura Marketplace (Shop)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the shop"
+      },
+      {
+        "type": "action",
+        "description": "Select a reward to redeem"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the redemption"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the leaderboard"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the shop"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the Aura Points balance displayed in the shop reflects the redemption"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC012",
+    "title": "View leaderboard overview including podium and self rank card",
+    "description": "Verifies a logged-in user can open the leaderboard and see the podium and their self rank card with Aura Points.",
+    "category": "Leaderboard & Aura History",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the leaderboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the top three podium is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the self rank card is displayed with total Aura Points"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC013",
+    "title": "Open Aura history timeline and view day-by-day entries",
+    "description": "Verifies a logged-in user can open the Aura history timeline from the leaderboard and see day-by-day earned and lost points entries.",
+    "category": "Leaderboard & Aura History",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the leaderboard"
+      },
+      {
+        "type": "action",
+        "description": "Open the Aura history timeline"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the Aura history timeline is displayed with day-by-day entries"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC014",
+    "title": "Browse rewards list in the shop",
+    "description": "Verifies a logged-in user can view the available rewards list in the shop without initiating redemption.",
+    "category": "Aura Marketplace (Shop)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the shop"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a list of rewards is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC015",
+    "title": "Inspect weekly Aura summary and streak multiplier progress",
+    "description": "Verifies a logged-in user can view weekly Aura summary information and streak multiplier progress on the leaderboard page.",
+    "category": "Leaderboard & Aura History",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the leaderboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the weekly Aura summary is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify streak multiplier progress is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC016",
+    "title": "Aura Points shown on self rank card stays consistent across navigation",
+    "description": "Verifies the Aura Points value shown on the leaderboard self rank card remains consistent after navigating away and returning.",
+    "category": "Leaderboard & Aura History",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the leaderboard"
+      },
+      {
+        "type": "action",
+        "description": "Capture the Aura Points value displayed on the self rank card"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the shop"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the leaderboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the Aura Points value displayed on the self rank card matches the previously captured value"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC017",
+    "title": "Show validation errors for invalid signup credentials",
+    "description": "Verifies signup blocks invalid credentials and shows validation feedback without authenticating the user.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Switch to Signup mode"
+      },
+      {
+        "type": "action",
+        "description": "Fill an invalid email format into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a too-short password into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the signup form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation errors are visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC018",
+    "title": "Cancel a reward redemption from the confirmation prompt",
+    "description": "Verifies a logged-in user can cancel a redemption confirmation and no Aura Points are deducted.",
+    "category": "Aura Marketplace (Shop)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the shop"
+      },
+      {
+        "type": "action",
+        "description": "Capture the current Aura Points balance displayed in the shop"
+      },
+      {
+        "type": "action",
+        "description": "Select a reward to redeem"
+      },
+      {
+        "type": "action",
+        "description": "Dismiss the redemption confirmation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the Aura Points balance displayed in the shop is unchanged"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC019",
+    "title": "Habit completion requires required numeric input",
+    "description": "Verifies attempting to complete a habit that requires a numeric value shows validation feedback when the input is missing.",
+    "category": "Habit Tracking",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Switch to Login mode"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the auth form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to habits"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to mark a habit complete without providing a required numeric value"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation feedback for the habit input is visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC020",
+    "title": "Review the penalty log on the leaderboard",
+    "description": "Verifies a logged-in user can view the penalty log section on the leaderboard page.",
+    "category": "Leaderboard & Aura History",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the leaderboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the penalty log is displayed"
+      }
+    ],
+    "priority": "Low"
+  }
+]

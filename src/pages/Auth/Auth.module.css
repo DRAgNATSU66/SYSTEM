@@ -1,0 +1,227 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  z-index: 10;
+  padding: 1rem;
+}
+
+.card {
+  background: rgba(10, 10, 14, 0.82);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(0, 191, 255, 0.12);
+  padding: 2.5rem 2rem;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 191, 255, 0.05);
+  position: relative;
+  z-index: 20;
+}
+
+/* Brand icon */
+.brandIcon {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  margin-bottom: 0.75rem;
+  filter: drop-shadow(0 0 10px rgba(0, 191, 255, 0.5));
+}
+
+.brandIconLg {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 14px rgba(0, 191, 255, 0.6));
+}
+
+.card h1 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  font-size: 2rem;
+  letter-spacing: 0.15em;
+  color: #fff;
+  margin-bottom: 0.2rem;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-bottom: 1.75rem;
+  letter-spacing: 0.08em;
+}
+
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--rank-alpha);
+  box-shadow: 0 0 12px rgba(0, 191, 255, 0.2);
+}
+
+.button {
+  width: 100%;
+  padding: 1rem;
+  background: var(--rank-alpha);
+  color: #000;
+  font-weight: 900;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  margin-top: 0.5rem;
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 191, 255, 0.4);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.error {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 49, 49, 0.08);
+  border: 1px solid var(--rank-slacking);
+  color: var(--rank-slacking);
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.5rem;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.successMsg {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(57, 255, 20, 0.08);
+  border: 1px solid var(--rank-sigma);
+  color: var(--rank-sigma);
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.forgotLink {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin-top: 0.75rem;
+  transition: color 0.15s ease;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.03em;
+}
+
+.forgotLink:hover {
+  color: var(--rank-alpha);
+}
+
+.toggle {
+  margin-top: 1.25rem;
+  color: var(--text-secondary);
+  font-size: 0.83rem;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  text-align: center;
+}
+
+.toggle:hover {
+  color: #fff;
+}
+
+/* Forgot Password / Player Name Sections */
+.forgotWrap,
+.playerNameWrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.forgotTitle {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  font-size: 1.2rem;
+  letter-spacing: 0.15em;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+
+.forgotHint {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.forgotHint b {
+  color: var(--rank-alpha);
+}
+
+.linkBtn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: color 0.15s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.linkBtn:hover {
+  color: var(--rank-alpha);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .card {
+    padding: 2rem 1.25rem;
+    border-radius: 16px;
+    max-width: 100%;
+  }
+  .card h1 {
+    font-size: 1.6rem;
+  }
+}

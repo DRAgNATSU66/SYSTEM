@@ -1,0 +1,36 @@
+.container { padding: 2rem; max-width: 1400px; margin: 0 auto; min-height: 100vh; position: relative; z-index: 1; }
+.header { margin-bottom: 3rem; }
+.titleArea { display: flex; justify-content: space-between; align-items: flex-start; }
+.titleArea h1 { font-family: 'Outfit'; font-size: 2.5rem; letter-spacing: 0.25em; color: #fff; margin: 0; }
+.viewToggle { display: flex; gap: 0.5rem; background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); padding: 0.25rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+.viewToggle button { background: transparent; border: none; color: var(--text-secondary); font-family: 'Outfit'; font-weight: 900; font-size: 0.65rem; padding: 0.6rem 1.25rem; border-radius: 6px; cursor: pointer; letter-spacing: 0.1em; transition: 0.2s; }
+.viewToggle .active { background: var(--rank-alpha); color: #000; box-shadow: 0 0 15px rgba(0, 191, 255, 0.4); }
+.subtitle { color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem; letter-spacing: 0.1em; }
+
+.content { margin-bottom: 4rem; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; }
+
+/* DOT VIEWS (Year, Month, Week) */
+.dotFlex { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; padding: 2rem; background: rgba(0,0,0,0.2); backdrop-filter: blur(12px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+.dotWrapper { display: flex; flex-direction: column; align-items: center; gap: 1rem; position: relative; }
+.dot { width: 40px; height: 40px; border-radius: 50%; background: var(--day-color); box-shadow: 0 0 20px rgba(0,0,0,0.3); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.dotWrapper:hover .dot { transform: scale(1.4); filter: brightness(1.2); }
+.dotLabel { font-size: 0.65rem; font-weight: 950; color: var(--text-secondary); letter-spacing: 0.1em; }
+
+/* TRADITIONAL GRID (Overall) */
+.traditionalGrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; width: 100%; max-width: 1000px; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(12px); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+.gridHeader { text-align: center; font-size: 0.6rem; font-weight: 950; padding: 1rem 0; color: var(--text-secondary); letter-spacing: 0.2em; opacity: 0.5; }
+.gridDay { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; background: var(--day-color); border-radius: 4px; position: relative; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.02); }
+.gridDay:hover { border-color: #fff; z-index: 10; transform: scale(1.05); }
+.dayNum { font-size: 0.7rem; font-weight: 900; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+.gridBlank { aspect-ratio: 1/1; background: transparent; }
+
+/* TOOLTIP SYSTEM */
+.tooltip { visibility: hidden; position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background: #000; padding: 1rem; border-radius: 8px; border: 1px solid var(--rank-alpha); width: 160px; z-index: 100; box-shadow: 0 10px 40px rgba(0,0,0,0.5); pointer-events: none; opacity: 0; transition: 0.3s; }
+.dotWrapper:hover .tooltip, .gridDay:hover .tooltip { visibility: visible; opacity: 1; bottom: 110%; }
+.ttDate { display: block; font-size: 0.6rem; color: var(--text-secondary); font-weight: 900; margin-bottom: 0.25rem; }
+.ttScore { display: block; font-size: 1.1rem; font-weight: 900; color: #fff; margin-bottom: 0.25rem; }
+.ttRank { display: block; font-size: 0.6rem; color: var(--rank-alpha); font-weight: 950; letter-spacing: 0.2em; }
+
+.legend { display: flex; align-items: center; justify-content: center; gap: 1rem; padding-top: 3rem; border-top: 1px solid rgba(255,255,255,0.05); }
+.legend span { font-size: 0.6rem; font-weight: 950; letter-spacing: 0.3em; color: var(--text-secondary); }
+.block { width: 14px; height: 14px; border-radius: 2px; }

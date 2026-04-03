@@ -1,0 +1,15 @@
+.container { padding: 4rem 2rem; max-width: 1000px; margin: 0 auto; text-align: center; }
+.header { margin-bottom: 5rem; }
+.header h1 { font-family: 'Outfit'; font-size: 3rem; color: #fff; letter-spacing: 0.2em; }
+.activeDuels { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 2rem; margin-bottom: 4rem; }
+.duelCard { background: var(--bg-surface); padding: 2.5rem; border-radius: 16px; border: 1px solid var(--rank-alpha); box-shadow: 0 0 30px rgba(0,191,255,0.05); }
+.duelInfo { margin-bottom: 2rem; }
+.versus { font-family: 'Outfit'; font-size: 0.7rem; color: var(--rank-slacking); font-weight: 900; letter-spacing: 0.3em; margin-bottom: 0.5rem; }
+.duelInfo h3 { font-size: 1.5rem; font-family: 'Outfit'; color: #fff; margin: 0 0 1rem 0; }
+.stake { font-size: 0.8rem; font-weight: 800; color: var(--rank-sigma); letter-spacing: 0.1em; }
+.progressRow { display: flex; align-items: center; gap: 1rem; margin-top: 1rem; }
+.progressLabel { width: 80px; font-size: 0.6rem; font-weight: 900; color: var(--text-secondary); text-align: left; }
+.bar { flex: 1; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+.fill { height: 100%; background: var(--rank-alpha); border-radius: 4px; }
+.btnNewDuel { padding: 1.25rem 3rem; background: transparent; border: 2px solid var(--rank-alpha); color: var(--rank-alpha); border-radius: 8px; font-weight: 900; letter-spacing: 0.2em; cursor: pointer; transition: 0.3s; }
+.btnNewDuel:hover { background: var(--rank-alpha); color: #000; box-shadow: 0 0 40px var(--rank-alpha); }

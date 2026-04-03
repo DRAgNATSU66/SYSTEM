@@ -1,0 +1,732 @@
+[
+  {
+    "id": "BE-RLS-01",
+    "title": "User A cannot read User B's tasks",
+    "description": "Verifies Row Level Security is enforced on the tasks table — an authenticated user can only SELECT rows where user_id matches their own JWT sub.",
+    "category": "Row Level Security",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Authenticate as User A and obtain JWT_A"
+      },
+      {
+        "type": "setup",
+        "description": "Authenticate as User B and obtain JWT_B; insert a task row owned by User B"
+      },
+      {
+        "type": "action",
+        "description": "Using JWT_A, issue GET /tasks?user_id=eq.{{USER_B_ID}} against Supabase REST API"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the response returns an empty array or a 0-row result (not User B's task)"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-RLS-02",
+    "title": "User A cannot read User B's aura_logs",
+    "description": "Verifies RLS on the aura_logs table prevents cross-user reads.",
+    "category": "Row Level Security",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Authenticate as User A (JWT_A) and User B (JWT_B); insert an aura_log row for User B"
+      },
+      {
+        "type": "action",
+        "description": "Using JWT_A, issue GET /aura_logs?user_id=eq.{{USER_B_ID}}"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the response returns an empty array"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-RLS-03",
+    "title": "User A cannot write to User B's profile",
+    "description": "Verifies PATCH /profiles for another user's row is rejected by RLS.",
+    "category": "Row Level Security",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Using JWT_A, issue PATCH /profiles?id=eq.{{USER_B_ID}} with body {total_aura_points: 99999}"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the response returns HTTP 403 or 0 rows affected"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-RLS-04",
+    "title": "Unauthenticated request returns 401 on all protected tables",
+    "description": "Verifies that requests without a valid JWT are rejected on tasks, aura_logs, profiles, and daily_scores.",
+    "category": "Row Level Security",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Issue GET /tasks without Authorization header"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify HTTP 401 or empty result with policy denial"
+      },
+      {
+        "type": "action",
+        "description": "Issue GET /aura_logs without Authorization header"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify HTTP 401 or empty result with policy denial"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-RLS-05",
+    "title": "User can read and write only their own daily_scores",
+    "description": "Verifies the daily_scores table enforces user-scoped RLS for both SELECT and INSERT.",
+    "category": "Row Level Security",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Using JWT_A, INSERT a daily_scores row for today's date"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the row is created with user_id matching User A"
+      },
+      {
+        "type": "action",
+        "description": "Using JWT_A, SELECT all daily_scores"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify only rows where user_id = User A are returned"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-AP-01",
+    "title": "aura_logs.net computed column equals earned minus lost",
+    "description": "Verifies the generated column net = earned - lost is stored accurately.",
+    "category": "AP Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Using JWT_A, UPSERT an aura_logs row with earned=800, lost=200, date=today"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the SELECT response shows net=600"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-AP-02",
+    "title": "Daily earned AP capped at 2000",
+    "description": "Verifies the backend rejects or clamps earned values exceeding the 2000 daily cap.",
+    "category": "AP Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Using JWT_A, attempt to UPSERT an aura_logs row with earned=2500 for today"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the stored earned value is at most 2000"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-AP-03",
+    "title": "Daily lost AP capped at 2000",
+    "description": "Verifies the backend rejects or clamps lost values exceeding the 2000 daily cap.",
+    "category": "AP Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Using JWT_A, attempt to UPSERT an aura_logs row with lost=3000 for today"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the stored lost value is at most 2000"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-AP-04",
+    "title": "Streak multiplier correctly scales net AP",
+    "description": "Verifies the auraService applies the multiplier from profiles when computing final AP.",
+    "category": "AP Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Set profiles.multiplier = 2.0 for User A"
+      },
+      {
+        "type": "action",
+        "description": "Trigger AP calculation for User A with earned=500 and lost=0"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify profiles.total_aura_points increases by 1000 (500 * 2.0)"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-AP-05",
+    "title": "Multiplier capped at 4.0x",
+    "description": "Verifies the multiplier field in profiles cannot exceed 4.0.",
+    "category": "AP Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Attempt to PATCH profiles.multiplier = 5.0 for User A"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the stored multiplier is 4.0 (capped) or the request is rejected"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-AP-06",
+    "title": "All 5 dailies completed grants exactly 1000 AP",
+    "description": "Verifies the scoring engine awards exactly 1000 AP when Workout + Nutrition + Sleep + Mood + Goals are all marked complete for the day.",
+    "category": "AP Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Mark Workout, Nutrition, Sleep, Mood (>= Stable), and Goals as complete for User A today"
+      },
+      {
+        "type": "action",
+        "description": "Call the daily scoring RPC or service endpoint for User A"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the aura_logs earned value for today is exactly 1000 (from dailies block)"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-AP-07",
+    "title": "Partial daily completion grants proportional AP",
+    "description": "Verifies completing 3 out of 5 dailies awards 600 AP (3/5 * 1000).",
+    "category": "AP Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Mark only Workout, Nutrition, and Sleep as complete for User A today; leave Mood and Goals incomplete"
+      },
+      {
+        "type": "action",
+        "description": "Call the daily scoring RPC for User A"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the aura_logs earned value from dailies is 600"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-AP-08",
+    "title": "Goals/Hobbies block awards proportional AP by difficulty weight",
+    "description": "Verifies the dynamic 1000 AP Goals/Hobbies block awards higher points to harder goals and fewer to easier ones.",
+    "category": "AP Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Create a hard goal (weight=high) and an easy hobby (weight=low) for User A"
+      },
+      {
+        "type": "action",
+        "description": "Mark both the hard goal and easy hobby as complete and trigger scoring"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the hard goal contributes more AP than the easy hobby within the 1000 AP block"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-AP-09",
+    "title": "profiles.total_aura_points updates after aura_logs upsert",
+    "description": "Verifies the trigger or service that rolls up aura_logs into profiles.total_aura_points fires correctly.",
+    "category": "AP Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Record the current profiles.total_aura_points for User A"
+      },
+      {
+        "type": "action",
+        "description": "UPSERT an aura_logs row with earned=200, lost=0 for today"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify profiles.total_aura_points has increased by 200"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-AP-10",
+    "title": "profiles.rank_tier recalculated after AP update",
+    "description": "Verifies rank_tier is updated on the profiles row after total_aura_points changes.",
+    "category": "AP Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Set User A as the highest AP user in the test environment"
+      },
+      {
+        "type": "action",
+        "description": "Trigger AP recalculation via scoring RPC"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify profiles.rank_tier reflects a named top rank (not 'Normie' or 'Unranked')"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-RANK-01",
+    "title": "Top-3 AP user receives named rank tier",
+    "description": "Verifies that a user ranked 1st, 2nd, or 3rd on the leaderboard receives a specific named rank rather than 'Unranked'.",
+    "category": "Ranking Logic",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Seed the leaderboard with at least 5 users; give User A the highest total_aura_points"
+      },
+      {
+        "type": "action",
+        "description": "Fetch profiles ordered by total_aura_points DESC and check rank_tier for User A"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify rank_tier is a named rank string (not 'Unranked #N')"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-RANK-02",
+    "title": "User outside top 3 receives Unranked #N string",
+    "description": "Verifies that a user ranked 4th or lower receives 'Unranked #<exact_position>' as their rank label.",
+    "category": "Ranking Logic",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Ensure User A is ranked 5th on the leaderboard by total_aura_points"
+      },
+      {
+        "type": "action",
+        "description": "Call the rank resolution RPC or fetch profile rank label for User A"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the rank label is 'Unranked #5'"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-RANK-03",
+    "title": "Rank positions accurately ordered by AP descending",
+    "description": "Verifies the leaderboard query returns users in correct descending AP order.",
+    "category": "Ranking Logic",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Query profiles ordered by total_aura_points DESC"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify each row's total_aura_points is >= the next row's value"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-RANK-04",
+    "title": "Rank updates when another user surpasses current user AP",
+    "description": "Verifies that rank labels are recalculated dynamically when a different user's AP changes.",
+    "category": "Ranking Logic",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "User A is at rank #2; User B is at rank #3"
+      },
+      {
+        "type": "action",
+        "description": "Give User B more AP than User A via aura_logs upsert"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify User A's rank label updates to #3 and User B's to #2"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "BE-WRK-01",
+    "title": "Volume formula sets x reps x weight persisted correctly",
+    "description": "Verifies workout_logs stores volume correctly using the formula Sets × Reps × Weight.",
+    "category": "Workout Logic",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Insert a workout_log entry: exercise='Bench Press', sets=3, reps=10, weight=80"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the stored or computed volume is 2400 (3 × 10 × 80)"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-WRK-02",
+    "title": "Muscle group volume aggregated correctly per session",
+    "description": "Verifies the per-muscle-group volume aggregation used by the pentagram chart is accurate.",
+    "category": "Workout Logic",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Insert 3 chest exercises with volumes 1000, 500, 750 in the same session"
+      },
+      {
+        "type": "action",
+        "description": "Call the muscle group aggregation RPC for the session"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify chest group total volume = 2250"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-WRK-03",
+    "title": "Weekly hypertrophy progress resets at Sunday midnight UTC",
+    "description": "Verifies the weekly progress counter resets to 0 when the cron job fires at Sunday 00:00 UTC.",
+    "category": "Workout Logic",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Set User A's weekly hypertrophy progress to 80%"
+      },
+      {
+        "type": "action",
+        "description": "Execute the weekly reset cron function directly via RPC (simulating Sunday midnight)"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the weekly progress value is now 0 for User A"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-WRK-04",
+    "title": "VO2 Max score calculated from BPM + Distance + Time + Age",
+    "description": "Verifies the VO2 Max RPC returns a score based on a 10-minute Airbike session inputs.",
+    "category": "Workout Logic",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Call the calculate_vo2max RPC with inputs: bpm=160, distance_km=3.5, time_min=10, age=25"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the response contains a numeric vo2max_score field"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the score is a reasonable VO2 Max value (between 20 and 80 ml/kg/min)"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-WRK-05",
+    "title": "VO2 Max score is bounded 0 to 100",
+    "description": "Verifies the normalized VO2 Max display score (out of 100) is clamped within range.",
+    "category": "Workout Logic",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Call calculate_vo2max with extreme inputs (e.g., bpm=220, distance_km=10, time_min=10, age=15)"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the normalized score is <= 100"
+      },
+      {
+        "type": "action",
+        "description": "Call calculate_vo2max with very low inputs (bpm=60, distance_km=0.5, time_min=10, age=70)"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the normalized score is >= 0"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "BE-SLEEP-01",
+    "title": "Sleep 8h + Deep Sleep 9/10 = 100% progress",
+    "description": "Verifies the sleep scoring function returns 100% when both duration and deep sleep quality thresholds are met.",
+    "category": "Sleep Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Insert a sleep_log entry: duration_hours=8, deep_sleep_rating=9, date=today"
+      },
+      {
+        "type": "action",
+        "description": "Call the sleep progress scoring function for User A today"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the returned sleep progress is 100%"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-SLEEP-02",
+    "title": "Partial sleep values return proportional progress",
+    "description": "Verifies the sleep scoring is proportional: 6h sleep + 7/10 deep sleep does not return 100%.",
+    "category": "Sleep Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Insert a sleep_log entry: duration_hours=6, deep_sleep_rating=7, date=today"
+      },
+      {
+        "type": "action",
+        "description": "Call the sleep progress scoring function for User A today"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the returned sleep progress is less than 100% (proportional to 6/8 and 7/10)"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-NUTR-01",
+    "title": "Nutrition baseline macros and micros saved and retrievable from profiles.preferences",
+    "description": "Verifies that a user's personal baseline nutrient thresholds can be saved to profiles.preferences and read back.",
+    "category": "Nutrition Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "PATCH profiles.preferences for User A with a baseline object containing all macro and micro targets"
+      },
+      {
+        "type": "action",
+        "description": "GET profiles for User A and extract preferences.nutrition_baseline"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the saved baseline matches the submitted values"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-NUTR-02",
+    "title": "All 16 tracked micronutrients present in nutrition log schema",
+    "description": "Verifies the nutrition_logs table or JSONB structure contains fields for all 16 required micronutrients: VitaminD3, VitaminB12, VitaminC, VitaminE, VitaminK2, Calcium, Magnesium, Potassium, Sodium, Zinc, Iron, Iodine, Copper, Omega3, Fiber, Water.",
+    "category": "Nutrition Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Insert a nutrition_log entry with all 16 micronutrient fields populated for User A today"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the SELECT response contains non-null values for all 16 micronutrient fields"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-NUTR-03",
+    "title": "Reaching baseline thresholds marks nutrition 100% complete",
+    "description": "Verifies the nutrition scoring function returns 100% when all baseline targets are met or exceeded.",
+    "category": "Nutrition Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Set User A's nutrition baseline thresholds in profiles.preferences"
+      },
+      {
+        "type": "action",
+        "description": "Insert a nutrition_log for today where all macro and micro values meet or exceed the baseline"
+      },
+      {
+        "type": "action",
+        "description": "Call the nutrition progress scoring function for User A today"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the returned nutrition progress is 100%"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-STUDY-01",
+    "title": "Study progress: 2h = 100%, 1h = 50%",
+    "description": "Verifies the study scoring function correctly maps study duration to progress percentage.",
+    "category": "Study Scoring",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Insert a study_log entry with duration_hours=2.0 for User A today"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify study progress is 100%"
+      },
+      {
+        "type": "action",
+        "description": "Insert a study_log entry with duration_hours=1.0 for User A today (overwrite)"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify study progress is 50%"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-CRON-01",
+    "title": "compute_midnight_penalties docks inactive users 1000 AP",
+    "description": "Verifies the midnight penalty cron function identifies users who did not log activity and deducts 1000 AP.",
+    "category": "Cron & Penalties",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Ensure User A has no task completions logged for yesterday"
+      },
+      {
+        "type": "setup",
+        "description": "Record User A's current total_aura_points"
+      },
+      {
+        "type": "action",
+        "description": "Execute compute_midnight_penalties() directly via Supabase RPC"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify User A's total_aura_points has decreased by 1000"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an aura_logs entry with lost=1000 and reason containing 'penalty' exists for yesterday"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-CRON-02",
+    "title": "Weekly progress bar resets via Sunday midnight cron",
+    "description": "Verifies the weekly hypertrophy reset cron fires and zeroes weekly progress for all users.",
+    "category": "Cron & Penalties",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Set weekly_workout_progress to 75 for User A"
+      },
+      {
+        "type": "action",
+        "description": "Execute reset_weekly_progress() directly via Supabase RPC"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify weekly_workout_progress for User A is now 0"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "BE-CRON-03",
+    "title": "Broken streak resets multiplier to 1.0x",
+    "description": "Verifies that when a streak is broken (no activity logged for a day), the multiplier resets to 1.0.",
+    "category": "Cron & Penalties",
+    "runner": "api",
+    "steps": [
+      {
+        "type": "setup",
+        "description": "Set User A's profiles.multiplier = 2.5 and profiles.current_streak = 5"
+      },
+      {
+        "type": "action",
+        "description": "Execute compute_midnight_penalties() simulating a missed day for User A"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify profiles.multiplier is reset to 1.0 for User A"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify profiles.current_streak is reset to 0 for User A"
+      }
+    ],
+    "priority": "High"
+  }
+]

@@ -1,0 +1,16 @@
+.container { position: relative; width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; }
+.core { width: 44px; height: 44px; background: var(--rank-alpha); border-radius: 50%; box-shadow: 0 0 40px var(--rank-alpha); z-index: 10; animation: core-throb 4s infinite ease-in-out; }
+.ring { position: absolute; border: 1.5px solid var(--rank-alpha); border-radius: 50%; opacity: 0; animation: disperse 4s infinite cubic-bezier(0.4, 0, 0.2, 1); }
+.r1 { width: 44px; height: 44px; animation-delay: 0s; }
+.r2 { width: 44px; height: 44px; animation-delay: 1.3s; }
+.r3 { width: 44px; height: 44px; animation-delay: 2.6s; }
+
+@keyframes disperse {
+  0% { transform: scale(1); opacity: 0.8; border-width: 2px; }
+  100% { transform: scale(3.5); opacity: 0; border-width: 0.5px; }
+}
+
+@keyframes core-throb {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 20px var(--rank-alpha); }
+  50% { transform: scale(1.15); box-shadow: 0 0 50px var(--rank-alpha); }
+}

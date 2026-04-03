@@ -1,0 +1,116 @@
+.header {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(10, 10, 12, 0.9);
+  backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.brandIcon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.date {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+}
+
+.playerName {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 200;
+  color: #fff;
+  letter-spacing: 0.2rem;
+  text-transform: uppercase;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.scoreContainer {
+  font-family: 'Outfit', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-surface-hover);
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.scoreLabel {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.scoreValue {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.rankBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--badge-color);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.rankTitle {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 var(--badge-color); }
+  70% { transform: scale(1.5); box-shadow: 0 0 0 6px transparent; }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 transparent; }
+}
+
+@media (max-width: 900px) {
+  .header { padding: 0 1rem; }
+  .playerName { display: none; }
+}
+
+@media (max-width: 600px) {
+  .header { height: auto; padding: 1rem; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+  .brandIcon { order: 1; }
+  .date { order: 2; width: 100%; text-align: center; font-size: 0.75rem; }
+  .right { order: 3; width: 100%; justify-content: center; gap: 0.75rem; }
+  .scoreContainer { padding: 0.3rem 0.6rem; }
+}

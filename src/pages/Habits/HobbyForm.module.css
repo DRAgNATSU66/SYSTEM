@@ -1,0 +1,116 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal {
+  width: 90%;
+  max-width: 500px;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 0 50px rgba(0, 191, 255, 0.1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.header h2 {
+  font-family: 'Outfit';
+  font-size: 1rem;
+  letter-spacing: 0.2rem;
+  color: #fff;
+  margin: 0;
+}
+
+.btnClose {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field label {
+  font-family: 'Outfit';
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.1rem;
+}
+
+.input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 8px;
+  color: #fff;
+  font-family: 'Outfit';
+}
+
+.typeGrid, .categoryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.typeBtn, .catBtn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.4);
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-family: 'Outfit';
+  font-size: 0.65rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.typeBtn:hover, .catBtn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.activeType, .activeCat {
+  background: rgba(0, 191, 255, 0.1);
+  border-color: var(--rank-alpha);
+  color: var(--rank-alpha);
+}
+
+.btnSubmit {
+  background: var(--rank-alpha);
+  color: #000;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-family: 'Outfit';
+  font-weight: 950;
+  letter-spacing: 0.1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}

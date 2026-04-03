@@ -1,0 +1,35 @@
+.container {
+  background: var(--bg-surface);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-family: 'Outfit', sans-serif;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.value {
+  font-size: 2rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+}
+
+.fireActive {
+  filter: drop-shadow(0 0 10px #FF4500);
+}
+
+.fireInactive {
+  filter: grayscale(100%);
+  opacity: 0.5;
+}

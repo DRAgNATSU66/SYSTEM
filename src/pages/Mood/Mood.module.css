@@ -1,0 +1,12 @@
+.container { padding: 2rem; max-width: 800px; margin: 0 auto; }
+.header { text-align: center; margin-bottom: 4rem; }
+.header h1 { font-family: 'Outfit'; font-size: 2.5rem; color: #fff; letter-spacing: 0.1em; }
+.headerTop { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem; }
+.subtitle { color: var(--text-secondary); font-family: 'Outfit'; font-size: 0.8rem; margin-top: 0.5rem; letter-spacing: 0.05em; }
+.overallProgress { width: 300px; max-width: 100%; margin-top: 1rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; }
+.face { background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.05); padding: 2rem 1rem; border-radius: var(--radius-lg); cursor: pointer; transition: 0.2s; text-align: center; }
+.face:hover { transform: translateY(-5px); border-color: var(--mood-color); }
+.active { border-color: var(--mood-color); background: rgba(0,0,0,0.5); box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 20px var(--mood-color); }
+.val { font-family: 'Outfit'; font-size: 2.5rem; font-weight: 900; color: #fff; margin-bottom: 0.5rem; }
+.label { font-size: 0.6rem; font-weight: 800; color: var(--mood-color); letter-spacing: 0.1em; }

@@ -1,0 +1,210 @@
+.dashboard {
+  padding: 3rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+}
+
+/* ── Top Header ──────────────────────────────────────────────────────── */
+.topHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.greetingBlock {}
+
+.topHeader h1 {
+  font-family: 'Outfit';
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: #fff;
+  margin: 0;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-family: 'Inter';
+  font-size: 1rem;
+  margin-top: 0.6rem;
+  letter-spacing: 0.02em;
+  opacity: 0.75;
+}
+
+/* ── Rank Block (top right) ──────────────────────────────────────────── */
+.rankBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.apInline {
+  font-family: 'Outfit';
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--rank-alpha);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.rankBadge {
+  font-family: 'Outfit';
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid;
+  text-transform: uppercase;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(8px);
+}
+
+/* ── Stats Row ───────────────────────────────────────────────────────── */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.75rem;
+}
+
+/* ── Metrics Row ─────────────────────────────────────────────────────── */
+.metricsRow {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 2.5rem;
+  align-items: stretch;
+}
+
+.radarSlot,
+.heatmapSlot {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 28px;
+  padding: 2.5rem;
+  backdrop-filter: blur(20px);
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.radarSlot:hover,
+.heatmapSlot:hover {
+  border-color: rgba(0, 191, 255, 0.25);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+/* ── Trend Row ───────────────────────────────────────────────────────── */
+.trendRow {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 28px;
+  padding: 2.5rem;
+  min-height: 420px;
+  backdrop-filter: blur(20px);
+}
+
+/* ── Chart internals ─────────────────────────────────────────────────── */
+.weeklyChartCard {
+  background: transparent;
+  border: none;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardTitle {
+  font-family: 'Outfit';
+  font-size: 0.75rem;
+  color: var(--rank-alpha);
+  font-weight: 950;
+  letter-spacing: 0.3em;
+  margin-bottom: 1.75rem;
+  text-transform: uppercase;
+}
+
+.chartWrapper {
+  flex: 1;
+  width: 100%;
+  min-height: 320px;
+}
+
+.chartTooltip {
+  background: rgba(10, 10, 12, 0.96);
+  border: 1px solid var(--rank-alpha);
+  padding: 0.9rem 1.1rem;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.tooltipLabel {
+  font-family: 'Outfit';
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.2rem;
+}
+
+.tooltipValue {
+  color: #fff;
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .metricsRow {
+    grid-template-columns: 1fr;
+  }
+  .topHeader h1 {
+    font-size: 2.4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1.25rem;
+    gap: 2rem;
+  }
+  .topHeader h1 {
+    font-size: 1.9rem;
+  }
+  .topHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .rankBlock {
+    align-items: flex-start;
+  }
+  .statsRow {
+    grid-template-columns: 1fr 1fr;
+  }
+  .radarSlot,
+  .heatmapSlot,
+  .trendRow {
+    padding: 1.25rem;
+    border-radius: 20px;
+  }
+  .trendRow {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsRow {
+    grid-template-columns: 1fr;
+  }
+  .topHeader h1 {
+    font-size: 1.5rem;
+  }
+}

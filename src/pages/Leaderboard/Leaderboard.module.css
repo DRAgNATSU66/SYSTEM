@@ -1,0 +1,51 @@
+.container { padding: 3rem 2rem; max-width: 860px; margin: 0 auto; }
+
+.header { text-align: center; margin-bottom: 2.5rem; }
+.header h1 { font-family: 'Outfit'; font-size: 2.5rem; color: #fff; letter-spacing: 0.15em; margin-bottom: 0.5rem; }
+.headerSub { color: var(--text-secondary); font-size: 0.82rem; letter-spacing: 0.04em; }
+
+/* Self card */
+.selfCard { background: rgba(0,191,255,0.05); border: 1px solid rgba(0,191,255,0.2); padding: 1.75rem 2rem; border-radius: 16px; margin-bottom: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+.selfLabel { font-size: 0.65rem; font-weight: 900; color: var(--rank-alpha); letter-spacing: 0.2em; }
+.selfAP { font-family: 'Outfit'; font-size: 2.2rem; font-weight: 900; color: #fff; line-height: 1; }
+.selfRank { font-family: 'Outfit'; font-size: 0.75rem; font-weight: 900; letter-spacing: 0.15em; }
+.selfName { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem; }
+
+/* Toggle */
+.viewToggle { display: flex; gap: 0.5rem; margin-bottom: 2rem; }
+.toggleBtn { flex: 1; padding: 0.7rem; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: var(--text-secondary); font-family: 'Outfit'; font-weight: 700; font-size: 0.7rem; letter-spacing: 0.12em; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+.toggleBtn:hover { border-color: var(--rank-alpha); color: var(--rank-alpha); }
+.toggleActive { background: rgba(0,191,255,0.08); border-color: var(--rank-alpha); color: var(--rank-alpha); }
+
+/* Leader list */
+.leaderList { display: flex; flex-direction: column; gap: 0.6rem; }
+.leaderRow { display: flex; align-items: center; gap: 1rem; background: var(--bg-surface); padding: 1.1rem 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); transition: border-color 0.2s, background 0.2s; }
+.leaderRow:hover { border-color: rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); }
+.selfRow { border-color: rgba(0,191,255,0.3) !important; background: rgba(0,191,255,0.04) !important; }
+.rankNum { font-family: 'Outfit'; font-size: 1.1rem; font-weight: 900; min-width: 44px; }
+.identity { flex: 1; min-width: 0; }
+.name { font-family: 'Outfit'; font-size: 0.95rem; color: #fff; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.youTag { color: var(--rank-alpha); font-size: 0.8em; }
+.tier { font-size: 0.6rem; font-weight: 900; letter-spacing: 0.1em; margin-top: 3px; }
+.score { font-family: 'Outfit'; font-size: 1.05rem; font-weight: 900; color: var(--rank-sigma); white-space: nowrap; }
+
+.loadingMsg,
+.emptyMsg { text-align: center; color: var(--text-secondary); font-size: 0.85rem; padding: 3rem 0; }
+
+/* History */
+.historyTitle { font-family: 'Outfit'; font-size: 0.8rem; color: var(--rank-alpha); letter-spacing: 0.3em; margin-bottom: 1.5rem; }
+.historyList { display: flex; flex-direction: column; gap: 0.5rem; }
+.historyRow { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1rem; background: var(--bg-surface); border-radius: 10px; border: 1px solid rgba(255,255,255,0.04); }
+.historyDate { font-size: 0.75rem; color: var(--text-secondary); min-width: 90px; }
+.historyReason { flex: 1; font-size: 0.8rem; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.historyNet { font-family: 'Outfit'; font-weight: 900; font-size: 0.9rem; white-space: nowrap; }
+
+.footer { margin-top: 3rem; text-align: center; color: var(--text-secondary); font-size: 0.7rem; font-style: italic; }
+
+@media (max-width: 600px) {
+  .container { padding: 1.5rem 1rem; }
+  .header h1 { font-size: 1.8rem; }
+  .selfAP { font-size: 1.8rem; }
+  .leaderRow { padding: 0.9rem 1rem; }
+  .viewToggle { flex-direction: row; }
+}

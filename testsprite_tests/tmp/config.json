@@ -1,0 +1,20 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:5173",
+  "loginUser": "NATSU",
+  "loginPassword": "tesst123",
+  "executionArgs": {
+    "projectName": "SYSTEM",
+    "projectPath": "c:\\Users\\ushni\\Documents\\TRACKER\\SYSTEM",
+    "testIds": [],
+    "additionalInstruction": "Test the frontend features according to the generated test plan. Focus on the Shop page improvements I just made (TC006, TC009, TC011, TC014, TC018).",
+    "serverMode": "development",
+    "envs": {
+      "API_KEY": "sk-user-qKMKsBuc4esBxJgSveI0H5zhGFcrTVBsqXRTAR5YmLlxboD1m1n9P-cyoLlNqEwITbm8C2I5Fgu_7LyNee9Uzu00jdiqws_SRC7ucDFcVzOKWLnmbB83I7ScHYbVP5PcsyY"
+    }
+  },
+  "serverPort": 50880,
+  "proxy": "http://a76ac758-425c-4d56-a9ad-f6f782022320:gd2jCeXwKsWAKLjKHp4VZenvff4FKiEc@tun.testsprite.com:8080"
+}

@@ -1,0 +1,77 @@
+import React, { useState } from 'react';
+import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
+import { useHobbyStore } from '../../store/assetStores';
+import { useAuraStore } from '../../store/auraStore';
+import HobbyForm from './HobbyForm';
+import HistoryModal from '../../components/ui/HistoryModal/HistoryModal';
+import styles from './Habits.module.css';
+
+const HabitsPage = () => {
+  const [showForm, setShowForm] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const { hobbies, hobbiesHistory, deleteHobby, archiveHobby } = useHobbyStore();
+  const addAuraPoints = useAuraStore(state => state.addAuraPoints);
+
+  const handleLogHobby = (hobby) => {
+    addAuraPoints(300, `Hobby Session: ${hobby.title}`);
+    // Optional: lastLogged update logic
+  };
+
+  return (
+    <PageWrapper className={styles.container}>
+      <header className={styles.header}>
+        <div className={styles.headerRow}>
+          <div>
+            <h1>NEURAL RECREATION</h1>
+            <p className={styles.subtitle}>Categorized high-performance leisure vectors.</p>
+          </div>
+          <div className={styles.headerActions}>
+            <button className={styles.btnAdd} onClick={() => setShowForm(true)}>+ NEW HOBBY</button>
+            <button className={styles.btnHistory} onClick={() => setShowHistory(true)}>HISTORY</button>
+          </div>
+        </div>
+      </header>
+      
+      <div className={styles.list}>
+        {hobbies.length === 0 && <p className={styles.empty}>No hobbies initialized. Balance is critical.</p>}
+        {hobbies.map(h => (
+          <div key={h.id} className={styles.item}>
+            <div className={styles.info}>
+              <h3>{h.title}</h3>
+              <div className={styles.tags}>
+                <span className={`${styles.tag} ${styles.typeTag}`}>{h.type}</span>
+                {h.categories.map(cat => (
+                  <span key={cat} className={`${styles.tag} ${styles.catTag}`}>{cat}</span>
+                ))}
+              </div>
+            </div>
+            <div className={styles.actions}>
+              <button 
+                className={styles.btnLog}
+                onClick={() => handleLogHobby(h)}
+              >
+                LOG SESSION
+              </button>
+              <button className={styles.btnArchive} onClick={() => archiveHobby(h.id)}>ARCHIVE</button>
+              <button className={styles.btnDelete} onClick={() => deleteHobby(h.id)}>×</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {showForm && <HobbyForm onClose={() => setShowForm(false)} />}
+      
+      {showHistory && (
+        <HistoryModal 
+          title="HOBBIES" 
+          items={hobbiesHistory} 
+          type="hobby"
+          onClose={() => setShowHistory(false)} 
+          onDelete={(id) => deleteHobby(id, true)}
+        />
+      )}
+    </PageWrapper>
+  );
+};
+
+export default HabitsPage;
