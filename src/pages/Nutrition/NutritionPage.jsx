@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
 import DomainPieChart from '../../components/charts/DomainPieChart/DomainPieChart';
 import { useMetricsStore } from '../../store/metricsStore';
+import { useAuraStore } from '../../store/auraStore';
 import { getTodayStr } from '../../utils/dateUtils';
 import styles from './Nutrition.module.css';
 
@@ -15,7 +16,7 @@ const computeNutritionProgress = (macros, micros, todayMacros, todayMicros) => {
 };
 
 // ─── Nutrient row ─────────────────────────────────────────────────────────────
-const NutrientRow = ({ macro, value, onChange, isEditing, onLimitChange, onDelete }) => {
+const NutrientRow = ({ macro, value, onChange, isEditing, onLimitChange, onDelete, onLogItem }) => {
   const prog = Math.min(100, Math.round(((value || 0) / (macro.minLimit || 1)) * 100));
   return (
     <div className={styles.macroCard}>
@@ -30,13 +31,19 @@ const NutrientRow = ({ macro, value, onChange, isEditing, onLimitChange, onDelet
             onChange={e => onChange(macro.id, e.target.value)}
           />
           <span className={styles.unit}>{macro.unit}</span>
+          <button
+            className={styles.btnLogItem}
+            onClick={() => onLogItem(macro)}
+          >
+            LOG
+          </button>
         </div>
         <div className={styles.progressTrack}>
           <div
             className={styles.progressFill}
             style={{
               width: `${prog}%`,
-              background: prog >= 100 ? 'var(--rank-sigma)' : 'var(--rank-alpha)'
+              background: prog >= 100 ? 'var(--color-green)' : 'var(--rank-alpha)'
             }}
           />
         </div>
@@ -83,7 +90,14 @@ const NutritionPage = () => {
   const [tab,       setTab]       = useState('macros'); // 'macros' | 'micros'
   const [flash,     setFlash]     = useState('');
 
+  const { addAuraPoints } = useAuraStore();
   const overallProgress = computeNutritionProgress(customMacros, customMicros, todayMacros, todayMicros);
+
+  const handleLogItem = (macro) => {
+    addAuraPoints(5, `NUTRITION LOGGED: ${macro.name}`);
+    setFlash(`${macro.name} logged!`);
+    setTimeout(() => setFlash(''), 2000);
+  };
 
   const handleAddMacro = (e) => {
     e.preventDefault();
@@ -164,6 +178,7 @@ const NutritionPage = () => {
               isEditing={isEditing}
               onLimitChange={(id, val) => setMacroLimit(id, val)}
               onDelete={deleteMacro}
+              onLogItem={handleLogItem}
             />
           ))}
         </div>
@@ -180,7 +195,8 @@ const NutritionPage = () => {
               onChange={(id, val) => logMicroValue(id, val)}
               isEditing={isEditing}
               onLimitChange={(id, val) => setMicroLimit(id, val)}
-              onDelete={() => {}} // micros are not deletable (PRD requirement)
+              onDelete={() => {}}
+              onLogItem={handleLogItem}
             />
           ))}
         </div>

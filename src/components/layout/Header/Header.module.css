@@ -12,10 +12,30 @@
   z-index: 1000;
 }
 
+.hamburger {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: color 0.2s ease, background 0.2s ease;
+  min-height: auto;
+  min-width: auto;
+}
+.hamburger:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.05);
+}
+
 .brandIcon {
   width: 32px;
   height: 32px;
-  object-fit: contain;
+  border-radius: 50%;
+  object-fit: cover;
   filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
 }
 

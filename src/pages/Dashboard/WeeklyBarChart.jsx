@@ -43,7 +43,7 @@ const WeeklyBarChart = () => {
             <YAxis stroke="var(--text-secondary)" domain={[0, 1000]} tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} axisLine={false} tickLine={false} />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
             <Bar dataKey="score" fill="url(#colorUv)" radius={[4, 4, 0, 0]} maxBarSize={40} />
-            <Line type="linear" dataKey="score" stroke="var(--rank-sigma)" strokeWidth={3} dot={{ fill: 'var(--bg-surface)', stroke: 'var(--rank-sigma)', strokeWidth: 2, r: 4 }} />
+            <Line type="linear" dataKey="score" stroke="var(--color-green)" strokeWidth={3} dot={{ fill: 'var(--bg-surface)', stroke: 'var(--color-green)', strokeWidth: 2, r: 4 }} />
             <defs>
               <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="var(--rank-alpha)" stopOpacity={0.8}/>

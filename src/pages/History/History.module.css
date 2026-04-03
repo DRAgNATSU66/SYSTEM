@@ -5,5 +5,5 @@
 .entry { display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.05); padding: 1rem 1.5rem; border-radius: var(--radius-md); }
 .date { font-family: 'Outfit'; font-size: 0.8rem; color: var(--text-secondary); width: 100px; }
 .reason { flex: 1; color: #fff; font-weight: 600; padding: 0 1rem; }
-.positive { color: var(--rank-sigma); font-family: 'Outfit'; font-weight: 900; }
-.negative { color: var(--rank-slacking); font-family: 'Outfit'; font-weight: 900; }
+.positive { color: var(--color-green); font-family: 'Outfit'; font-weight: 900; }
+.negative { color: var(--color-red); font-family: 'Outfit'; font-weight: 900; }

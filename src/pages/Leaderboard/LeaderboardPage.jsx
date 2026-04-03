@@ -3,6 +3,7 @@ import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
 import { useAuraStore } from '../../store/auraStore';
 import { useUserStore } from '../../store/userStore';
 import { supabase } from '../../services/supabaseClient';
+import { getAPColor } from '../../utils/apColorLogic';
 import styles from './Leaderboard.module.css';
 
 const RANK_NAMES  = ['IM HIM', 'ALPHA & OMEGA', 'SIGMA'];
@@ -70,7 +71,7 @@ const LeaderboardPage = () => {
       {/* Self Status Card */}
       <div className={styles.selfCard}>
         <div className={styles.selfLabel}>YOUR AURA</div>
-        <div className={styles.selfAP}>{(totalAuraPoints || 0).toLocaleString()} AP</div>
+        <div className={styles.selfAP} style={{ color: getAPColor(totalAuraPoints || 0) }}>{(totalAuraPoints || 0).toLocaleString()} AP</div>
         {selfRank && (
           <div
             className={styles.selfRank}
@@ -127,7 +128,7 @@ const LeaderboardPage = () => {
                     {rank.label}
                   </div>
                 </div>
-                <div className={styles.score}>
+                <div className={styles.score} style={{ color: getAPColor(leader.total_aura_points || 0) }}>
                   {(leader.total_aura_points || 0).toLocaleString()} AP
                 </div>
               </div>
@@ -146,7 +147,7 @@ const LeaderboardPage = () => {
               <span className={styles.historyReason}>{entry.reason || 'Daily AP'}</span>
               <span
                 className={styles.historyNet}
-                style={{ color: entry.net >= 0 ? 'var(--rank-sigma)' : 'var(--rank-slacking)' }}
+                style={{ color: entry.net >= 0 ? 'var(--color-green)' : 'var(--color-red)' }}
               >
                 {entry.net >= 0 ? '+' : ''}{entry.net} AP
               </span>

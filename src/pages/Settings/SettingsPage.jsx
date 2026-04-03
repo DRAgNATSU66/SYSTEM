@@ -106,9 +106,9 @@ const SettingsPage = () => {
           )}
           
           <div className={styles.dangerZone}>
-            <p>Danger zone: wipe local state caches.</p>
+            <p>&#9888;&#65039; Danger zone: wipe local state caches. This action is irreversible.</p>
             <button className={styles.btnDelete} onClick={() => {
-              if(window.confirm('Wipe local OS state?')) {
+              if(window.confirm('Wipe local OS state? This cannot be undone.')) {
                 localStorage.clear();
                 window.location.reload();
               }

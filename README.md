@@ -1,16 +1,31 @@
-# React + Vite
+# 🌌SYSTEM v6.0
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**The Ultimate Gamified Life OS.**
+A high-performance, production-ready Progressive Web App (PWA) designed for elite metabolic and cognitive tracking.
 
-Currently, two official plugins are available:
+## 🚀 Key Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Voltage Neo-Brutal UI**: A premium, high-contrast "OS" aesthetic with total device responsiveness.
+- **Offline-First Sync Engine**: Robust bidirectional data persistence and queueing.
+- **Metabolic & Muscle Matrix**: Deep tracking for hypertrophy volume, nutrition, and VO2 Max.
+- **Neural Pentagram**: Real-time visual feedback on cognitive and physical throughput.
+- **Aura Ecosystem**: Gamified progress with rank tiers (Alpha, Sigma, Dreamer).
+- **PWA Ready**: Installable on iOS/Android/Desktop with offline support.
 
-## React Compiler
+## 🛠 Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React 19 + Vite 8
+- **Backend**: Supabase (Auth, DB, Realtime)
+- **State**: Zustand (with Persist)
+- **Visuals**: Framer Motion + Three.js
+- **PWA**: Vite-PWA-Plugin
 
-## Expanding the ESLint configuration
+## 📦 Deployment
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Currently configured for zero-config deployment on **Vercel**. 
+Ensure the following environment variables are set:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+---
+*Initialized by Antigravity AI.*

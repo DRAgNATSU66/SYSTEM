@@ -8,10 +8,10 @@
 .btnHistory:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.3); }
 .headerTop { display: flex; flex-direction: column; gap: 0.5rem; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
-.card { background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.05); padding: 2rem; border-radius: var(--radius-lg); position: relative; transition: 0.3s; }
-.card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.2); }
+.card { background: var(--bg-surface); border: 1px solid rgba(34,197,94,0.2); padding: 2rem; border-radius: var(--radius-lg); position: relative; transition: 0.3s; }
+.card:hover { transform: translateY(-5px); border-color: rgba(34,197,94,0.5); }
 .card h3 { font-family: 'Outfit'; margin-bottom: 1rem; color: #fff; }
-.bounty { font-size: 0.8rem; font-weight: 800; color: var(--rank-sigma); margin-bottom: 1.5rem; }
-.completed { opacity: 0.6; border-color: var(--rank-sigma); }
-.btnComplete { width: 100%; padding: 0.8rem; background: var(--rank-sigma); border: none; border-radius: var(--radius-sm); color: #000; font-weight: 900; cursor: pointer; }
+.bounty { font-size: 0.8rem; font-weight: 800; color: var(--color-green); margin-bottom: 1.5rem; }
+.completed { opacity: 0.6; border-color: var(--color-blue); }
+.btnComplete { width: 100%; padding: 0.8rem; background: var(--color-green); border: none; border-radius: var(--radius-sm); color: #000; font-weight: 900; cursor: pointer; }
 .btnDelete { position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 0.7rem; }

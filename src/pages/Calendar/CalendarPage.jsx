@@ -1,22 +1,39 @@
 import React, { useState } from 'react';
 import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
 import { useScoreStore } from '../../store/scoreStore';
-import { resolveRank } from '../../utils/rankResolver';
+import { getAPColorHex, getAPColorPale } from '../../utils/apColorLogic';
 import styles from './Calendar.module.css';
 
+const getColorForScore = (score) => {
+  if (score <= 0) return 'rgba(255,255,255,0.05)';
+  return getAPColorHex(score);
+};
+
+const getPaleColorForScore = (score) => {
+  if (score <= 0) return 'rgba(255,255,255,0.04)';
+  return getAPColorPale(score);
+};
+
+const getTierLabel = (score) => {
+  if (score >= 1500) return 'PEAK';
+  if (score >= 1000) return 'GOOD';
+  if (score >= 500)  return 'OKAY';
+  if (score > 0)     return 'LOW';
+  return 'NONE';
+};
+
 const TemporalDot = ({ label, score, date }) => {
-  const rank = resolveRank(score);
   return (
     <div className={styles.dotWrapper}>
-      <div 
-        className={styles.dot} 
-        style={{ backgroundColor: score > 0 ? rank.color : 'rgba(255,255,255,0.05)' }} 
+      <div
+        className={styles.dot}
+        style={{ backgroundColor: score > 0 ? getColorForScore(score) : 'rgba(255,255,255,0.05)' }}
       />
       <div className={styles.dotLabel}>{label}</div>
       <div className={styles.tooltip}>
         <span className={styles.ttDate}>{date}</span>
         <span className={styles.ttScore}>{Math.floor(score)} AP</span>
-        <span className={styles.ttRank}>{rank.title}</span>
+        <span className={styles.ttRank} style={{ color: getColorForScore(score) }}>{getTierLabel(score)}</span>
       </div>
     </div>
   );
@@ -24,15 +41,13 @@ const TemporalDot = ({ label, score, date }) => {
 
 const CalendarPage = () => {
   const { dailyScores } = useScoreStore();
-  const [view, setView] = useState('OVERALL'); // YEAR, MONTH, WEEK, OVERALL
-  
+  const [view, setView] = useState('OVERALL');
+
   const today = new Date();
-  
-  // YEAR VIEW (12 Months)
+
   const getYearData = () => Array.from({ length: 12 }, (_, i) => {
     const d = new Date(today.getFullYear(), i, 1);
     const monthStr = d.toLocaleString('default', { month: 'short' });
-    // Avg score for month
     const scores = Object.entries(dailyScores)
       .filter(([date]) => date.startsWith(d.toISOString().slice(0, 7)))
       .map(([, s]) => s);
@@ -40,7 +55,6 @@ const CalendarPage = () => {
     return { label: monthStr, score: avg, date: d.getFullYear() };
   });
 
-  // MONTH VIEW (4-5 Weeks)
   const getMonthData = () => Array.from({ length: 4 }, (_, i) => {
     const weekStart = new Date(today.getFullYear(), today.getMonth(), i * 7 + 1);
     const scores = Array.from({ length: 7 }, (_, j) => {
@@ -52,7 +66,6 @@ const CalendarPage = () => {
     return { label: `W${i+1}`, score: avg, date: weekStart.toDateString() };
   });
 
-  // WEEK VIEW (7 Days)
   const getWeekData = () => Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (6 - i));
@@ -60,19 +73,18 @@ const CalendarPage = () => {
     return { label: d.toLocaleDateString('en-US', { weekday: 'short' }), score: dailyScores[dateStr] || 0, date: dateStr };
   });
 
-  // OVERALL VIEW (Traditional Grid)
   const getGridData = () => {
     const start = new Date(today.getFullYear(), today.getMonth(), 1);
     const startDay = start.getDay();
     const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-    
+
     const blanks = Array.from({ length: startDay }, () => null);
     const days = Array.from({ length: daysInMonth }, (_, i) => {
       const d = new Date(today.getFullYear(), today.getMonth(), i + 1);
       const ds = d.toISOString().split('T')[0];
       return { day: i + 1, date: ds, score: dailyScores[ds] || 0 };
     });
-    
+
     return [...blanks, ...days];
   };
 
@@ -111,7 +123,11 @@ const CalendarPage = () => {
           <div className={styles.traditionalGrid}>
             {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map(h => <div key={h} className={styles.gridHeader}>{h}</div>)}
             {getGridData().map((d, i) => d ? (
-              <div key={d.date} className={styles.gridDay} style={{ '--day-color': d.score > 0 ? resolveRank(d.score).color : 'rgba(255,255,255,0.05)' }}>
+              <div
+                key={d.date}
+                className={styles.gridDay}
+                style={{ '--day-color': d.score > 0 ? getPaleColorForScore(d.score) : 'rgba(255,255,255,0.05)' }}
+              >
                 <span className={styles.dayNum}>{d.day}</span>
                 <div className={styles.tooltip}>
                    <span className={styles.ttDate}>{d.date}</span>
@@ -123,15 +139,28 @@ const CalendarPage = () => {
         )}
       </div>
 
+      {/* ── Color Key Legend ────────────────────────────────────────── */}
       <div className={styles.legend}>
-        <span>STAGNANT</span>
-        <div className={styles.block} style={{ background: 'rgba(255,255,255,0.05)' }} />
-        <div className={styles.block} style={{ background: 'var(--rank-normie)' }} />
-        <div className={styles.block} style={{ background: 'var(--rank-slacking)' }} />
-        <div className={styles.block} style={{ background: 'var(--rank-dreamer)' }} />
-        <div className={styles.block} style={{ background: 'var(--rank-sigma)' }} />
-        <div className={styles.block} style={{ background: 'var(--rank-alpha)' }} />
-        <span>FLOW</span>
+        <div className={styles.legendItem}>
+          <div className={styles.block} style={{ background: 'rgba(255,255,255,0.05)' }} />
+          <span>No Log</span>
+        </div>
+        <div className={styles.legendItem}>
+          <div className={styles.block} style={{ background: '#EF4444' }} />
+          <span>&lt; 500 AP</span>
+        </div>
+        <div className={styles.legendItem}>
+          <div className={styles.block} style={{ background: '#EAB308' }} />
+          <span>500–999</span>
+        </div>
+        <div className={styles.legendItem}>
+          <div className={styles.block} style={{ background: '#22C55E' }} />
+          <span>1000–1499</span>
+        </div>
+        <div className={styles.legendItem}>
+          <div className={styles.block} style={{ background: '#3B82F6' }} />
+          <span>1500+</span>
+        </div>
       </div>
     </PageWrapper>
   );

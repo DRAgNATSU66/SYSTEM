@@ -7,5 +7,5 @@
   z-index: 0;
   pointer-events: all;
   background-color: var(--bg-base);
-  cursor: none;
+  cursor: default;
 }

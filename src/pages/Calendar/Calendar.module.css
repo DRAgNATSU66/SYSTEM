@@ -31,6 +31,7 @@
 .ttScore { display: block; font-size: 1.1rem; font-weight: 900; color: #fff; margin-bottom: 0.25rem; }
 .ttRank { display: block; font-size: 0.6rem; color: var(--rank-alpha); font-weight: 950; letter-spacing: 0.2em; }
 
-.legend { display: flex; align-items: center; justify-content: center; gap: 1rem; padding-top: 3rem; border-top: 1px solid rgba(255,255,255,0.05); }
-.legend span { font-size: 0.6rem; font-weight: 950; letter-spacing: 0.3em; color: var(--text-secondary); }
-.block { width: 14px; height: 14px; border-radius: 2px; }
+.legend { display: flex; align-items: center; justify-content: center; gap: 1.5rem; padding-top: 3rem; border-top: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; }
+.legendItem { display: flex; align-items: center; gap: 0.4rem; }
+.legendItem span { font-size: 0.65rem; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.03em; }
+.block { width: 14px; height: 14px; border-radius: 3px; }

@@ -1,161 +1,145 @@
-import React, { useRef, useMemo, useState, useEffect, useCallback } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
+import React, { useRef, useEffect, useCallback } from 'react';
 import styles from './ParticleBackground.module.css';
 
-const PARTICLE_COUNT = 4000;
-
-const FloatingDots = ({ mouseNorm }) => {
-  const mesh = useRef();
-  const velocities = useRef(null);
-
-  const [positions] = useState(() => {
-    const pos = new Float32Array(PARTICLE_COUNT * 3);
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      pos[i * 3]     = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 14;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 6;
-    }
-    return pos;
-  });
-
-  const [colors] = useState(() => {
-    const col = new Float32Array(PARTICLE_COUNT * 3);
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const t = Math.random();
-      // Cyan (#00BFFF) to deep blue (#003366)
-      col[i * 3]     = THREE.MathUtils.lerp(0.0, 0.2, t);
-      col[i * 3 + 1] = THREE.MathUtils.lerp(0.75, 0.4, t);
-      col[i * 3 + 2] = THREE.MathUtils.lerp(1.0, 0.8, t);
-    }
-    return col;
-  });
-
-  useEffect(() => {
-    const vels = new Float32Array(PARTICLE_COUNT * 3);
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      vels[i * 3]     = (Math.random() - 0.5) * 0.004;
-      vels[i * 3 + 1] = (Math.random() - 0.5) * 0.003;
-      vels[i * 3 + 2] = (Math.random() - 0.5) * 0.001;
-    }
-    velocities.current = vels;
-  }, []);
-
-  useFrame(() => {
-    if (!mesh.current || !velocities.current) return;
-    const pos = mesh.current.geometry.attributes.position.array;
-    const vel = velocities.current;
-
-    // Mouse repulsion in world-space approximation
-    // mouseNorm is -1..1; map to world coords (camera z=12, fov=60)
-    const mx = mouseNorm.x * 10;
-    const my = mouseNorm.y * 7;
-    const REPEL_RADIUS = 2.8;
-    const REPEL_STRENGTH = 0.018;
-
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const i3 = i * 3;
-      let x = pos[i3], y = pos[i3 + 1], z = pos[i3 + 2];
-
-      // Mouse repulsion on x/y plane
-      const dx = x - mx;
-      const dy = y - my;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < REPEL_RADIUS && dist > 0.001) {
-        const force = (REPEL_RADIUS - dist) / REPEL_RADIUS * REPEL_STRENGTH;
-        vel[i3]     += (dx / dist) * force;
-        vel[i3 + 1] += (dy / dist) * force;
-      }
-
-      // Gentle float drift
-      vel[i3]     += (Math.random() - 0.5) * 0.0002;
-      vel[i3 + 1] += (Math.random() - 0.5) * 0.0002;
-
-      // Damping
-      vel[i3]     *= 0.97;
-      vel[i3 + 1] *= 0.97;
-      vel[i3 + 2] *= 0.96;
-
-      // Update position
-      x += vel[i3];
-      y += vel[i3 + 1];
-      z += vel[i3 + 2];
-
-      // Wrap boundaries
-      if (x >  10) x = -10; if (x < -10) x = 10;
-      if (y >   7) y =  -7; if (y <  -7) y =  7;
-      if (z >   3) z =  -3; if (z <  -3) z =  3;
-
-      pos[i3]     = x;
-      pos[i3 + 1] = y;
-      pos[i3 + 2] = z;
-    }
-
-    mesh.current.geometry.attributes.position.needsUpdate = true;
-  });
-
-  return (
-    <points ref={mesh}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={PARTICLE_COUNT}
-          array={positions}
-          itemSize={3}
-        />
-        <bufferAttribute
-          attach="attributes-color"
-          count={PARTICLE_COUNT}
-          array={colors}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.06}
-        vertexColors
-        transparent
-        opacity={0.55}
-        blending={THREE.AdditiveBlending}
-        depthWrite={false}
-        sizeAttenuation
-      />
-    </points>
-  );
-};
+const DOT_SPACING = 20;
+const DOT_RADIUS = 2;
+const BASE_OPACITY = 0.25;
+const HOVER_RADIUS = 120;
+const EASE_SPEED = 0.08;
 
 const ParticleBackground = () => {
-  const mouseNorm = useRef({ x: 0, y: 0 });
-  const containerRef = useRef();
+  const canvasRef = useRef(null);
+  const mouseRef = useRef({ x: -9999, y: -9999 });
+  const dotsRef = useRef([]);
+  const animRef = useRef(null);
+  const timeRef = useRef(0);
 
-  const handleMouseMove = useCallback((e) => {
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    mouseNorm.current = {
-      x: ((e.clientX - rect.left) / rect.width)  * 2 - 1,
-      y: -((e.clientY - rect.top)  / rect.height) * 2 + 1,
-    };
+  const initDots = useCallback((width, height) => {
+    const dots = [];
+    const cols = Math.ceil(width / DOT_SPACING) + 2;
+    const rows = Math.ceil(height / DOT_SPACING) + 2;
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        dots.push({
+          baseX: c * DOT_SPACING,
+          baseY: r * DOT_SPACING,
+          x: c * DOT_SPACING,
+          y: r * DOT_SPACING,
+          scale: 1,
+          opacity: BASE_OPACITY,
+          targetScale: 1,
+          targetOpacity: BASE_OPACITY,
+          phase: Math.random() * Math.PI * 2,
+        });
+      }
+    }
+    return dots;
   }, []);
 
-  const handleTouchMove = useCallback((e) => {
-    if (!e.touches[0]) return;
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    mouseNorm.current = {
-      x: ((e.touches[0].clientX - rect.left) / rect.width)  * 2 - 1,
-      y: -((e.touches[0].clientY - rect.top)  / rect.height) * 2 + 1,
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      dotsRef.current = initDots(window.innerWidth, window.innerHeight);
     };
-  }, []);
+
+    resize();
+    window.addEventListener('resize', resize);
+
+    const handleMouseMove = (e) => {
+      mouseRef.current = { x: e.clientX, y: e.clientY };
+    };
+
+    const handleTouchMove = (e) => {
+      if (e.touches[0]) {
+        mouseRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+    };
+
+    const handleMouseLeave = () => {
+      mouseRef.current = { x: -9999, y: -9999 };
+    };
+
+    // Attach to window for continuous tracking
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('mouseleave', handleMouseLeave);
+
+    const animate = () => {
+      timeRef.current += 0.02;
+      const t = timeRef.current;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      ctx.clearRect(0, 0, w, h);
+
+      const mx = mouseRef.current.x;
+      const my = mouseRef.current.y;
+      const dots = dotsRef.current;
+
+      for (let i = 0; i < dots.length; i++) {
+        const dot = dots[i];
+
+        // Default wave animation
+        const waveX = Math.sin(t + dot.phase) * 1.5;
+        const waveY = Math.cos(t * 0.7 + dot.phase * 1.3) * 1.5;
+
+        // Mouse interaction
+        const dx = dot.baseX - mx;
+        const dy = dot.baseY - my;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < HOVER_RADIUS) {
+          const factor = 1 - dist / HOVER_RADIUS;
+          const lift = factor * factor; // quadratic easing
+          dot.targetScale = 1 + lift * 2.5;
+          dot.targetOpacity = BASE_OPACITY + lift * 0.75;
+        } else {
+          dot.targetScale = 1;
+          dot.targetOpacity = BASE_OPACITY;
+        }
+
+        // Lerp towards target (smooth ease with 300ms-like feel)
+        dot.scale += (dot.targetScale - dot.scale) * EASE_SPEED;
+        dot.opacity += (dot.targetOpacity - dot.opacity) * EASE_SPEED;
+
+        dot.x = dot.baseX + waveX;
+        dot.y = dot.baseY + waveY;
+
+        const r = DOT_RADIUS * dot.scale;
+
+        // Color: base cyan, shift to brighter on hover
+        const brightness = Math.min(1, 0.4 + (dot.scale - 1) * 0.3);
+        ctx.beginPath();
+        ctx.arc(dot.x, dot.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, ${Math.floor(140 + brightness * 115)}, ${Math.floor(200 + brightness * 55)}, ${dot.opacity})`;
+        ctx.fill();
+      }
+
+      animRef.current = requestAnimationFrame(animate);
+    };
+
+    animRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('mouseleave', handleMouseLeave);
+      if (animRef.current) cancelAnimationFrame(animRef.current);
+    };
+  }, [initDots]);
 
   return (
-    <div
-      ref={containerRef}
-      className={styles.canvasContainer}
-      onMouseMove={handleMouseMove}
-      onTouchMove={handleTouchMove}
-    >
-      <Canvas camera={{ position: [0, 0, 12], fov: 60 }} dpr={[1, 1.5]}>
-        <FloatingDots mouseNorm={mouseNorm.current} />
-      </Canvas>
+    <div className={styles.canvasContainer}>
+      <canvas ref={canvasRef} />
     </div>
   );
 };

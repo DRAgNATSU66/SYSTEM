@@ -9,16 +9,15 @@ import { calculateVO2Max } from '../../utils/vo2MaxCalculator';
 import styles from './Workout.module.css';
 
 // ─── Day-of-week workout schedule ────────────────────────────────────────────
-// Mon/Tue/Wed → Cardio + Mobility; Thu/Fri/Sat/Sun → Hypertrophy
 const getScheduledType = () => {
-  const day = new Date().getDay(); // 0=Sun,1=Mon,...6=Sat
+  const day = new Date().getDay();
   return (day >= 1 && day <= 3) ? 'cardio' : 'hypertrophy';
 };
 
 // ─── Weekly date range helpers ────────────────────────────────────────────────
 const getWeekDates = () => {
   const today = new Date();
-  const day = today.getDay(); // 0=Sun
+  const day = today.getDay();
   const mondayOffset = day === 0 ? -6 : 1 - day;
   const monday = new Date(today);
   monday.setDate(today.getDate() + mondayOffset);
@@ -28,21 +27,19 @@ const getWeekDates = () => {
     d.setDate(monday.getDate() + i);
     dates.push(d.toISOString().split('T')[0]);
   }
-  return dates; // Mon–Sun
+  return dates;
 };
 
 // ─── Muscle Volume Card ───────────────────────────────────────────────────────
-const MuscleGroupCard = ({ title, subGroups, logs, pbs, onLog }) => {
+const MuscleGroupCard = ({ title, subGroups, logs, pbs, onLog, onLogAll }) => {
   const [selectedSub, setSelectedSub] = useState(subGroups[0]);
   const [sets,   setSets]   = useState(3);
   const [reps,   setReps]   = useState(10);
   const [weight, setWeight] = useState(20);
 
-  // Volume-based radar: total volume (sets × reps × weight) per sub-group today
   const radarData = subGroups.map(sg => {
     const subLogs = logs[sg] || [];
     const totalVolume = subLogs.reduce((acc, e) => acc + (e.sets * e.reps * e.weight), 0);
-    // Scale to 0–100 relative to a reference volume of 3000 kg
     const REFERENCE_VOLUME = 3000;
     return {
       label: sg,
@@ -50,7 +47,6 @@ const MuscleGroupCard = ({ title, subGroups, logs, pbs, onLog }) => {
     };
   });
 
-  // Show total volume for selected sub-group
   const selectedLogs  = logs[selectedSub] || [];
   const selectedVolume = selectedLogs.reduce((acc, e) => acc + (e.sets * e.reps * e.weight), 0);
 
@@ -58,7 +54,16 @@ const MuscleGroupCard = ({ title, subGroups, logs, pbs, onLog }) => {
     <div className={styles.muscleCard}>
       <div className={styles.cardHeader}>
         <h3>{title.toUpperCase()}</h3>
-        <div className={styles.pbTag}>VOL: {selectedVolume.toLocaleString()} KG</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className={styles.pbTag}>VOL: {selectedVolume.toLocaleString()} KG</div>
+          <button
+            className={styles.btnLogAll}
+            onClick={() => onLogAll(title, subGroups)}
+            title={`Log all exercises in ${title}`}
+          >
+            LOG ALL
+          </button>
+        </div>
       </div>
 
       <SubRadar data={radarData} />
@@ -162,16 +167,17 @@ const WorkoutPage = () => {
   const weekDates = useMemo(() => getWeekDates(), []);
 
   const scheduledType = getScheduledType();
-
+  const [activeTab, setActiveTab] = useState('hypertrophy');
   const [lss, setLss] = useState({ minutes: 30, bpm: 135 });
 
-  // ── Weekly Hypertrophy Progress ──────────────────────────────────────────
-  // 100% = all hypertrophy days (Thu–Sun = 4 days) have ≥1 volume entry
-  // + all cardio days (Mon–Tue–Wed = 3 days) have ≥1 cardio entry
-  // + mobility logged at least once this week
+  // Muscle groups split by category
+  const hypertrophyGroups = Object.entries(muscles).filter(([key]) => key !== 'mobility');
+  const mobilityGroups = Object.entries(muscles).filter(([key]) => key === 'mobility');
+
+  // ── Weekly Progress ──────────────────────────────────────────
   const weeklyProgress = useMemo(() => {
-    const hypertrophyDays = weekDates.filter((_, i) => i >= 3); // Thu–Sun (indices 3–6)
-    const cardioDays      = weekDates.filter((_, i) => i < 3);  // Mon–Wed (indices 0–2)
+    const hypertrophyDays = weekDates.filter((_, i) => i >= 3);
+    const cardioDays      = weekDates.filter((_, i) => i < 3);
 
     const hypertrophyDone = hypertrophyDays.filter(d => {
       const dayLog = logs[d] || {};
@@ -189,7 +195,7 @@ const WorkoutPage = () => {
     }) ? 1 : 0;
 
     const total = hypertrophyDone + cardioDone + mobilityDone;
-    const max   = hypertrophyDays.length + cardioDays.length + 1; // 4 + 3 + 1 = 8
+    const max   = hypertrophyDays.length + cardioDays.length + 1;
     return Math.min(100, Math.round((total / max) * 100));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [logs, weekDates]);
@@ -203,6 +209,27 @@ const WorkoutPage = () => {
     } else {
       addAuraPoints(10, `VOLUME LOGGED: ${s}`);
     }
+  };
+
+  const handleLogAllGroup = (group, subGroups) => {
+    subGroups.forEach(sub => {
+      logVolume(group, sub, 3, 10, 20);
+      addAuraPoints(10, `VOLUME LOGGED: ${sub}`);
+    });
+  };
+
+  const handleLogAllTab = () => {
+    let groups;
+    if (activeTab === 'hypertrophy') groups = hypertrophyGroups;
+    else if (activeTab === 'mobility') groups = mobilityGroups;
+    else return; // cardio has its own log mechanism
+
+    groups.forEach(([group, subs]) => {
+      subs.forEach(sub => {
+        logVolume(group, sub, 3, 10, 20);
+        addAuraPoints(10, `VOLUME LOGGED: ${sub}`);
+      });
+    });
   };
 
   const handleVO2Log = ({ rawVO2, score }) => {
@@ -229,56 +256,116 @@ const WorkoutPage = () => {
         </div>
       </header>
 
-      {/* ── Cardio Engine ─────────────────────────────────────────── */}
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>CARDIO ENGINE</h2>
-        <div className={styles.cardioGrid}>
-          <div className={styles.engineCard}>
-            <h3>LSS (Low Intensity Steady State)</h3>
-            <div className={styles.engineControls}>
-              <div className={styles.field}>
-                <label>MINUTES</label>
-                <input
-                  type="number"
-                  value={lss.minutes}
-                  onChange={e => setLss({ ...lss, minutes: parseInt(e.target.value) || 0 })}
-                  min="1" max="300"
-                />
-              </div>
-              <div className={styles.field}>
-                <label>AVG BPM</label>
-                <input
-                  type="number"
-                  value={lss.bpm}
-                  onChange={e => setLss({ ...lss, bpm: parseInt(e.target.value) || 0 })}
-                  min="60" max="220"
-                />
-              </div>
-              <button className={styles.btnPrimary} onClick={() => logCardio('lss', lss)}>SYNC DATA</button>
-            </div>
+      {/* ── Sub-Tab Switcher ─────────────────────────────────────── */}
+      <div className={styles.tabBar}>
+        <button
+          className={`${styles.tabPill} ${activeTab === 'hypertrophy' ? styles.tabPillActive : ''}`}
+          onClick={() => setActiveTab('hypertrophy')}
+        >
+          HYPERTROPHY
+        </button>
+        <button
+          className={`${styles.tabPill} ${activeTab === 'mobility' ? styles.tabPillActive : ''}`}
+          onClick={() => setActiveTab('mobility')}
+        >
+          MOBILITY
+        </button>
+        <button
+          className={`${styles.tabPill} ${activeTab === 'cardio' ? styles.tabPillActive : ''}`}
+          onClick={() => setActiveTab('cardio')}
+        >
+          CARDIO
+        </button>
+      </div>
+
+      {/* ── Log All (top-level) ───────────────────────────────────── */}
+      {activeTab !== 'cardio' && (
+        <div className={styles.logAllBar}>
+          <button className={styles.btnLogAllTop} onClick={handleLogAllTab}>
+            LOG ALL {activeTab.toUpperCase()}
+          </button>
+        </div>
+      )}
+
+      {/* ── Hypertrophy Tab ──────────────────────────────────────── */}
+      {activeTab === 'hypertrophy' && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>MUSCLE MATRIX — VOLUME PENTAGRAM</h2>
+          <p className={styles.sectionSubtitle}>Radar shows total volume (Sets × Reps × Weight) per sub-group today</p>
+          <div className={styles.muscleGrid}>
+            {hypertrophyGroups.map(([group, subs]) => (
+              <MuscleGroupCard
+                key={group}
+                title={group}
+                subGroups={subs}
+                logs={todayLogs[group] || {}}
+                pbs={personalBests[group] || {}}
+                onLog={handleLogVolume}
+                onLogAll={handleLogAllGroup}
+              />
+            ))}
           </div>
+        </section>
+      )}
 
-          <VO2MaxCard onLog={handleVO2Log} />
-        </div>
-      </section>
+      {/* ── Mobility Tab ─────────────────────────────────────────── */}
+      {activeTab === 'mobility' && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>MOBILITY & FLEXIBILITY</h2>
+          <p className={styles.sectionSubtitle}>Track rotator cuff, hip flexors, glutes, and ankle mobility work</p>
+          <div className={styles.muscleGrid}>
+            {mobilityGroups.map(([group, subs]) => (
+              <MuscleGroupCard
+                key={group}
+                title={group}
+                subGroups={subs}
+                logs={todayLogs[group] || {}}
+                pbs={personalBests[group] || {}}
+                onLog={handleLogVolume}
+                onLogAll={handleLogAllGroup}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
-      {/* ── Muscle Matrix ──────────────────────────────────────────── */}
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>MUSCLE MATRIX — VOLUME PENTAGRAM</h2>
-        <p className={styles.sectionSubtitle}>Radar shows total volume (Sets × Reps × Weight) per sub-group today</p>
-        <div className={styles.muscleGrid}>
-          {Object.entries(muscles).map(([group, subs]) => (
-            <MuscleGroupCard
-              key={group}
-              title={group}
-              subGroups={subs}
-              logs={todayLogs[group] || {}}
-              pbs={personalBests[group] || {}}
-              onLog={handleLogVolume}
-            />
-          ))}
-        </div>
-      </section>
+      {/* ── Cardio Tab ───────────────────────────────────────────── */}
+      {activeTab === 'cardio' && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>CARDIO ENGINE</h2>
+          <div className={styles.cardioGrid}>
+            <div className={styles.engineCard}>
+              <h3>LSS (Low Intensity Steady State)</h3>
+              <div className={styles.engineControls}>
+                <div className={styles.field}>
+                  <label>MINUTES</label>
+                  <input
+                    type="number"
+                    value={lss.minutes}
+                    onChange={e => setLss({ ...lss, minutes: parseInt(e.target.value) || 0 })}
+                    min="1" max="300"
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label>AVG BPM</label>
+                  <input
+                    type="number"
+                    value={lss.bpm}
+                    onChange={e => setLss({ ...lss, bpm: parseInt(e.target.value) || 0 })}
+                    min="60" max="220"
+                  />
+                </div>
+                <button className={styles.btnPrimary} onClick={() => {
+                  logCardio('lss', lss);
+                  addAuraPoints(15, `LSS CARDIO LOGGED: ${lss.minutes}min @ ${lss.bpm}bpm`);
+                }}>SYNC DATA</button>
+              </div>
+            </div>
+
+            <VO2MaxCard onLog={handleVO2Log} />
+          </div>
+        </section>
+      )}
 
       <div className={styles.anatomicalCues}>
         <h3>ANATOMICAL BIAS REGISTRY</h3>

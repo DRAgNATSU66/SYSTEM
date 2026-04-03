@@ -1,16 +1,18 @@
 import React from 'react';
 import { useAuraStore } from '../../../store/auraStore';
+import { getAPColor } from '../../../utils/apColorLogic';
 import gigachad from '../../../assets/Gigachad.png';
 import styles from './AuraPointsDisplay.module.css';
 
 const AuraPointsDisplay = () => {
   const { totalAuraPoints, todayNet } = useAuraStore();
   const isPositive = todayNet >= 0;
+  const apColor = getAPColor(totalAuraPoints || 0);
 
   return (
     <div className={styles.container}>
       <h3 className={styles.label}>TOTAL AURA POINTS</h3>
-      <div className={styles.value}>
+      <div className={styles.value} style={{ color: apColor }}>
         <div className={styles.iconContainer}>
           <img src={gigachad} alt="GigaChad" className={styles.brandIcon} />
         </div>
