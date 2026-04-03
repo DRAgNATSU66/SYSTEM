@@ -33,9 +33,9 @@ const getWeekDates = () => {
 // ─── Muscle Volume Card ───────────────────────────────────────────────────────
 const MuscleGroupCard = ({ title, subGroups, logs, pbs, onLog, onLogAll }) => {
   const [selectedSub, setSelectedSub] = useState(subGroups[0]);
-  const [sets,   setSets]   = useState(3);
-  const [reps,   setReps]   = useState(10);
-  const [weight, setWeight] = useState(20);
+  const [sets,   setSets]   = useState('3');
+  const [reps,   setReps]   = useState('10');
+  const [weight, setWeight] = useState('20');
 
   const radarData = subGroups.map(sg => {
     const subLogs = logs[sg] || [];
@@ -80,25 +80,25 @@ const MuscleGroupCard = ({ title, subGroups, logs, pbs, onLog, onLogAll }) => {
         <div className={styles.volumeEngine}>
           <div className={styles.field}>
             <label>SETS</label>
-            <input type="number" value={sets} onChange={e => setSets(Math.max(1, parseInt(e.target.value) || 1))} min="1" max="20" />
+            <input type="number" value={sets} onChange={e => setSets(e.target.value)} min="1" max="20" />
           </div>
           <div className={styles.field}>
             <label>REPS</label>
-            <input type="number" value={reps} onChange={e => setReps(Math.max(1, parseInt(e.target.value) || 1))} min="1" max="100" />
+            <input type="number" value={reps} onChange={e => setReps(e.target.value)} min="1" max="100" />
           </div>
           <div className={styles.field}>
             <label>KG</label>
-            <input type="number" value={weight} onChange={e => setWeight(Math.max(0, parseInt(e.target.value) || 0))} min="0" max="500" />
+            <input type="number" value={weight} onChange={e => setWeight(e.target.value)} min="0" max="500" />
           </div>
         </div>
 
         <div className={styles.volumePreview}>
-          Volume: <strong>{(sets * reps * weight).toLocaleString()} kg</strong>
+          Volume: <strong>{((parseInt(sets) || 0) * (parseInt(reps) || 0) * (parseInt(weight) || 0)).toLocaleString()} kg</strong>
         </div>
 
         <button
           className={styles.btnLog}
-          onClick={() => onLog(title, selectedSub, sets, reps, weight)}
+          onClick={() => onLog(title, selectedSub, Math.max(1, parseInt(sets) || 1), Math.max(1, parseInt(reps) || 1), Math.max(0, parseInt(weight) || 0))}
         >
           LOG VOLUME
         </button>

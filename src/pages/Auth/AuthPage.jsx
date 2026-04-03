@@ -4,7 +4,7 @@ import { supabase } from '../../services/supabaseClient';
 import { useUserStore } from '../../store/userStore';
 import { userService } from '../../services/userService';
 import { seedServerFromLocal, pullAllData } from '../../services/syncEngine';
-import ParticleBackground from '../../components/three/ParticleBackground/ParticleBackground';
+
 import systemIcon from '../../assets/system.png';
 import styles from './Auth.module.css';
 
@@ -209,7 +209,7 @@ const AuthPage = () => {
   if (pendingUser) {
     return (
       <div className={styles.container}>
-        <ParticleBackground />
+
         <div className={styles.card}>
           <PlayerNamePrompt
             defaultName={pendingUser.defaultName}
@@ -224,7 +224,7 @@ const AuthPage = () => {
   if (showForgot) {
     return (
       <div className={styles.container}>
-        <ParticleBackground />
+
         <div className={styles.card}>
           <img src={systemIcon} alt="SYSTEM" className={styles.brandIcon} />
           <ForgotPasswordView onBack={() => setShowForgot(false)} />
@@ -236,7 +236,7 @@ const AuthPage = () => {
   // ── Main Login / Signup ──────────────────────────────────────────────────
   return (
     <div className={styles.container}>
-      <ParticleBackground />
+
       <div className={styles.card}>
         <img src={systemIcon} alt="SYSTEM" className={styles.brandIcon} />
         <h1>SYSTEM</h1>
