@@ -17,7 +17,13 @@ const computeNutritionProgress = (macros, micros, todayMacros, todayMicros) => {
 
 // ─── Nutrient row ─────────────────────────────────────────────────────────────
 const NutrientRow = ({ macro, value, onChange, isEditing, onLimitChange, onDelete, onLogItem }) => {
-  const prog = Math.min(100, Math.round(((value || 0) / (macro.minLimit || 1)) * 100));
+  const [inputVal, setInputVal] = React.useState(value != null ? String(value) : '');
+  React.useEffect(() => {
+    setInputVal(value != null ? String(value) : '');
+  }, [value]);
+
+  const numVal = parseFloat(inputVal) || 0;
+  const prog = Math.min(100, Math.round((numVal / (macro.minLimit || 1)) * 100));
   return (
     <div className={styles.macroCard}>
       <div className={styles.macroInfo}>
@@ -26,14 +32,17 @@ const NutrientRow = ({ macro, value, onChange, isEditing, onLimitChange, onDelet
           <input
             type="number"
             step="any"
-            value={value || ''}
+            value={inputVal}
             placeholder="0"
-            onChange={e => onChange(macro.id, e.target.value)}
+            onChange={e => {
+              setInputVal(e.target.value);
+              onChange(macro.id, e.target.value);
+            }}
           />
           <span className={styles.unit}>{macro.unit}</span>
           <button
             className={styles.btnLogItem}
-            onClick={() => onLogItem(macro)}
+            onClick={() => onLogItem(macro, inputVal)}
           >
             LOG
           </button>
@@ -90,12 +99,52 @@ const NutritionPage = () => {
   const [tab,       setTab]       = useState('macros'); // 'macros' | 'micros'
   const [flash,     setFlash]     = useState('');
 
-  const { addAuraPoints } = useAuraStore();
+  const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded, getCategoryEarned, dailyCategoryAP } = useAuraStore();
   const overallProgress = computeNutritionProgress(customMacros, customMicros, todayMacros, todayMicros);
 
-  const handleLogItem = (macro) => {
-    addAuraPoints(5, `NUTRITION LOGGED: ${macro.name}`);
-    setFlash(`${macro.name} logged!`);
+  // Per-nutrient AP: total NUTRITION cap (200) divided among all nutrients, each can only award once per day
+  const totalNutrients = customMacros.length + customMicros.length;
+  const apPerNutrient = totalNutrients > 0 ? Math.floor(200 / totalNutrients) : 5;
+
+  const handleLogItem = (macro, rawValue) => {
+    resetDailyIfNeeded();
+
+    // Always persist the entered value to the store first
+    const valueToLog = parseFloat(rawValue) || 0;
+    if (tab === 'macros') {
+      logMacroValue(macro.id, valueToLog);
+    } else {
+      logMicroValue(macro.id, valueToLog);
+    }
+
+    // Check if this specific nutrient already awarded AP today
+    const todayKey = today;
+    const dayData = dailyCategoryAP[todayKey] || {};
+    const nutrientKey = `NUTRITION_${macro.id}`;
+    if (dayData[nutrientKey]) {
+      setFlash(`${macro.name} already logged for AP today.`);
+      setTimeout(() => setFlash(''), 2000);
+      return;
+    }
+
+    // Check if the nutrient's value meets its minimum target
+    if (valueToLog < macro.minLimit) {
+      setFlash(`${macro.name}: value must meet target (${macro.minLimit}${macro.unit}) for AP.`);
+      setTimeout(() => setFlash(''), 2000);
+      return;
+    }
+
+    // Award AP and mark this nutrient as awarded
+    addCategoryAP('NUTRITION', apPerNutrient, `NUTRITION MET: ${macro.name}`);
+    // Mark this specific nutrient as awarded today
+    useAuraStore.setState((state) => ({
+      dailyCategoryAP: {
+        ...state.dailyCategoryAP,
+        [todayKey]: { ...(state.dailyCategoryAP[todayKey] || {}), [nutrientKey]: true }
+      }
+    }));
+    checkAndUpdateStreak();
+    setFlash(`${macro.name} target met! +${apPerNutrient} AP`);
     setTimeout(() => setFlash(''), 2000);
   };
 

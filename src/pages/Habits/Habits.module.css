@@ -1,10 +1,10 @@
-.container { padding: 3rem; max-width: 1000px; margin: 0 auto; }
-.header { margin-bottom: 4rem; }
-.headerRow { display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; }
-.header h1 { font-family: 'Outfit'; font-size: 2.2rem; letter-spacing: 0.15em; color: #fff; margin: 0; }
-.subtitle { color: var(--text-secondary); font-family: 'Outfit'; font-size: 0.8rem; margin-top: 0.5rem; letter-spacing: 0.05em; }
+.container { padding: 3rem; max-width: 1000px; margin: 0 auto; overflow: hidden; }
+.header { margin-bottom: 4rem; min-width: 0; }
+.headerRow { display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; flex-wrap: wrap; min-width: 0; }
+.header h1 { font-family: 'Outfit'; font-size: 2.2rem; letter-spacing: 0.15em; color: #fff; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.subtitle { color: var(--text-secondary); font-family: 'Outfit'; font-size: 0.8rem; margin-top: 0.5rem; letter-spacing: 0.05em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.headerActions { display: flex; gap: 1rem; }
+.headerActions { display: flex; gap: 1rem; flex-shrink: 0; flex-wrap: wrap; }
 
 .btnAdd { background: var(--rank-alpha); color: #000; padding: 0.75rem 1.5rem; border-radius: 8px; border: none; font-weight: 950; letter-spacing: 0.1em; cursor: pointer; transition: 0.2s; }
 .btnHistory { background: rgba(255, 255, 255, 0.05); color: #fff; padding: 0.75rem 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); font-weight: 900; letter-spacing: 0.1em; cursor: pointer; transition: 0.2s; }
@@ -25,14 +25,15 @@
 
 .item:hover { border-color: rgba(255, 255, 255, 0.15); transform: translateX(5px); }
 
-.info h3 { font-family: 'Outfit'; font-size: 1.1rem; color: #fff; margin: 0 0 0.75rem 0; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 200; }
+.info { min-width: 0; overflow: hidden; flex: 1; }
+.info h3 { font-family: 'Outfit'; font-size: 1.1rem; color: #fff; margin: 0 0 0.75rem 0; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 200; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .tag { font-family: 'Outfit'; font-size: 0.6rem; padding: 0.25rem 0.6rem; border-radius: 4px; font-weight: 900; letter-spacing: 0.05em; }
 .typeTag { background: rgba(0, 191, 255, 0.1); color: var(--rank-alpha); border: 1px solid rgba(0, 191, 255, 0.2); }
 .catTag { background: rgba(255, 255, 255, 0.05); color: var(--text-secondary); border: 1px solid rgba(255, 255, 255, 0.1); }
 
-.actions { display: flex; align-items: center; gap: 1rem; }
+.actions { display: flex; align-items: center; gap: 1rem; flex-shrink: 0; flex-wrap: wrap; }
 
 .btnLog {
   background: transparent;
@@ -50,10 +51,10 @@
 
 .btnLog:hover { background: var(--rank-alpha); color: #000; }
 
-.btnArchive { background: transparent; border: none; color: var(--text-secondary); font-size: 0.7rem; font-weight: 800; cursor: pointer; text-decoration: underline; opacity: 0.6; }
+.btnArchive { background: transparent; border: none; color: var(--text-secondary); font-size: 0.7rem; font-weight: 800; cursor: pointer; text-decoration: underline; opacity: 0.6; min-height: auto; min-width: auto; }
 .btnArchive:hover { opacity: 1; color: #fff; }
 
-.btnDelete { background: transparent; border: none; color: rgba(255, 49, 49, 0.3); font-size: 1.2rem; cursor: pointer; padding: 0.5rem; }
+.btnDelete { background: transparent; border: none; color: rgba(255, 49, 49, 0.3); font-size: 1.2rem; cursor: pointer; padding: 0.5rem; min-height: auto; min-width: auto; }
 .btnDelete:hover { color: #FF3131; }
 
 @media (max-width: 600px) {

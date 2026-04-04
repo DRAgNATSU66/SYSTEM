@@ -7,9 +7,13 @@ export const useUiStore = create(
       sidebarOpen: true,
       activeModal: null,
       theme: 'dark',
+      offlineMode: false,
+      cloudSync: true,
       toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
       setModal: (modal) => set({ activeModal: modal }),
-      setTheme: (theme) => set({ theme })
+      setTheme: (theme) => set({ theme }),
+      toggleOfflineMode: () => set((state) => ({ offlineMode: !state.offlineMode })),
+      toggleCloudSync: () => set((state) => ({ cloudSync: !state.cloudSync })),
     }),
     { name: 'antigravity-ui-store' }
   )

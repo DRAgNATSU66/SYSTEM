@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
 import { useHobbyStore } from '../../store/assetStores';
 import { useAuraStore } from '../../store/auraStore';
+import { useUserStore } from '../../store/userStore';
+import { hobbyService } from '../../services/hobbyService';
 import HobbyForm from './HobbyForm';
 import HistoryModal from '../../components/ui/HistoryModal/HistoryModal';
 import styles from './Habits.module.css';
@@ -10,11 +12,13 @@ const HabitsPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const { hobbies, hobbiesHistory, deleteHobby, archiveHobby } = useHobbyStore();
-  const addAuraPoints = useAuraStore(state => state.addAuraPoints);
+  const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded } = useAuraStore();
+  const { user } = useUserStore();
 
   const handleLogHobby = (hobby) => {
-    addAuraPoints(300, `Hobby Session: ${hobby.title}`);
-    // Optional: lastLogged update logic
+    resetDailyIfNeeded();
+    addCategoryAP('MISC', 150, `Hobby Session: ${hobby.title}`);
+    checkAndUpdateStreak();
   };
 
   return (
@@ -52,8 +56,14 @@ const HabitsPage = () => {
               >
                 LOG SESSION
               </button>
-              <button className={styles.btnArchive} onClick={() => archiveHobby(h.id)}>ARCHIVE</button>
-              <button className={styles.btnDelete} onClick={() => deleteHobby(h.id)}>×</button>
+              <button className={styles.btnArchive} onClick={() => {
+                if (user?.id) hobbyService.archiveHobby(user.id, h.id);
+                else archiveHobby(h.id);
+              }}>ARCHIVE</button>
+              <button className={styles.btnDelete} onClick={() => {
+                if (user?.id) hobbyService.deleteHobby(user.id, h.id);
+                else deleteHobby(h.id);
+              }}>×</button>
             </div>
           </div>
         ))}
@@ -67,7 +77,10 @@ const HabitsPage = () => {
           items={hobbiesHistory} 
           type="hobby"
           onClose={() => setShowHistory(false)} 
-          onDelete={(id) => deleteHobby(id, true)}
+          onDelete={(id) => {
+            if (user?.id) hobbyService.deleteHobby(user.id, id, true);
+            else deleteHobby(id, true);
+          }}
         />
       )}
     </PageWrapper>

@@ -30,7 +30,7 @@ const Header = () => {
       <div className={styles.right}>
         <div className={styles.scoreContainer}>
           <span className={styles.scoreLabel}>SCORE:</span>
-          <span className={styles.scoreValue} style={{ color: getAPColor(totalAuraPoints || 0) }}>{(totalAuraPoints || 0).toLocaleString()}</span>
+          <span className={styles.scoreValue} style={{ color: 'var(--rank-omega)' }}>{(totalAuraPoints || 0).toLocaleString()}</span>
         </div>
         <RankBadge label={rankLabel} color={rankColor} />
       </div>

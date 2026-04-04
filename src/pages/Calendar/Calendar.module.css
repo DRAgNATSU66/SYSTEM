@@ -1,11 +1,11 @@
-.container { padding: 2rem; max-width: 1400px; margin: 0 auto; min-height: 100vh; position: relative; z-index: 1; }
-.header { margin-bottom: 3rem; }
-.titleArea { display: flex; justify-content: space-between; align-items: flex-start; }
-.titleArea h1 { font-family: 'Outfit'; font-size: 2.5rem; letter-spacing: 0.25em; color: #fff; margin: 0; }
-.viewToggle { display: flex; gap: 0.5rem; background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); padding: 0.25rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
-.viewToggle button { background: transparent; border: none; color: var(--text-secondary); font-family: 'Outfit'; font-weight: 900; font-size: 0.65rem; padding: 0.6rem 1.25rem; border-radius: 6px; cursor: pointer; letter-spacing: 0.1em; transition: 0.2s; }
+.container { padding: 2rem; max-width: 1400px; margin: 0 auto; min-height: 100vh; position: relative; z-index: 1; overflow: hidden; }
+.header { margin-bottom: 3rem; overflow: hidden; }
+.titleArea { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+.titleArea h1 { font-family: 'Outfit'; font-size: 2rem; letter-spacing: 0.15em; color: #fff; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.viewToggle { display: flex; gap: 0.5rem; background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); padding: 0.25rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); flex-shrink: 0; }
+.viewToggle button { background: transparent; border: none; color: var(--text-secondary); font-family: 'Outfit'; font-weight: 900; font-size: 0.65rem; padding: 0.6rem 1rem; border-radius: 6px; cursor: pointer; letter-spacing: 0.1em; transition: 0.2s; white-space: nowrap; }
 .viewToggle .active { background: var(--rank-alpha); color: #000; box-shadow: 0 0 15px rgba(0, 191, 255, 0.4); }
-.subtitle { color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem; letter-spacing: 0.1em; }
+.subtitle { color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.85rem; letter-spacing: 0.05em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .content { margin-bottom: 4rem; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; }
 

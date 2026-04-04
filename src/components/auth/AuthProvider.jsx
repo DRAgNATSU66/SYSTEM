@@ -10,6 +10,10 @@ import { userService } from '../../services/userService';
 export function AuthProvider({ children }) {
   const setUser = useUserStore(state => state.setUser);
   const clearUser = useUserStore(state => state.clearUser);
+  const ensureCypherId = useUserStore(state => state.ensureCypherId);
+
+  // Ensure cypher ID is generated for all users (even local-only)
+  useEffect(() => { ensureCypherId(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!supabase) return; // Supabase not configured — skip auth setup

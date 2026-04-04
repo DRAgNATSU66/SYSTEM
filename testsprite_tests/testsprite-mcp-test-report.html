@@ -1209,11 +1209,11 @@ body {
         <div class="metadata-container">
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Project Name</div>
-          <div class="metadata-value text-body">SYSTEM</div>
+          <div class="metadata-value text-body">SYSTEM (Antigravity Life OS)</div>
         </div>
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Date</div>
-          <div class="metadata-value text-body">1/4/2026</div>
+          <div class="metadata-value text-body">4/4/2026</div>
         </div>
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Prepared by</div>
@@ -1238,19 +1238,31 @@ body {
             <li><span class="coverage-highlight">Key gaps / risks:</span>
             
               <blockquote>
-<p>[!WARNING]
-<strong>CRITICAL: Missing Environment Variables</strong>
-Nearly all functional tests failed because the <code>.env</code> file is missing. The application displays a &quot;Supabase is not configured yet&quot; warning, which blocks the navigation and data-fetching logic required for the tests to proceed.</p>
+<p>[!IMPORTANT]
+<strong>Critical Missing Infrastructure</strong></p>
+<ol>
+<li><strong>Offline Mode &amp; Sync Toggles:</strong> The entire PWA offline workflow is currently un-testable because the toggles are missing from the Settings UI.</li>
+<li><strong>Task Manager UI:</strong> Users cannot currently manage (add/edit) the permanent habits list from the settings or habits page.</li>
+<li><strong>Interactive Timers:</strong> The &quot;Study&quot; section is limited to manual entry; the promised start/stop timer logic is not implemented.</li>
+</ol>
 </blockquote>
 <blockquote>
-<p>[!CAUTION]
-<strong>REMARK: Auth Page Rendering Issues</strong>
-Several tests encountered a &quot;blank white screen&quot; at <code>/auth</code>. This indicates a runtime error or an unhandled exception triggered by missing environment variables, which prevents the SPA from rendering any interactive elements.</p>
+<p>[!WARNING]
+<strong>Technical Bugs Found</strong></p>
+<ol>
+<li><strong>Nutrition Submission:</strong> The &quot;Calories LOG&quot; button in the nutrition module is non-functional or fails to update state.</li>
+<li><strong>Mood Form Trigger:</strong> Selecting a mood rating tile does not correctly trigger the follow-up notes form.</li>
+<li><strong>Aura Weight Inputs:</strong> The UI displays weights but provides no mechanism (sliders/inputs) to adjust them.</li>
+</ol>
 </blockquote>
 <blockquote>
 <p>[!TIP]
-<strong>Action Item: Fix .env</strong>
-Before re-running tests, the <code>SYSTEM/.env</code> file should be created using the values from <code>.env.example</code>. This will unlock the authentication and data features.</p>
+<strong>Priority Recommendations</strong></p>
+<ol>
+<li>Implement the <strong>Offline Mode toggle</strong> in Settings immediately to unlock sync testing.</li>
+<li>Fix the <strong>Nutrition and Mood form state triggers</strong> as these are core daily interactions.</li>
+<li>Add a simple <strong>Task Manager</strong> modal to the Habits page to allow basic list management.</li>
+</ol>
 </blockquote>
 
             </li>
@@ -1276,7 +1288,7 @@ Before re-running tests, the <code>SYSTEM/.env</code> file should be created usi
           <div class="table-rows">
             
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">🔐 User Authentication</span></div>
+              <div class="table-cell"><span class="text-body">🔑 Authentication & Identity</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
@@ -1284,7 +1296,7 @@ Before re-running tests, the <code>SYSTEM/.env</code> file should be created usi
         
 
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">📈 Habit Tracking</span></div>
+              <div class="table-cell"><span class="text-body">📊 Dashboard & Core Analytics</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
@@ -1292,7 +1304,7 @@ Before re-running tests, the <code>SYSTEM/.env</code> file should be created usi
         
 
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">🛒 Aura Marketplace (Shop)</span></div>
+              <div class="table-cell"><span class="text-body">🔄 Cloud Sync & Offline Mode</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
@@ -1300,7 +1312,39 @@ Before re-running tests, the <code>SYSTEM/.env</code> file should be created usi
         
 
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">🏁 Leaderboard & Aura History</span></div>
+              <div class="table-cell"><span class="text-body">🛠️ Daily Core: Habits & Tasks</span></div>
+              <div class="table-cell"><span class="text-body">0</span></div>
+              <div class="table-cell"><span class="text-body">0</span></div>
+              <div class="table-cell"><span class="text-body">0</span></div>
+            </div>
+        
+
+            <div class="table-row">
+              <div class="table-cell"><span class="text-body">🧪 Daily Core: Health & Performance</span></div>
+              <div class="table-cell"><span class="text-body">0</span></div>
+              <div class="table-cell"><span class="text-body">0</span></div>
+              <div class="table-cell"><span class="text-body">0</span></div>
+            </div>
+        
+
+            <div class="table-row">
+              <div class="table-cell"><span class="text-body">🧠 Daily Core: Psychological & Tactical</span></div>
+              <div class="table-cell"><span class="text-body">0</span></div>
+              <div class="table-cell"><span class="text-body">0</span></div>
+              <div class="table-cell"><span class="text-body">0</span></div>
+            </div>
+        
+
+            <div class="table-row">
+              <div class="table-cell"><span class="text-body">💠 Aura System & Marketplace</span></div>
+              <div class="table-cell"><span class="text-body">0</span></div>
+              <div class="table-cell"><span class="text-body">0</span></div>
+              <div class="table-cell"><span class="text-body">0</span></div>
+            </div>
+        
+
+            <div class="table-row">
+              <div class="table-cell"><span class="text-body">⚡ Command Center</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
@@ -1326,7 +1370,7 @@ Before re-running tests, the <code>SYSTEM/.env</code> file should be created usi
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">🔐 User Authentication</h3>
+              <h3 class="title-requirement">🔑 Authentication & Identity</h3>
                 <div class="requirement-status-tag status-success">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
@@ -1355,7 +1399,7 @@ Before re-running tests, the <code>SYSTEM/.env</code> file should be created usi
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">📈 Habit Tracking</h3>
+              <h3 class="title-requirement">📊 Dashboard & Core Analytics</h3>
                 <div class="requirement-status-tag status-success">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
@@ -1384,7 +1428,7 @@ Before re-running tests, the <code>SYSTEM/.env</code> file should be created usi
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">🛒 Aura Marketplace (Shop)</h3>
+              <h3 class="title-requirement">🔄 Cloud Sync & Offline Mode</h3>
                 <div class="requirement-status-tag status-success">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
@@ -1413,7 +1457,123 @@ Before re-running tests, the <code>SYSTEM/.env</code> file should be created usi
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">🏁 Leaderboard & Aura History</h3>
+              <h3 class="title-requirement">🛠️ Daily Core: Habits & Tasks</h3>
+                <div class="requirement-status-tag status-success">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
+                <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>0/0</span>
+            </div>
+              </div>
+              <p class="text-body-medium requirement-description">Proper error handling for API calls and invalid data scenarios.</p>
+            </div>
+            <div class="accordion-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.4276 6C11.9145 6 12.1687 6.61626 11.875 7.01439L11.8316 7.06689L8.40295 10.817C8.30455 10.9246 8.17364 10.9892 8.03476 10.9988C7.89589 11.0083 7.7586 10.9621 7.64865 10.8688L7.59493 10.817L4.16629 7.06689L4.11886 7.00814L4.088 6.96002L4.05714 6.90002L4.04743 6.87752L4.032 6.83564L4.01371 6.76814L4.008 6.73501L4.00229 6.69751L4 6.66189V6.58814L4.00286 6.55188L4.008 6.51438L4.01371 6.48188L4.032 6.41438L4.04743 6.37251L4.08743 6.29L4.12457 6.23375L4.16629 6.18313L4.22 6.13125L4.26401 6.0975L4.31886 6.06375L4.33944 6.05313L4.37772 6.03625L4.43944 6.01625L4.46972 6.01L4.50401 6.00375L4.53658 6.00125L11.4276 6Z" fill="var(--fg-secondary)"/>
+              </svg>
+            </div>
+          </div>
+
+            <div class="accordion-content">
+            <div class="test-wrapper">
+
+            </div>
+          </div>
+        </div>
+
+                <div class="requirement-wrapper accordion-item active">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <div class="requirement-content">
+                                          <div class="requirement-title-row">
+              <h3 class="title-requirement">🧪 Daily Core: Health & Performance</h3>
+                <div class="requirement-status-tag status-success">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
+                <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>0/0</span>
+            </div>
+              </div>
+              <p class="text-body-medium requirement-description">Proper error handling for API calls and invalid data scenarios.</p>
+            </div>
+            <div class="accordion-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.4276 6C11.9145 6 12.1687 6.61626 11.875 7.01439L11.8316 7.06689L8.40295 10.817C8.30455 10.9246 8.17364 10.9892 8.03476 10.9988C7.89589 11.0083 7.7586 10.9621 7.64865 10.8688L7.59493 10.817L4.16629 7.06689L4.11886 7.00814L4.088 6.96002L4.05714 6.90002L4.04743 6.87752L4.032 6.83564L4.01371 6.76814L4.008 6.73501L4.00229 6.69751L4 6.66189V6.58814L4.00286 6.55188L4.008 6.51438L4.01371 6.48188L4.032 6.41438L4.04743 6.37251L4.08743 6.29L4.12457 6.23375L4.16629 6.18313L4.22 6.13125L4.26401 6.0975L4.31886 6.06375L4.33944 6.05313L4.37772 6.03625L4.43944 6.01625L4.46972 6.01L4.50401 6.00375L4.53658 6.00125L11.4276 6Z" fill="var(--fg-secondary)"/>
+              </svg>
+            </div>
+          </div>
+
+            <div class="accordion-content">
+            <div class="test-wrapper">
+
+            </div>
+          </div>
+        </div>
+
+                <div class="requirement-wrapper accordion-item active">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <div class="requirement-content">
+                                          <div class="requirement-title-row">
+              <h3 class="title-requirement">🧠 Daily Core: Psychological & Tactical</h3>
+                <div class="requirement-status-tag status-success">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
+                <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>0/0</span>
+            </div>
+              </div>
+              <p class="text-body-medium requirement-description">Proper error handling for API calls and invalid data scenarios.</p>
+            </div>
+            <div class="accordion-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.4276 6C11.9145 6 12.1687 6.61626 11.875 7.01439L11.8316 7.06689L8.40295 10.817C8.30455 10.9246 8.17364 10.9892 8.03476 10.9988C7.89589 11.0083 7.7586 10.9621 7.64865 10.8688L7.59493 10.817L4.16629 7.06689L4.11886 7.00814L4.088 6.96002L4.05714 6.90002L4.04743 6.87752L4.032 6.83564L4.01371 6.76814L4.008 6.73501L4.00229 6.69751L4 6.66189V6.58814L4.00286 6.55188L4.008 6.51438L4.01371 6.48188L4.032 6.41438L4.04743 6.37251L4.08743 6.29L4.12457 6.23375L4.16629 6.18313L4.22 6.13125L4.26401 6.0975L4.31886 6.06375L4.33944 6.05313L4.37772 6.03625L4.43944 6.01625L4.46972 6.01L4.50401 6.00375L4.53658 6.00125L11.4276 6Z" fill="var(--fg-secondary)"/>
+              </svg>
+            </div>
+          </div>
+
+            <div class="accordion-content">
+            <div class="test-wrapper">
+
+            </div>
+          </div>
+        </div>
+
+                <div class="requirement-wrapper accordion-item active">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <div class="requirement-content">
+                                          <div class="requirement-title-row">
+              <h3 class="title-requirement">💠 Aura System & Marketplace</h3>
+                <div class="requirement-status-tag status-success">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
+                <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>0/0</span>
+            </div>
+              </div>
+              <p class="text-body-medium requirement-description">Proper error handling for API calls and invalid data scenarios.</p>
+            </div>
+            <div class="accordion-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.4276 6C11.9145 6 12.1687 6.61626 11.875 7.01439L11.8316 7.06689L8.40295 10.817C8.30455 10.9246 8.17364 10.9892 8.03476 10.9988C7.89589 11.0083 7.7586 10.9621 7.64865 10.8688L7.59493 10.817L4.16629 7.06689L4.11886 7.00814L4.088 6.96002L4.05714 6.90002L4.04743 6.87752L4.032 6.83564L4.01371 6.76814L4.008 6.73501L4.00229 6.69751L4 6.66189V6.58814L4.00286 6.55188L4.008 6.51438L4.01371 6.48188L4.032 6.41438L4.04743 6.37251L4.08743 6.29L4.12457 6.23375L4.16629 6.18313L4.22 6.13125L4.26401 6.0975L4.31886 6.06375L4.33944 6.05313L4.37772 6.03625L4.43944 6.01625L4.46972 6.01L4.50401 6.00375L4.53658 6.00125L11.4276 6Z" fill="var(--fg-secondary)"/>
+              </svg>
+            </div>
+          </div>
+
+            <div class="accordion-content">
+            <div class="test-wrapper">
+
+            </div>
+          </div>
+        </div>
+
+                <div class="requirement-wrapper accordion-item active">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <div class="requirement-content">
+                                          <div class="requirement-title-row">
+              <h3 class="title-requirement">⚡ Command Center</h3>
                 <div class="requirement-status-tag status-success">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
@@ -1454,7 +1614,7 @@ Before re-running tests, the <code>SYSTEM/.env</code> file should be created usi
         </div>
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Code Repo</div>
-          <div class="metadata-value text-body">SYSTEM</div>
+          <div class="metadata-value text-body">SYSTEM (Antigravity Life OS)</div>
         </div>
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Test Results</div>

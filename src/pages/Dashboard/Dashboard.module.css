@@ -15,28 +15,38 @@
   align-items: flex-end;
   flex-wrap: wrap;
   gap: 1.25rem;
+  overflow: hidden;
 }
 
-.greetingBlock {}
+.greetingBlock {
+  min-width: 0;
+  overflow: hidden;
+}
 
 .topHeader h1 {
   font-family: 'Outfit';
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: 900;
   letter-spacing: -0.04em;
   color: #fff;
   margin: 0;
-  line-height: 1;
+  line-height: 1.1;
   text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .subtitle {
   color: var(--text-secondary);
   font-family: 'Inter';
-  font-size: 1rem;
-  margin-top: 0.6rem;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
   letter-spacing: 0.02em;
   opacity: 0.75;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ── Rank Block (top right) ──────────────────────────────────────────── */
@@ -80,8 +90,8 @@
 /* ── Metrics Row ─────────────────────────────────────────────────────── */
 .metricsRow {
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: 2.5rem;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 2rem;
   align-items: stretch;
 }
 
@@ -160,6 +170,27 @@
   font-weight: 900;
   font-size: 1.1rem;
 }
+
+/* ── Daily Loop ──────────────────────────────────────────────────────── */
+.dailyLoopRow {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 28px;
+  padding: 2.5rem;
+  backdrop-filter: blur(20px);
+}
+.loopTitle { font-family: 'Outfit'; font-size: 0.75rem; color: var(--rank-alpha); font-weight: 950; letter-spacing: 0.3em; margin: 0 0 1.5rem 0; text-transform: uppercase; }
+.loopEmpty { color: var(--text-secondary); font-size: 0.85rem; opacity: 0.7; }
+.taskList { display: flex; flex-direction: column; gap: 0.75rem; }
+.taskItem { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 0.9rem 1.25rem; transition: 0.2s; gap: 1rem; }
+.taskItem:hover { border-color: rgba(255,255,255,0.12); }
+.taskDone { opacity: 0.55; border-color: rgba(57,255,20,0.2); background: rgba(57,255,20,0.03); }
+.taskTitle { color: #fff; font-family: 'Outfit'; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.04em; flex: 1; }
+.taskDone .taskTitle { text-decoration: line-through; color: var(--text-secondary); }
+.btnToggle { background: rgba(0,191,255,0.1); border: 1px solid var(--rank-alpha); color: var(--rank-alpha); padding: 0.4rem 1rem; border-radius: 8px; font-family: 'Outfit'; font-weight: 900; font-size: 0.65rem; letter-spacing: 0.1em; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
+.btnToggle:hover { background: var(--rank-alpha); color: #000; }
+.btnDone { background: rgba(57,255,20,0.1); border-color: var(--rank-sigma); color: var(--rank-sigma); }
+.btnDone:hover { background: var(--rank-sigma); color: #000; }
 
 /* ── Responsive ──────────────────────────────────────────────────────── */
 @media (max-width: 1200px) {

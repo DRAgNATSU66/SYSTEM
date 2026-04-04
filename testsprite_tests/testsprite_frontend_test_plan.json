@@ -1,9 +1,9 @@
 [
   {
     "id": "TC001",
-    "title": "Log in and access authenticated dashboard",
-    "description": "Verifies a returning user can log in from the auth page and is taken to the authenticated dashboard successfully.",
-    "category": "User Authentication",
+    "title": "Log in and reach the dashboard",
+    "description": "Verifies a user can sign in from the authentication page and land on the dashboard successfully.",
+    "category": "Authentication",
     "steps": [
       {
         "type": "action",
@@ -11,19 +11,19 @@
       },
       {
         "type": "action",
-        "description": "Switch to Login mode"
+        "description": "Choose to sign in"
       },
       {
         "type": "action",
-        "description": "Fill {{LOGIN_USER}} into the email field"
+        "description": "Fill in the email field with {{LOGIN_USER}}"
       },
       {
         "type": "action",
-        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
       },
       {
         "type": "action",
-        "description": "Submit the auth form"
+        "description": "Submit the login form"
       },
       {
         "type": "assertion",
@@ -34,17 +34,13 @@
   },
   {
     "id": "TC002",
-    "title": "Complete a habit and see streak/score update on habits page",
-    "description": "Verifies an authenticated user can mark a habit complete and the UI reflects the updated habit state and streak/score impact.",
-    "category": "Habit Tracking",
+    "title": "Offline-first changes persist after refresh",
+    "description": "Verifies that while offline mode is enabled, newly logged activities persist after a page refresh and remain visible in the UI.",
+    "category": "Cloud Sync & Offline Mode",
     "steps": [
       {
         "type": "action",
         "description": "Navigate to /auth"
-      },
-      {
-        "type": "action",
-        "description": "Switch to Login mode"
       },
       {
         "type": "action",
@@ -56,49 +52,40 @@
       },
       {
         "type": "action",
-        "description": "Submit the auth form"
+        "description": "Submit the authentication form"
       },
       {
         "type": "action",
-        "description": "Click the navigation link to habits"
+        "description": "Click the link to open settings"
       },
       {
         "type": "action",
-        "description": "Mark the first available active habit as complete"
+        "description": "Toggle offline mode on"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the mood page"
+      },
+      {
+        "type": "action",
+        "description": "Create a new mood entry with a valid selection and a short note"
+      },
+      {
+        "type": "action",
+        "description": "Press F5 to refresh the page"
       },
       {
         "type": "assertion",
-        "description": "Verify the habit is shown as completed"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the habit streak or today's score reflects the completion"
+        "description": "Verify the newly created mood entry is still present on the mood page"
       }
     ],
     "priority": "High"
   },
   {
     "id": "TC003",
-    "title": "Unauthenticated user is gated from the shop",
-    "description": "Verifies an unauthenticated user cannot access the shop and is redirected to the authentication page.",
-    "category": "Aura Marketplace (Shop)",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /shop"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the authentication page is displayed"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC004",
-    "title": "Complete habit then verify dashboard updates after returning",
-    "description": "Verifies a user can complete a habit on the habits page and, after returning to the dashboard, sees today’s score or streak visualizations reflect the completion.",
-    "category": "Habit Tracking",
+    "title": "Complete a habit from Habits and see streak and score impact",
+    "description": "Verifies marking a habit complete increments its streak and the dashboard reflects an updated daily score.",
+    "category": "Habits (Permanent Daily Tasks)",
     "steps": [
       {
         "type": "action",
@@ -106,7 +93,89 @@
       },
       {
         "type": "action",
-        "description": "Switch to Login mode"
+        "description": "Choose to sign in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation to open the Habits page"
+      },
+      {
+        "type": "action",
+        "description": "Mark a habit as complete"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation to return to the Dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify today's score reflects the completion change"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the completed habit shows an incremented streak"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Dashboard shows today's score, rank, and charts",
+    "description": "Verifies the dashboard renders the daily score and rank along with radar and weekly charts for review.",
+    "category": "Dashboard (Daily Score & Rank)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Choose to sign in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify today's score and a rank badge are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify radar and weekly performance charts are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Toggle offline mode and see sync indicator reflect offline state",
+    "description": "Verifies a user can enable offline mode in settings and the app reflects the offline state via the sync status indicator.",
+    "category": "Cloud Sync & Offline Mode",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
       },
       {
         "type": "action",
@@ -118,49 +187,216 @@
       },
       {
         "type": "action",
-        "description": "Submit the auth form"
+        "description": "Submit the authentication form"
       },
       {
         "type": "action",
-        "description": "Click the navigation link to habits"
+        "description": "Click the link to open settings"
       },
       {
         "type": "action",
-        "description": "Mark the first available active habit as complete"
-      },
-      {
-        "type": "action",
-        "description": "Click the navigation link to dashboard"
+        "description": "Toggle offline mode on"
       },
       {
         "type": "assertion",
-        "description": "Verify today's score or streak visualizations reflect the habit completion"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC005",
-    "title": "Unauthenticated user is gated from the leaderboard",
-    "description": "Verifies an unauthenticated user cannot access the leaderboard and is redirected to the authentication page.",
-    "category": "Leaderboard & Aura History",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /leaderboard"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the authentication page is displayed"
+        "description": "Verify the sync status indicator shows the app is offline"
       }
     ],
     "priority": "High"
   },
   {
     "id": "TC006",
-    "title": "Redeem a reward and see Aura Points balance update",
-    "description": "Verifies a logged-in user can redeem a reward from the shop and their Aura Points balance updates after confirming redemption.",
-    "category": "Aura Marketplace (Shop)",
+    "title": "Habit completion persists after refresh",
+    "description": "Verifies a completed habit remains completed after a page refresh, indicating local persistence in the UI.",
+    "category": "Habits (Permanent Daily Tasks)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Choose to sign in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation to open the Habits page"
+      },
+      {
+        "type": "action",
+        "description": "Mark a habit as complete"
+      },
+      {
+        "type": "action",
+        "description": "Press F5 to refresh the page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the same habit still appears completed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Dashboard shows today's permanent tasks list",
+    "description": "Verifies the dashboard surfaces today's permanent tasks and their completion states for the daily loop.",
+    "category": "Dashboard (Daily Score & Rank)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Choose to sign in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to today's permanent tasks section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a list of permanent tasks is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Start and stop a study timer and see the logged duration added to progress",
+    "description": "Verifies a user can run a study timer for a subject, stop it, and see the logged duration reflected in subject progress and today’s score contribution UI.",
+    "category": "Study Sessions & Timers",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open Study"
+      },
+      {
+        "type": "action",
+        "description": "Start a study timer for a subject"
+      },
+      {
+        "type": "action",
+        "description": "Wait for a short duration"
+      },
+      {
+        "type": "action",
+        "description": "Stop the study timer"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a new logged study duration is added to the subject’s progress"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify today’s score contribution reflects study activity"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Switch from offline mode back to online without losing locally created data",
+    "description": "Verifies data created while offline remains visible after turning offline mode off and navigating across pages.",
+    "category": "Cloud Sync & Offline Mode",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open settings"
+      },
+      {
+        "type": "action",
+        "description": "Toggle offline mode on"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the nutrition page"
+      },
+      {
+        "type": "action",
+        "description": "Log a new meal with a valid name and macros"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open settings"
+      },
+      {
+        "type": "action",
+        "description": "Toggle offline mode off"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the calendar page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the day’s activity is reflected in the calendar view"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Log a meal with macros updates daily nutrition progress",
+    "description": "Verifies a user can add a meal with macros and the nutrition progress visualization updates to reflect the new totals.",
+    "category": "Nutrition Logging",
     "steps": [
       {
         "type": "action",
@@ -180,28 +416,36 @@
       },
       {
         "type": "action",
-        "description": "Click the link to open the shop"
+        "description": "Click the navigation item for Nutrition"
       },
       {
         "type": "action",
-        "description": "Select a reward to redeem"
+        "description": "Start adding a new meal entry"
       },
       {
         "type": "action",
-        "description": "Confirm the redemption"
+        "description": "Fill Meal QA 1 into the meal name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill valid macro values into the macros fields"
+      },
+      {
+        "type": "action",
+        "description": "Save the meal entry"
       },
       {
         "type": "assertion",
-        "description": "Verify the Aura Points balance displayed in the shop decreases after redemption"
+        "description": "Verify the macro progress visualization reflects the newly added meal"
       }
     ],
     "priority": "High"
   },
   {
-    "id": "TC007",
-    "title": "Dashboard daily overview renders key sections",
-    "description": "Verifies an authenticated user can view today’s score/rank, core stat cards, charts, and today’s permanent tasks on the dashboard.",
-    "category": "Dashboard (Daily Overview)",
+    "id": "TC011",
+    "title": "Log a workout and see it reflected in workout insights and today’s score",
+    "description": "Verifies a user can save a workout log entry and the workout is reflected in workout summaries and today’s score contribution UI.",
+    "category": "Workout Logging",
     "steps": [
       {
         "type": "action",
@@ -209,7 +453,60 @@
       },
       {
         "type": "action",
-        "description": "Switch to Login mode"
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open Workout"
+      },
+      {
+        "type": "action",
+        "description": "Start a workout log entry"
+      },
+      {
+        "type": "action",
+        "description": "Select a muscle group"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Push Ups\" into the exercise name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid duration into the duration field"
+      },
+      {
+        "type": "action",
+        "description": "Save the workout log"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new workout appears in the recent logs list or workout summary for the current period"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify today’s score contribution reflects workout activity"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "Log a sleep session updates sleep summary visualization",
+    "description": "Verifies a user can record a sleep session with duration and quality and the sleep summary/chart updates accordingly.",
+    "category": "Sleep Tracking",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
       },
       {
         "type": "action",
@@ -221,28 +518,40 @@
       },
       {
         "type": "action",
-        "description": "Submit the auth form"
+        "description": "Submit the login form"
       },
       {
         "type": "action",
-        "description": "Scroll to today's permanent tasks section"
+        "description": "Click the navigation item for Sleep"
+      },
+      {
+        "type": "action",
+        "description": "Start adding a new sleep session"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid sleep duration into the duration field"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid sleep quality rating"
+      },
+      {
+        "type": "action",
+        "description": "Save the sleep session"
       },
       {
         "type": "assertion",
-        "description": "Verify today's score and rank summary is displayed"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify dashboard charts and today's tasks are displayed"
+        "description": "Verify the sleep summary visualization reflects the newly logged session"
       }
     ],
     "priority": "High"
   },
   {
-    "id": "TC008",
-    "title": "Sign up and land on dashboard",
-    "description": "Verifies a new user can create an account via signup and is taken to the authenticated dashboard.",
-    "category": "User Authentication",
+    "id": "TC013",
+    "title": "Sign up creates an account and reaches the app",
+    "description": "Verifies a new user can sign up with required fields and is taken into the authenticated app experience.",
+    "category": "Authentication",
     "steps": [
       {
         "type": "action",
@@ -250,15 +559,11 @@
       },
       {
         "type": "action",
-        "description": "Switch to Signup mode"
+        "description": "Choose to sign up"
       },
       {
         "type": "action",
-        "description": "Fill a unique email into the email field"
-      },
-      {
-        "type": "action",
-        "description": "Fill a valid password into the password field"
+        "description": "Fill in the required profile fields with valid values"
       },
       {
         "type": "action",
@@ -266,229 +571,102 @@
       },
       {
         "type": "assertion",
-        "description": "Verify the user lands on the dashboard"
+        "description": "Verify the user lands on the dashboard or onboarding"
       }
     ],
     "priority": "High"
-  },
-  {
-    "id": "TC009",
-    "title": "Block redemption when the user has insufficient Aura Points",
-    "description": "Verifies the shop prevents redeeming a reward that costs more than the user's available Aura Points and shows an insufficient-points validation message.",
-    "category": "Aura Marketplace (Shop)",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /auth"
-      },
-      {
-        "type": "action",
-        "description": "Fill {{LOGIN_USER}} into the email field"
-      },
-      {
-        "type": "action",
-        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Click the link to open the shop"
-      },
-      {
-        "type": "action",
-        "description": "Capture the current Aura Points balance displayed in the shop"
-      },
-      {
-        "type": "action",
-        "description": "Attempt to redeem a reward that costs more Aura Points than available"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify an insufficient-points validation message is visible"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the Aura Points balance displayed in the shop is unchanged"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC010",
-    "title": "Open task detail overlay from dashboard",
-    "description": "Verifies an authenticated user can open a task detail overlay from today’s tasks and see metadata including score contribution and streak information.",
-    "category": "Dashboard (Daily Overview)",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /auth"
-      },
-      {
-        "type": "action",
-        "description": "Switch to Login mode"
-      },
-      {
-        "type": "action",
-        "description": "Fill {{LOGIN_USER}} into the email field"
-      },
-      {
-        "type": "action",
-        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
-      },
-      {
-        "type": "action",
-        "description": "Submit the auth form"
-      },
-      {
-        "type": "action",
-        "description": "Scroll to today's permanent tasks section"
-      },
-      {
-        "type": "action",
-        "description": "Click a task to open its details"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify a task detail overlay is visible"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the overlay shows score contribution and streak metadata"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC011",
-    "title": "Aura Points balance stays consistent after redemption when navigating away and back",
-    "description": "Verifies the updated Aura Points balance after a successful redemption remains consistent when navigating to another page and returning to the shop.",
-    "category": "Aura Marketplace (Shop)",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /auth"
-      },
-      {
-        "type": "action",
-        "description": "Fill {{LOGIN_USER}} into the email field"
-      },
-      {
-        "type": "action",
-        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Click the link to open the shop"
-      },
-      {
-        "type": "action",
-        "description": "Select a reward to redeem"
-      },
-      {
-        "type": "action",
-        "description": "Confirm the redemption"
-      },
-      {
-        "type": "action",
-        "description": "Click the link to open the leaderboard"
-      },
-      {
-        "type": "action",
-        "description": "Click the link to open the shop"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the Aura Points balance displayed in the shop reflects the redemption"
-      }
-    ],
-    "priority": "Medium"
-  },
-  {
-    "id": "TC012",
-    "title": "View leaderboard overview including podium and self rank card",
-    "description": "Verifies a logged-in user can open the leaderboard and see the podium and their self rank card with Aura Points.",
-    "category": "Leaderboard & Aura History",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /auth"
-      },
-      {
-        "type": "action",
-        "description": "Fill {{LOGIN_USER}} into the email field"
-      },
-      {
-        "type": "action",
-        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Click the link to open the leaderboard"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the top three podium is displayed"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the self rank card is displayed with total Aura Points"
-      }
-    ],
-    "priority": "Medium"
-  },
-  {
-    "id": "TC013",
-    "title": "Open Aura history timeline and view day-by-day entries",
-    "description": "Verifies a logged-in user can open the Aura history timeline from the leaderboard and see day-by-day earned and lost points entries.",
-    "category": "Leaderboard & Aura History",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /auth"
-      },
-      {
-        "type": "action",
-        "description": "Fill {{LOGIN_USER}} into the email field"
-      },
-      {
-        "type": "action",
-        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Click the link to open the leaderboard"
-      },
-      {
-        "type": "action",
-        "description": "Open the Aura history timeline"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the Aura history timeline is displayed with day-by-day entries"
-      }
-    ],
-    "priority": "Medium"
   },
   {
     "id": "TC014",
-    "title": "Browse rewards list in the shop",
-    "description": "Verifies a logged-in user can view the available rewards list in the shop without initiating redemption.",
-    "category": "Aura Marketplace (Shop)",
+    "title": "Inspect a day’s earned vs lost Aura breakdown in History",
+    "description": "User can open Aura History and inspect a specific day to see earned versus lost Aura breakdown.",
+    "category": "Aura History & Leaderboard",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the history navigation item"
+      },
+      {
+        "type": "action",
+        "description": "Select a day entry or bar in the Aura history timeline"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a breakdown view is displayed for the selected day"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify earned and lost Aura values are shown for that day"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC015",
+    "title": "Enable cloud sync and see sync indicator reflect syncing or ready-to-sync state",
+    "description": "Verifies a user can enable cloud sync, make a local change, and the sync status indicator reflects that data is queued or syncing.",
+    "category": "Cloud Sync & Offline Mode",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open settings"
+      },
+      {
+        "type": "action",
+        "description": "Enable cloud sync"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the habits page"
+      },
+      {
+        "type": "action",
+        "description": "Mark one habit as complete for today"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the sync status indicator shows syncing or that changes are pending sync"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC016",
+    "title": "Log today's mood with notes updates mood visualization",
+    "description": "Verifies a user can log a mood rating with notes and the mood wave/recent entries reflect the new entry.",
+    "category": "Mood Journaling",
     "steps": [
       {
         "type": "action",
@@ -508,20 +686,354 @@
       },
       {
         "type": "action",
-        "description": "Click the link to open the shop"
+        "description": "Click the navigation item for Mood"
+      },
+      {
+        "type": "action",
+        "description": "Start logging a new mood entry"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid mood rating"
+      },
+      {
+        "type": "action",
+        "description": "Fill Mood QA note into the notes field"
+      },
+      {
+        "type": "action",
+        "description": "Save the mood entry"
       },
       {
         "type": "assertion",
-        "description": "Verify a list of rewards is displayed"
+        "description": "Verify the mood visualization reflects a newly recorded entry"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC017",
+    "title": "Change a score weight and see subsequent computed score react to the new weighting",
+    "description": "Verifies adjusting a category weight in the score weight editor affects the computed daily score after logging a new activity in that category.",
+    "category": "Settings & Preferences",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Note the current daily score value"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open settings"
+      },
+      {
+        "type": "action",
+        "description": "Open the score weight editor"
+      },
+      {
+        "type": "action",
+        "description": "Increase the weight for the study category"
+      },
+      {
+        "type": "action",
+        "description": "Save score weight changes"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the study page"
+      },
+      {
+        "type": "action",
+        "description": "Log a short study session using valid duration input"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the daily score has updated after the study log"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC018",
+    "title": "Nutrition page shows today's macro progress without adding a meal",
+    "description": "Verifies a signed-in user can view today's macro rings and consumed totals on the nutrition page.",
+    "category": "Nutrition Logging",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation item for Nutrition"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify today's macro progress and consumed totals are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC019",
+    "title": "Execute a command to complete a habit and see the habit updated",
+    "description": "Verifies a user can run a quick action to complete a habit from Command and the completion state is reflected on the Habits page.",
+    "category": "Command (Quick Actions)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Habits"
+      },
+      {
+        "type": "action",
+        "description": "Ensure at least one habit exists by creating a basic habit if the UI supports creating one here"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Command"
+      },
+      {
+        "type": "action",
+        "description": "Type a complete-habit intent targeting an existing habit into the command input"
+      },
+      {
+        "type": "action",
+        "description": "Execute the command"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Habits"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the targeted habit shows as completed for today"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC020",
+    "title": "View calendar heatmap and open a day’s details",
+    "description": "User can view the calendar heatmap and open a specific day to see that day’s completed items and score breakdown.",
+    "category": "Calendar (Heatmap & Day Details)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the calendar navigation item"
+      },
+      {
+        "type": "action",
+        "description": "Select a day cell in the heatmap"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a day detail drawer or panel is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that day’s tasks and score breakdown are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC021",
+    "title": "Create a new task from Settings and see it appear in Habits",
+    "description": "Verifies a user can add a task in Settings Task Manager and the new task becomes available in the Habits list.",
+    "category": "Task Management (Add / Edit / Delete Tasks)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open Settings"
+      },
+      {
+        "type": "action",
+        "description": "Open the Task Manager section"
+      },
+      {
+        "type": "action",
+        "description": "Start adding a new task"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Automation Task A\" into the task name field"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid task type"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid completion method"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid weight value into the weight field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the task form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open Habits"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the task named \"Automation Task A\" is visible in the habits list"
       }
     ],
     "priority": "Medium"
   },
   {
-    "id": "TC015",
-    "title": "Inspect weekly Aura summary and streak multiplier progress",
-    "description": "Verifies a logged-in user can view weekly Aura summary information and streak multiplier progress on the leaderboard page.",
-    "category": "Leaderboard & Aura History",
+    "id": "TC022",
+    "title": "Execute commands to start and stop a study timer and see the timer state update",
+    "description": "Verifies a user can start and stop a study timer via Command and the Study page reflects the corresponding running/stopped state.",
+    "category": "Command (Quick Actions)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Command"
+      },
+      {
+        "type": "action",
+        "description": "Type a start-study-timer intent into the command input"
+      },
+      {
+        "type": "action",
+        "description": "Execute the command"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Study"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Command"
+      },
+      {
+        "type": "action",
+        "description": "Type a stop-study-timer intent into the command input"
+      },
+      {
+        "type": "action",
+        "description": "Execute the command"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Study"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the study timer is not running and a recorded session or duration is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC023",
+    "title": "Sleep page shows target schedule and current summary",
+    "description": "Verifies a signed-in user can view the sleep summary and target schedule on the sleep page.",
+    "category": "Sleep Tracking",
     "steps": [
       {
         "type": "action",
@@ -541,11 +1053,743 @@
       },
       {
         "type": "action",
-        "description": "Click the link to open the leaderboard"
+        "description": "Click the navigation item for Sleep"
       },
       {
         "type": "assertion",
-        "description": "Verify the weekly Aura summary is displayed"
+        "description": "Verify a sleep summary and a target schedule section are displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC024",
+    "title": "Purchase a reward in the Shop and see Aura Points decrease on Dashboard",
+    "description": "User can purchase a reward from the Shop and sees their total Aura Points reduced on the dashboard afterward.",
+    "category": "Marketplace (Shop)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Observe the current total Aura Points on the dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Click the shop navigation item"
+      },
+      {
+        "type": "action",
+        "description": "Select a reward card to purchase"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the purchase"
+      },
+      {
+        "type": "action",
+        "description": "Click the dashboard navigation item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the total Aura Points is lower than it was before the purchase"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC025",
+    "title": "Sync status remains consistent across core pages after mode changes",
+    "description": "Verifies the sync status indicator stays consistent when navigating between dashboard and other sections after toggling offline mode.",
+    "category": "Cloud Sync & Offline Mode",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open settings"
+      },
+      {
+        "type": "action",
+        "description": "Toggle offline mode on"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the study page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the sync status indicator still shows the app is offline"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC026",
+    "title": "Create a new goal and see it listed for tracking",
+    "description": "Verifies a user can create a new goal with a target and timeframe and the goal appears in the goals list for ongoing tracking.",
+    "category": "Goals (Monthly & Temporary)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Goals"
+      },
+      {
+        "type": "action",
+        "description": "Start creating a new goal"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"UI Test Goal\" into the goal name field"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid timeframe for the goal"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid target value into the goal target field"
+      },
+      {
+        "type": "action",
+        "description": "Save the goal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new goal appears in the goals list"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC027",
+    "title": "Update display name in settings and see it reflected across the app",
+    "description": "Verifies a user can update their profile display name and the updated name appears in other app surfaces that show the profile.",
+    "category": "Settings & Preferences",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open settings"
+      },
+      {
+        "type": "action",
+        "description": "Open the profile section"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Test Display Name\" into the display name field"
+      },
+      {
+        "type": "action",
+        "description": "Save profile changes"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated display name is visible in the app"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC028",
+    "title": "Mood page shows mood wave and recent entries list",
+    "description": "Verifies a signed-in user can view the mood wave visualization and a list of recent mood entries.",
+    "category": "Mood Journaling",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation item for Mood"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a mood wave visualization and recent mood entries are displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC029",
+    "title": "Add a subtask to a side hustle project and see progress update",
+    "description": "Verifies a user can open a project, add a subtask or progress update, save changes, and see the project progress reflect the update.",
+    "category": "Side Hustles & Projects",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Side Hustles"
+      },
+      {
+        "type": "action",
+        "description": "Open the first available project card"
+      },
+      {
+        "type": "action",
+        "description": "Start adding a new subtask or progress update"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"UI Test Subtask\" into the subtask name field"
+      },
+      {
+        "type": "action",
+        "description": "Save the project changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the project shows the new subtask or an increased progress indication"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC030",
+    "title": "Edit an existing task and see the changes reflected in Habits",
+    "description": "Verifies a user can edit a task’s configuration in Task Manager and the updated configuration is reflected when viewing the task in Habits.",
+    "category": "Task Management (Add / Edit / Delete Tasks)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open Settings"
+      },
+      {
+        "type": "action",
+        "description": "Open the Task Manager section"
+      },
+      {
+        "type": "action",
+        "description": "Start adding a new task"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Automation Task B\" into the task name field"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid task type"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid completion method"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid weight value into the weight field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the task form"
+      },
+      {
+        "type": "action",
+        "description": "Start editing the task named \"Automation Task B\""
+      },
+      {
+        "type": "action",
+        "description": "Change the completion method to a different valid option"
+      },
+      {
+        "type": "action",
+        "description": "Fill a different valid weight value into the weight field"
+      },
+      {
+        "type": "action",
+        "description": "Save the task changes"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open Habits"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the task named \"Automation Task B\" shows the updated configuration in its details or settings view"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC031",
+    "title": "View leaderboard podium and self rank",
+    "description": "User can view the leaderboard top-three podium and their self rank card.",
+    "category": "Aura History & Leaderboard",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the leaderboard navigation item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a top-three podium section is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a self rank card is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC032",
+    "title": "Command workflow does not lose session when navigating to target pages",
+    "description": "Verifies the user can move between Command and other core pages after executing a command without being logged out or blocked by route guards.",
+    "category": "Command (Quick Actions)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Command"
+      },
+      {
+        "type": "action",
+        "description": "Type a valid help or list-commands intent into the command input"
+      },
+      {
+        "type": "action",
+        "description": "Execute the command"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the dashboard overview content is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC033",
+    "title": "Browse rewards and open purchase confirmation flow",
+    "description": "User can browse available rewards, select one, and reach a confirmation step before completing the purchase.",
+    "category": "Marketplace (Shop)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the shop navigation item"
+      },
+      {
+        "type": "action",
+        "description": "Scroll through the rewards list"
+      },
+      {
+        "type": "action",
+        "description": "Select a reward card to purchase"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a purchase confirmation UI is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC034",
+    "title": "Cancel adding a meal does not change nutrition progress",
+    "description": "Verifies a user can start adding a meal and cancel/exit without saving and nutrition progress remains unchanged.",
+    "category": "Nutrition Logging",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation item for Nutrition"
+      },
+      {
+        "type": "action",
+        "description": "Start adding a new meal entry"
+      },
+      {
+        "type": "action",
+        "description": "Fill Meal QA Cancel into the meal name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill valid macro values into the macros fields"
+      },
+      {
+        "type": "action",
+        "description": "Cancel the meal entry"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the macro progress visualization did not change due to an unsaved meal"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC035",
+    "title": "Update an existing project's progress value and see it reflected on the project card",
+    "description": "Verifies a user can change a project's progress and the updated progress is reflected in the project view or project card summary.",
+    "category": "Side Hustles & Projects",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Side Hustles"
+      },
+      {
+        "type": "action",
+        "description": "Open the first available project card"
+      },
+      {
+        "type": "action",
+        "description": "Adjust the project progress to a valid different value"
+      },
+      {
+        "type": "action",
+        "description": "Save the project changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the project progress indication reflects the updated value"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC036",
+    "title": "Aura History timeline is visible and scrollable",
+    "description": "User can view the Aura history timeline and scroll to see additional historical entries.",
+    "category": "Aura History & Leaderboard",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the history navigation item"
+      },
+      {
+        "type": "action",
+        "description": "Scroll down within the history view"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify additional history entries are displayed as the user scrolls"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC037",
+    "title": "Profile changes persist after refresh",
+    "description": "Verifies that after updating profile settings and saving, the changes remain after a page refresh.",
+    "category": "Settings & Preferences",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open settings"
+      },
+      {
+        "type": "action",
+        "description": "Open the profile section"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Test Display Name Persist\" into the display name field"
+      },
+      {
+        "type": "action",
+        "description": "Save profile changes"
+      },
+      {
+        "type": "action",
+        "description": "Press F5 to refresh the page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated display name is still shown in profile settings"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC038",
+    "title": "View goal progress overview (rings/timelines)",
+    "description": "Verifies the Goals page shows an overview of existing goals including progress visualization for monthly and temporary goals.",
+    "category": "Goals (Monthly & Temporary)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Goals"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify at least one goals progress visualization is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify goals are grouped or distinguishable by timeframe (monthly vs temporary)"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC039",
+    "title": "Review weekly Aura summary and streak multiplier progress",
+    "description": "User can review weekly Aura summary data and streak multiplier progress on the leaderboard page.",
+    "category": "Aura History & Leaderboard",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the leaderboard navigation item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a weekly Aura summary section is displayed"
       },
       {
         "type": "assertion",
@@ -555,10 +1799,92 @@
     "priority": "Medium"
   },
   {
-    "id": "TC016",
-    "title": "Aura Points shown on self rank card stays consistent across navigation",
-    "description": "Verifies the Aura Points value shown on the leaderboard self rank card remains consistent after navigating away and returning.",
-    "category": "Leaderboard & Aura History",
+    "id": "TC040",
+    "title": "Calendar handles selecting multiple different days",
+    "description": "User can switch between different days on the heatmap and the day details update accordingly.",
+    "category": "Calendar (Heatmap & Day Details)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the calendar navigation item"
+      },
+      {
+        "type": "action",
+        "description": "Select a day cell in the heatmap"
+      },
+      {
+        "type": "action",
+        "description": "Select a different day cell in the heatmap"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the day detail drawer or panel updates to the newly selected day"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the selected day’s breakdown content is displayed"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC041",
+    "title": "Side Hustles page shows projects list/cards",
+    "description": "Verifies the Side Hustles page displays project cards and allows opening a project from the list.",
+    "category": "Side Hustles & Projects",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Side Hustles"
+      },
+      {
+        "type": "action",
+        "description": "Click the first available project card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the project detail view is displayed"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC042",
+    "title": "Sleep session requires valid duration to save",
+    "description": "Verifies the sleep session form prevents saving when duration is missing or invalid and shows a validation error.",
+    "category": "Sleep Tracking",
     "steps": [
       {
         "type": "action",
@@ -578,65 +1904,32 @@
       },
       {
         "type": "action",
-        "description": "Click the link to open the leaderboard"
+        "description": "Click the navigation item for Sleep"
       },
       {
         "type": "action",
-        "description": "Capture the Aura Points value displayed on the self rank card"
+        "description": "Start adding a new sleep session"
       },
       {
         "type": "action",
-        "description": "Click the link to open the shop"
+        "description": "Leave the sleep duration empty"
       },
       {
         "type": "action",
-        "description": "Click the link to open the leaderboard"
+        "description": "Attempt to save the sleep session"
       },
       {
         "type": "assertion",
-        "description": "Verify the Aura Points value displayed on the self rank card matches the previously captured value"
-      }
-    ],
-    "priority": "Medium"
-  },
-  {
-    "id": "TC017",
-    "title": "Show validation errors for invalid signup credentials",
-    "description": "Verifies signup blocks invalid credentials and shows validation feedback without authenticating the user.",
-    "category": "User Authentication",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /auth"
-      },
-      {
-        "type": "action",
-        "description": "Switch to Signup mode"
-      },
-      {
-        "type": "action",
-        "description": "Fill an invalid email format into the email field"
-      },
-      {
-        "type": "action",
-        "description": "Fill a too-short password into the password field"
-      },
-      {
-        "type": "action",
-        "description": "Submit the signup form"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify validation errors are visible"
+        "description": "Verify a duration validation error is visible and the session is not saved"
       }
     ],
     "priority": "Low"
   },
   {
-    "id": "TC018",
-    "title": "Cancel a reward redemption from the confirmation prompt",
-    "description": "Verifies a logged-in user can cancel a redemption confirmation and no Aura Points are deducted.",
-    "category": "Aura Marketplace (Shop)",
+    "id": "TC043",
+    "title": "Meal creation requires needed fields before saving",
+    "description": "Verifies the meal form blocks saving when required inputs are missing and shows a validation error.",
+    "category": "Nutrition Logging",
     "steps": [
       {
         "type": "action",
@@ -656,32 +1949,32 @@
       },
       {
         "type": "action",
-        "description": "Click the link to open the shop"
+        "description": "Click the navigation item for Nutrition"
       },
       {
         "type": "action",
-        "description": "Capture the current Aura Points balance displayed in the shop"
+        "description": "Start adding a new meal entry"
       },
       {
         "type": "action",
-        "description": "Select a reward to redeem"
+        "description": "Leave the required meal inputs empty"
       },
       {
         "type": "action",
-        "description": "Dismiss the redemption confirmation"
+        "description": "Attempt to save the meal entry"
       },
       {
         "type": "assertion",
-        "description": "Verify the Aura Points balance displayed in the shop is unchanged"
+        "description": "Verify a validation error is visible and the meal is not saved"
       }
     ],
     "priority": "Low"
   },
   {
-    "id": "TC019",
-    "title": "Habit completion requires required numeric input",
-    "description": "Verifies attempting to complete a habit that requires a numeric value shows validation feedback when the input is missing.",
-    "category": "Habit Tracking",
+    "id": "TC044",
+    "title": "Command input rejects an unknown intent without changing app state",
+    "description": "Verifies entering an invalid command shows a validation or help response and does not modify habits or timers.",
+    "category": "Command (Quick Actions)",
     "steps": [
       {
         "type": "action",
@@ -689,7 +1982,85 @@
       },
       {
         "type": "action",
-        "description": "Switch to Login mode"
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Command"
+      },
+      {
+        "type": "action",
+        "description": "Type \"invalid_intent_123\" into the command input"
+      },
+      {
+        "type": "action",
+        "description": "Execute the command"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an invalid-command or help feedback is visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC045",
+    "title": "Calendar shows an empty state for a day with no activity",
+    "description": "User can open a day with no logged items and sees an appropriate empty state rather than errors or stale data.",
+    "category": "Calendar (Heatmap & Day Details)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the calendar navigation item"
+      },
+      {
+        "type": "action",
+        "description": "Select a day cell that appears as lowest-intensity or no-activity on the heatmap"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an empty state is displayed for that day’s details"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no completed items are listed for that day"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC046",
+    "title": "Score weight editor prevents saving invalid weight configuration",
+    "description": "Verifies the score weight editor blocks saving when an invalid weight value is entered and shows a validation error.",
+    "category": "Settings & Preferences",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
       },
       {
         "type": "action",
@@ -701,28 +2072,36 @@
       },
       {
         "type": "action",
-        "description": "Submit the auth form"
+        "description": "Submit the authentication form"
       },
       {
         "type": "action",
-        "description": "Click the navigation link to habits"
+        "description": "Click the link to open settings"
       },
       {
         "type": "action",
-        "description": "Attempt to mark a habit complete without providing a required numeric value"
+        "description": "Open the score weight editor"
+      },
+      {
+        "type": "action",
+        "description": "Fill an invalid value into one category weight field"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to save score weight changes"
       },
       {
         "type": "assertion",
-        "description": "Verify validation feedback for the habit input is visible"
+        "description": "Verify a weight validation error is visible and changes are not saved"
       }
     ],
     "priority": "Low"
   },
   {
-    "id": "TC020",
-    "title": "Review the penalty log on the leaderboard",
-    "description": "Verifies a logged-in user can view the penalty log section on the leaderboard page.",
-    "category": "Leaderboard & Aura History",
+    "id": "TC047",
+    "title": "Mood entry requires a rating before saving",
+    "description": "Verifies the mood form prevents saving without a selected rating and shows a validation error.",
+    "category": "Mood Journaling",
     "steps": [
       {
         "type": "action",
@@ -742,11 +2121,146 @@
       },
       {
         "type": "action",
-        "description": "Click the link to open the leaderboard"
+        "description": "Click the navigation item for Mood"
+      },
+      {
+        "type": "action",
+        "description": "Start logging a new mood entry"
+      },
+      {
+        "type": "action",
+        "description": "Leave the mood rating unselected"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to save the mood entry"
       },
       {
         "type": "assertion",
-        "description": "Verify the penalty log is displayed"
+        "description": "Verify a validation error is visible and the mood entry is not saved"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC048",
+    "title": "Invalid credential submission is blocked",
+    "description": "Verifies submitting invalid credentials on the authentication page does not log the user in and shows an error state.",
+    "category": "Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Choose to sign in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with invalid@example.com"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with wrong-password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an authentication error is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is not on the dashboard"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC049",
+    "title": "Validate required task name when adding a task",
+    "description": "Verifies submitting a new task without a required name shows a validation error and does not create the task.",
+    "category": "Task Management (Add / Edit / Delete Tasks)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open Settings"
+      },
+      {
+        "type": "action",
+        "description": "Open the Task Manager section"
+      },
+      {
+        "type": "action",
+        "description": "Start adding a new task"
+      },
+      {
+        "type": "action",
+        "description": "Fill an empty value into the task name field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the task form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a task name validation error is visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC050",
+    "title": "Goals page handles empty state when no goals exist",
+    "description": "Verifies that when a user has no goals, the Goals page shows an empty state and provides a clear path to create a goal.",
+    "category": "Goals (Monthly & Temporary)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the authentication form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open Goals"
+      },
+      {
+        "type": "action",
+        "description": "Remove all existing goals if the UI provides a remove option"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an empty state is visible for goals"
       }
     ],
     "priority": "Low"

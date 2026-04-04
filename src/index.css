@@ -234,3 +234,22 @@ button, [role="button"], select {
   min-height: 44px;
   min-width: 44px;
 }
+
+/* ── Global text overflow safety ────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Buttons should never wrap text */
+button, [role="button"] {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Form rows and action bars should wrap gracefully */
+form, .addForm, .headerActions {
+  min-width: 0;
+}

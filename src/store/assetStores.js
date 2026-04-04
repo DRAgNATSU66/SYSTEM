@@ -12,26 +12,44 @@ export const useGoalStore = create(
       ],
       goalsHistory: [],
       
-      addGoal: (title, target_date, bounty_ap = 1000, isStagnant = true) => set((state) => ({ 
-        goals: [...state.goals, { id: Date.now(), title, target_date, completed: false, bounty_ap, isStagnant }] 
+      addGoal: (title, target_date, bounty_ap = 1000, isStagnant = true) => set((state) => ({
+        goals: [...state.goals, {
+          id: Date.now().toString(),
+          title, target_date, completed: false, bounty_ap, isStagnant,
+          status: 'CREATED',
+          createdAt: new Date().toISOString(),
+        }]
       })),
       
       completeGoal: (id) => set((state) => {
         const goal = state.goals.find(g => g.id === id);
         if (!goal || goal.completed) return state;
-        const updatedGoal = { ...goal, completed: true, completedAt: new Date().toISOString() };
+        const updatedGoal = { ...goal, completed: true, status: 'COMPLETED', completedAt: new Date().toISOString() };
         return {
           goals: state.goals.map(g => g.id === id ? updatedGoal : g),
           goalsHistory: [updatedGoal, ...state.goalsHistory]
         };
       }),
-      
-      deleteGoal: (id) => set((state) => ({ 
-        goals: state.goals.filter(g => g.id !== id) 
+
+      deleteGoal: (id) => set((state) => ({
+        goals: state.goals.filter(g => g.id !== id)
       })),
 
+      purgeGoal: (id) => set((state) => {
+        const goal = state.goals.find(g => g.id === id);
+        if (goal) {
+          return {
+            goals: state.goals.filter(g => g.id !== id),
+            goalsHistory: [{ ...goal, status: 'PURGED', purgedAt: new Date().toISOString() }, ...state.goalsHistory]
+          };
+        }
+        return { goals: state.goals.filter(g => g.id !== id) };
+      }),
+
       deleteFromHistory: (id) => set((state) => ({
-        goalsHistory: state.goalsHistory.filter(g => g.id !== id)
+        goalsHistory: state.goalsHistory.map(g =>
+          g.id === id ? { ...g, status: 'HISTORY_PURGED', historyPurgedAt: new Date().toISOString() } : g
+        ).filter(g => g.id !== id)
       })),
 
       hydrateFromServer: (serverData) => set(serverData),
@@ -52,7 +70,11 @@ export const useProjectStore = create(
       sessions: [], 
       
       addProject: (title, type = 'CS', color = '#FFFFFF', status = 'UPCOMING') => set((state) => ({
-        projects: [...state.projects, { id: Date.now(), title, type, status, color, total_hours: 0 }]
+        projects: [...state.projects, {
+          id: Date.now().toString(), title, type, status, color, total_hours: 0,
+          lifecycle: 'CREATED',
+          createdAt: new Date().toISOString(),
+        }]
       })),
       
       updateProjectStatus: (id, status) => set((state) => {
@@ -60,7 +82,11 @@ export const useProjectStore = create(
           const project = state.projects.find(p => p.id === id);
           return {
             projects: state.projects.filter(p => p.id !== id),
-            projectsHistory: [{ ...project, status, archivedAt: new Date().toISOString() }, ...state.projectsHistory]
+            projectsHistory: [{
+              ...project, status,
+              lifecycle: status === 'COMPLETED' ? 'COMPLETED' : 'ARCHIVED',
+              archivedAt: new Date().toISOString()
+            }, ...state.projectsHistory]
           };
         }
         return {
@@ -71,6 +97,13 @@ export const useProjectStore = create(
       deleteProject: (id, fromHistory = false) => set((state) => {
         if (fromHistory) {
           return { projectsHistory: state.projectsHistory.filter(p => p.id !== id) };
+        }
+        const project = state.projects.find(p => p.id === id);
+        if (project) {
+          return {
+            projects: state.projects.filter(p => p.id !== id),
+            projectsHistory: [{ ...project, lifecycle: 'PURGED', purgedAt: new Date().toISOString() }, ...state.projectsHistory]
+          };
         }
         return { projects: state.projects.filter(p => p.id !== id) };
       }),
@@ -98,25 +131,33 @@ export const useHobbyStore = create(
       hobbiesHistory: [],
       
       addHobby: (hobby) => set((state) => ({
-        hobbies: [...state.hobbies, { 
-          id: Date.now().toString(), 
-          ...hobby, 
-          createdAt: new Date().toISOString() 
+        hobbies: [...state.hobbies, {
+          id: Date.now().toString(),
+          ...hobby,
+          lifecycle: 'CREATED',
+          createdAt: new Date().toISOString()
         }]
       })),
-      
+
       deleteHobby: (id, fromHistory = false) => set((state) => {
         if (fromHistory) {
           return { hobbiesHistory: state.hobbiesHistory.filter(h => h.id !== id) };
         }
+        const hobby = state.hobbies.find(h => h.id === id);
+        if (hobby) {
+          return {
+            hobbies: state.hobbies.filter(h => h.id !== id),
+            hobbiesHistory: [{ ...hobby, lifecycle: 'PURGED', purgedAt: new Date().toISOString() }, ...state.hobbiesHistory]
+          };
+        }
         return { hobbies: state.hobbies.filter(h => h.id !== id) };
       }),
-      
+
       archiveHobby: (id) => set((state) => {
         const hobby = state.hobbies.find(h => h.id === id);
         return {
           hobbies: state.hobbies.filter(h => h.id !== id),
-          hobbiesHistory: [{ ...hobby, archivedAt: new Date().toISOString() }, ...state.hobbiesHistory]
+          hobbiesHistory: [{ ...hobby, lifecycle: 'ARCHIVED', archivedAt: new Date().toISOString() }, ...state.hobbiesHistory]
         };
       }),
 

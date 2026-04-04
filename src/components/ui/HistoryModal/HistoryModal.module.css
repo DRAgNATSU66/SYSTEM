@@ -91,6 +91,12 @@
   background: rgba(255, 255, 255, 0.04);
 }
 
+.info {
+  min-width: 0;
+  overflow: hidden;
+  flex: 1;
+}
+
 .info h3 {
   font-family: 'Outfit';
   font-size: 0.95rem;
@@ -99,6 +105,9 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   font-weight: 200;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .meta {
@@ -106,6 +115,9 @@
   color: rgba(255, 255, 255, 0.4);
   margin: 0;
   font-family: 'Outfit';
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .btnDelete {

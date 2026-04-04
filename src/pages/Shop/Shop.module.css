@@ -1,41 +1,56 @@
 .container {
-  padding: 3rem 2rem;
+  padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
 }
 
 .header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
   align-items: flex-start;
-  margin-bottom: 4rem;
+  justify-content: space-between;
+  margin-bottom: 3rem;
   gap: 2rem;
+  width: 100%;
+}
+
+.headerLeft {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .headerLeft h1 {
   font-family: 'Outfit', sans-serif;
-  font-size: 2.5rem;
-  letter-spacing: 0.15em;
+  font-size: 2rem;
+  letter-spacing: 0.12em;
   color: #fff;
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .subtitle {
   color: var(--text-secondary);
   font-family: 'Outfit';
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   margin-top: 0.5rem;
   letter-spacing: 0.05em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .balanceCard {
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 2rem;
+  padding: 1.25rem 1.5rem;
   border-radius: 16px;
   text-align: right;
-  min-width: 250px;
+  min-width: 200px;
+  flex: 0 0 auto;
+  align-self: flex-start;
 }
 
 .apLabel {
@@ -62,18 +77,17 @@
 
 .rewardGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
 }
 
 .rewardCard {
   background: var(--bg-surface);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 2.5rem;
+  padding: 0 0 0 0;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
   transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -86,9 +100,8 @@
 }
 
 .rewardIcon {
-  width: calc(100% + 5rem);
-  height: 180px;
-  margin: -2.5rem -2.5rem 1.5rem -2.5rem;
+  width: 100%;
+  height: 160px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -101,6 +114,10 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.rewardInfo {
+  padding: 1.25rem 1.5rem 0.5rem;
 }
 
 .rewardInfo h3 {
@@ -122,8 +139,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1rem;
-  padding-top: 1.5rem;
+  margin-top: auto;
+  padding: 1.25rem 1.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -177,11 +194,13 @@
 @media (max-width: 768px) {
   .header {
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
   }
   .balanceCard {
     width: 100%;
     text-align: center;
+  }
+  .rewardGrid {
+    grid-template-columns: 1fr;
   }
 }

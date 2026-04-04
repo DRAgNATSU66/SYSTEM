@@ -32,7 +32,7 @@ const ShopPage = () => {
 
   return (
     <PageWrapper className={styles.container}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <div className={styles.headerLeft}>
           <h1>AURA MARKETPLACE</h1>
           <p className={styles.subtitle}>Convert abstract merit into tangible assets.</p>
@@ -42,7 +42,7 @@ const ShopPage = () => {
           <div className={styles.apValue}>{(totalAuraPoints ?? 0).toLocaleString()} AP</div>
           <div className={styles.usdValue}>≈ ${usdValue} USD</div>
         </div>
-      </header>
+      </div>
 
       <div className={styles.rewardGrid}>
         {rewards.map(reward => (
@@ -56,7 +56,7 @@ const ShopPage = () => {
             </div>
             <div className={styles.rewardCost}>
               <span>{(reward.cost ?? 0).toLocaleString()} AP</span>
-              <button 
+              <button
                 className={styles.redeemBtn}
                 onClick={() => handleRedeem(reward)}
                 disabled={totalAuraPoints < reward.cost}

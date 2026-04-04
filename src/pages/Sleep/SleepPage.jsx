@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
 import ProgressBar from '../../components/ui/ProgressBar/ProgressBar';
 import { useMetricsStore } from '../../store/metricsStore';
+import { useAuraStore } from '../../store/auraStore';
 import { getTodayStr } from '../../utils/dateUtils';
 import styles from './Sleep.module.css';
 
@@ -35,8 +36,15 @@ const SleepPage = () => {
   const underSleep     = hours < 8;
   const underDeep      = deep < 9;
 
+  const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded } = useAuraStore();
+
   const handleSync = () => {
+    resetDailyIfNeeded();
     logMetrics({ sleep: hours, deepSleep: deep });
+    // Award proportional AP out of 100 cap for sleep
+    const sleepAP = Math.round(progress);  // 0–100 maps to 0–100 AP
+    addCategoryAP('SLEEP', sleepAP, `SLEEP LOGGED: ${hours}h, Deep ${deep}/10`);
+    checkAndUpdateStreak();
     setSaved_(true);
     setTimeout(() => setSaved_(false), 2500);
   };

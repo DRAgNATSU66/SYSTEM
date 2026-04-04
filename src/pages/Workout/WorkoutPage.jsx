@@ -31,11 +31,13 @@ const getWeekDates = () => {
 };
 
 // ─── Muscle Volume Card ───────────────────────────────────────────────────────
-const MuscleGroupCard = ({ title, subGroups, logs, pbs, onLog, onLogAll }) => {
+const MuscleGroupCard = ({ title, subGroups, logs, pbs, onLog, onLogAll, lastLoggedValues }) => {
   const [selectedSub, setSelectedSub] = useState(subGroups[0]);
-  const [sets,   setSets]   = useState('3');
-  const [reps,   setReps]   = useState('10');
-  const [weight, setWeight] = useState('20');
+  const getLastLogged = (sub) => lastLoggedValues?.[sub] || { sets: 3, reps: 10, weight: 20 };
+  const initial = getLastLogged(subGroups[0]);
+  const [sets,   setSets]   = useState(String(initial.sets));
+  const [reps,   setReps]   = useState(String(initial.reps));
+  const [weight, setWeight] = useState(String(initial.weight));
 
   const radarData = subGroups.map(sg => {
     const subLogs = logs[sg] || [];
@@ -71,7 +73,14 @@ const MuscleGroupCard = ({ title, subGroups, logs, pbs, onLog, onLogAll }) => {
       <div className={styles.controls}>
         <select
           value={selectedSub}
-          onChange={e => setSelectedSub(e.target.value)}
+          onChange={e => {
+            const sub = e.target.value;
+            setSelectedSub(sub);
+            const last = getLastLogged(sub);
+            setSets(String(last.sets));
+            setReps(String(last.reps));
+            setWeight(String(last.weight));
+          }}
           className={styles.select}
         >
           {subGroups.map(sg => <option key={sg} value={sg}>{sg}</option>)}
@@ -108,18 +117,21 @@ const MuscleGroupCard = ({ title, subGroups, logs, pbs, onLog, onLogAll }) => {
 };
 
 // ─── VO2 Max Card ─────────────────────────────────────────────────────────────
-const VO2MaxCard = ({ onLog }) => {
-  const [bpm,     setBpm]     = useState(160);
-  const [distKm,  setDistKm]  = useState(3.5);
-  const [timeMins, setTimeMins] = useState(10);
-  const [age,     setAge]     = useState(22);
-  const [result,  setResult]  = useState(null);
+const VO2MaxCard = ({ onLog, lastVO2 }) => {
+  const defaults = lastVO2 || { bpm: 160, distKm: 3.5, timeMins: 10, age: 22 };
+  const [bpm,      setBpm]      = useState(defaults.bpm      || 160);
+  const [distKm,   setDistKm]   = useState(defaults.distKm   || 3.5);
+  const [timeMins, setTimeMins] = useState(defaults.timeMins || 10);
+  const [age,      setAge]      = useState(defaults.age      || 22);
 
-  const handleCalc = () => {
-    const res = calculateVO2Max({ bpm, distKm, timeMins, age });
-    setResult(res);
-    onLog(res);
-  };
+  // Live preview — recalculated on every input change, no button click needed
+  const result = calculateVO2Max({ bpm, distKm, timeMins, age });
+
+  const scoreLabel =
+    result.score >= 80 ? 'ELITE' :
+    result.score >= 60 ? 'GOOD' :
+    result.score >= 40 ? 'AVERAGE' :
+    result.score >= 20 ? 'BELOW AVG' : 'POOR';
 
   return (
     <div className={styles.engineCard}>
@@ -145,14 +157,13 @@ const VO2MaxCard = ({ onLog }) => {
           </div>
         </div>
 
-        {result && (
-          <div className={styles.vo2Result}>
-            <div className={styles.vo2Score}>{result.score}<span>/100</span></div>
-            <div className={styles.vo2Raw}>{result.rawVO2} ml/kg/min</div>
-          </div>
-        )}
+        {/* Always-visible live result */}
+        <div className={styles.vo2Result}>
+          <div className={styles.vo2Score}>{result.score}<span>/100</span></div>
+          <div className={styles.vo2Raw}>{result.rawVO2} ml/kg/min — {scoreLabel}</div>
+        </div>
 
-        <button className={styles.btnPrimary} onClick={handleCalc}>CALCULATE & LOG</button>
+        <button className={styles.btnPrimary} onClick={() => onLog(result)}>LOG SESSION</button>
       </div>
     </div>
   );
@@ -160,15 +171,16 @@ const VO2MaxCard = ({ onLog }) => {
 
 // ─── Main WorkoutPage ─────────────────────────────────────────────────────────
 const WorkoutPage = () => {
-  const { muscles, logVolume, logCardio, logs, personalBests } = useWorkoutStore();
-  const { addAuraPoints } = useAuraStore();
+  const { muscles, logVolume, logCardio, logs, personalBests, lastLoggedValues, lastLoggedCardio } = useWorkoutStore();
+  const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded } = useAuraStore();
   const today     = getTodayStr();
   const todayLogs = logs[today] || {};
   const weekDates = useMemo(() => getWeekDates(), []);
 
   const scheduledType = getScheduledType();
   const [activeTab, setActiveTab] = useState('hypertrophy');
-  const [lss, setLss] = useState({ minutes: 30, bpm: 135 });
+  const lastLSS = lastLoggedCardio?.lss || { minutes: 30, bpm: 135 };
+  const [lss, setLss] = useState({ minutes: lastLSS.minutes, bpm: lastLSS.bpm });
 
   // Muscle groups split by category
   const hypertrophyGroups = Object.entries(muscles).filter(([key]) => key !== 'mobility');
@@ -201,24 +213,29 @@ const WorkoutPage = () => {
   }, [logs, weekDates]);
 
   const handleLogVolume = (g, s, sets, reps, weight) => {
+    resetDailyIfNeeded();
     const oldPB  = personalBests?.[g]?.[s] || 0;
     logVolume(g, s, sets, reps, weight);
     const new1RM = weight * (1 + reps / 30);
     if (new1RM > oldPB && oldPB > 0) {
-      addAuraPoints(50, `NEW PERSONAL BEST: ${s} (${Math.floor(new1RM)}kg 1RM)`);
+      addCategoryAP('WORKOUT', 50, `NEW PERSONAL BEST: ${s} (${Math.floor(new1RM)}kg 1RM)`);
     } else {
-      addAuraPoints(10, `VOLUME LOGGED: ${s}`);
+      addCategoryAP('WORKOUT', 10, `VOLUME LOGGED: ${s}`);
     }
+    checkAndUpdateStreak();
   };
 
   const handleLogAllGroup = (group, subGroups) => {
+    resetDailyIfNeeded();
     subGroups.forEach(sub => {
       logVolume(group, sub, 3, 10, 20);
-      addAuraPoints(10, `VOLUME LOGGED: ${sub}`);
+      addCategoryAP('WORKOUT', 10, `VOLUME LOGGED: ${sub}`);
     });
+    checkAndUpdateStreak();
   };
 
   const handleLogAllTab = () => {
+    resetDailyIfNeeded();
     let groups;
     if (activeTab === 'hypertrophy') groups = hypertrophyGroups;
     else if (activeTab === 'mobility') groups = mobilityGroups;
@@ -227,14 +244,17 @@ const WorkoutPage = () => {
     groups.forEach(([group, subs]) => {
       subs.forEach(sub => {
         logVolume(group, sub, 3, 10, 20);
-        addAuraPoints(10, `VOLUME LOGGED: ${sub}`);
+        addCategoryAP('WORKOUT', 10, `VOLUME LOGGED: ${sub}`);
       });
     });
+    checkAndUpdateStreak();
   };
 
-  const handleVO2Log = ({ rawVO2, score }) => {
-    logCardio('vo2max', { value: rawVO2, score, date: today });
-    addAuraPoints(20, `VO2 MAX LOGGED: ${rawVO2} ml/kg/min (Score ${score}/100)`);
+  const handleVO2Log = (res) => {
+    resetDailyIfNeeded();
+    logCardio('vo2max', { value: res.rawVO2, score: res.score, date: today });
+    addCategoryAP('WORKOUT', 20, `VO2 MAX LOGGED: ${res.rawVO2} ml/kg/min (Score ${res.score}/100)`);
+    checkAndUpdateStreak();
   };
 
   return (
@@ -302,6 +322,7 @@ const WorkoutPage = () => {
                 pbs={personalBests[group] || {}}
                 onLog={handleLogVolume}
                 onLogAll={handleLogAllGroup}
+                lastLoggedValues={lastLoggedValues[group] || {}}
               />
             ))}
           </div>
@@ -323,6 +344,7 @@ const WorkoutPage = () => {
                 pbs={personalBests[group] || {}}
                 onLog={handleLogVolume}
                 onLogAll={handleLogAllGroup}
+                lastLoggedValues={lastLoggedValues[group] || {}}
               />
             ))}
           </div>
@@ -356,13 +378,15 @@ const WorkoutPage = () => {
                   />
                 </div>
                 <button className={styles.btnPrimary} onClick={() => {
+                  resetDailyIfNeeded();
                   logCardio('lss', lss);
-                  addAuraPoints(15, `LSS CARDIO LOGGED: ${lss.minutes}min @ ${lss.bpm}bpm`);
+                  addCategoryAP('WORKOUT', 15, `LSS CARDIO LOGGED: ${lss.minutes}min @ ${lss.bpm}bpm`);
+                  checkAndUpdateStreak();
                 }}>SYNC DATA</button>
               </div>
             </div>
 
-            <VO2MaxCard onLog={handleVO2Log} />
+            <VO2MaxCard onLog={handleVO2Log} lastVO2={lastLoggedCardio?.vo2max} />
           </div>
         </section>
       )}

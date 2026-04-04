@@ -1,13 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
 import ProgressBar from '../../components/ui/ProgressBar/ProgressBar';
 import { useStudyStore } from '../../store/studyStore';
+import { useAuraStore } from '../../store/auraStore';
 import styles from './Study.module.css';
 
 const StudyPage = () => {
   const { subjects, addSubject, removeSubject, sessions, logSession } = useStudyStore();
+  const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded } = useAuraStore();
   const [newSubject, setNewSubject] = useState('');
   const today = new Date().toISOString().split('T')[0];
+
+  // Live timer state
+  const [activeTimer, setActiveTimer] = useState(null); // { subjectId, startMs }
+  const [elapsed, setElapsed] = useState(0); // seconds
+
+  useEffect(() => {
+    if (!activeTimer) return;
+    const interval = setInterval(() => {
+      setElapsed(Math.floor((Date.now() - activeTimer.startMs) / 1000));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [activeTimer]);
+
+  const formatElapsed = (s) => {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  };
+
+  const handleStartTimer = (subject) => {
+    setActiveTimer({ subjectId: subject.id, startMs: Date.now() });
+    setElapsed(0);
+  };
+
+  const handleStopTimer = (subject) => {
+    if (!activeTimer || activeTimer.subjectId !== subject.id) return;
+    const minutes = Math.max(1, Math.round(elapsed / 60));
+    resetDailyIfNeeded();
+    logSession(subject.id, minutes);
+    const ap = Math.min(Math.round((minutes / 120) * 200), 200);
+    addCategoryAP('STUDY', ap, `STUDY TIMED: ${subject.name} ${minutes}m`);
+    checkAndUpdateStreak();
+    setActiveTimer(null);
+    setElapsed(0);
+  };
 
   // Calculate overall study progress
   const totalMinutes = Object.values(sessions[today] || {}).reduce((a, b) => a + b, 0);
@@ -28,27 +65,49 @@ const StudyPage = () => {
       </header>
 
       <div className={styles.addSubjectRow}>
-        <input 
-          type="text" value={newSubject} 
-          onChange={e => setNewSubject(e.target.value)} 
-          placeholder="ENTER NEW SUBJECT..." 
+        <input
+          type="text" value={newSubject}
+          onChange={e => setNewSubject(e.target.value)}
+          placeholder="ENTER NEW SUBJECT..."
         />
         <button className={styles.btnAdd} onClick={() => { addSubject(newSubject); setNewSubject(''); }}>ADD SUBJECT</button>
       </div>
 
       <div className={styles.subjectGrid}>
-        {subjects.map(s => (
-          <div key={s.id} className={styles.subjectCard}>
-             <div className={styles.cardInfo}>
+        {subjects.map(s => {
+          const isActive = activeTimer?.subjectId === s.id;
+          return (
+            <div key={s.id} className={`${styles.subjectCard} ${isActive ? styles.subjectActive : ''}`}>
+              <div className={styles.cardInfo}>
                 <h3>{s.name.toUpperCase()}</h3>
                 <div className={styles.sessionCounter}>{sessions[today]?.[s.id] || 0}m Deep Work</div>
-             </div>
-             <div className={styles.cardActions}>
-                <button className={styles.btnLog} onClick={() => logSession(s.id, 60)}>LOG 60M</button>
+                {isActive && (
+                  <div className={styles.timerDisplay}>{formatElapsed(elapsed)}</div>
+                )}
+              </div>
+              <div className={styles.cardActions}>
+                {isActive ? (
+                  <button className={styles.btnStop} onClick={() => handleStopTimer(s)}>STOP TIMER</button>
+                ) : (
+                  <button
+                    className={styles.btnTimer}
+                    onClick={() => handleStartTimer(s)}
+                    disabled={!!activeTimer}
+                  >
+                    START TIMER
+                  </button>
+                )}
+                <button className={styles.btnLog} onClick={() => {
+                  resetDailyIfNeeded();
+                  logSession(s.id, 60);
+                  addCategoryAP('STUDY', 100, `STUDY LOGGED: ${s.name} 60m`);
+                  checkAndUpdateStreak();
+                }}>LOG 60M</button>
                 <button className={styles.btnRemove} onClick={() => removeSubject(s.id)}>DELETE</button>
-             </div>
-          </div>
-        ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </PageWrapper>
   );

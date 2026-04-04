@@ -20,7 +20,50 @@ export const useAuraStore = create(
       penaltyLog: [],
       auraHistory: [],
       lastLoginDate: getTodayStr(),
+      lastStreakDate: null,
       lastSyncedAt: null,
+
+      // Per-category daily AP tracking to enforce caps
+      dailyCategoryAP: {},  // { "YYYY-MM-DD": { WORKOUT: n, STUDY: n, NUTRITION: n, SLEEP: n, MOOD: n, MISC: n } }
+
+      // Get how much AP has been earned in a category today
+      getCategoryEarned: (category) => {
+        const today = getTodayStr();
+        const dayData = get().dailyCategoryAP[today] || {};
+        return dayData[category] || 0;
+      },
+
+      // Add AP with per-category daily cap enforcement
+      addCategoryAP: (category, amount, reason) => set((state) => {
+        if (!amount || isNaN(amount) || amount <= 0) return {};
+        const today = getTodayStr();
+        const dayData = state.dailyCategoryAP[today] || {};
+        const alreadyEarned = dayData[category] || 0;
+
+        // Determine the cap for this category
+        const caps = AURA_RULES.DAILY_CATEGORY_CAP;
+        let cap;
+        if (category === 'MISC') {
+          cap = AURA_RULES.GOALS_POOL;
+        } else {
+          cap = caps[category] || 100;
+        }
+
+        const remainingInCategory = Math.max(0, cap - alreadyEarned);
+        const remainingDaily = AURA_RULES.MAX_DAILY_EARN - state.todayEarned;
+        const actual = Math.min(amount, remainingInCategory, remainingDaily);
+        if (actual <= 0) return {};
+
+        const newDayData = { ...dayData, [category]: alreadyEarned + actual };
+
+        return {
+          totalAuraPoints: Math.max(0, state.totalAuraPoints + actual),
+          todayEarned: state.todayEarned + actual,
+          todayNet: (state.todayEarned + actual) - state.todayLost,
+          dailyCategoryAP: { ...state.dailyCategoryAP, [today]: newDayData },
+          auraHistory: [...state.auraHistory, { date: today, net: actual, reason: reason || 'Bonus' }]
+        };
+      }),
 
       computeTodayAura: (dailyScore, hasAllPermanent, peakMood, overperformedCount) => {
         const { multiplier, totalAuraPoints, todayLost, todayEarned, auraHistory } = get();
@@ -75,6 +118,40 @@ export const useAuraStore = create(
         });
       },
 
+      // Called once per day when user logs any activity — checks if streak should increment
+      checkAndUpdateStreak: () => {
+        const { lastStreakDate, streakDays, maxStreak } = get();
+        const today = getTodayStr();
+
+        if (lastStreakDate === today) return; // already counted today
+
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+        let newStreak;
+        if (lastStreakDate === yesterdayStr) {
+          // Consecutive day — increment
+          newStreak = streakDays + 1;
+        } else if (!lastStreakDate) {
+          // First time — start at 1
+          newStreak = 1;
+        } else {
+          // Gap — streak broken, restart at 1
+          newStreak = 1;
+        }
+
+        const newMax = newStreak > maxStreak ? newStreak : maxStreak;
+        const newMult = Math.min(resolveMultiplier(newStreak), MULTIPLIERS.MAX_MULT);
+
+        set({
+          streakDays: newStreak,
+          maxStreak: newMax,
+          multiplier: newMult,
+          lastStreakDate: today,
+        });
+      },
+
       incrementStreak: () => set((state) => {
         const newStreak = state.streakDays + 1;
         const newMax    = newStreak > state.maxStreak ? newStreak : state.maxStreak;
@@ -99,6 +176,7 @@ export const useAuraStore = create(
         )
       })),
 
+      // Legacy addAuraPoints — still used for misc/non-categorized AP
       addAuraPoints: (amount, reason) => set((state) => {
         // Cap daily earn
         const remaining = AURA_RULES.MAX_DAILY_EARN - state.todayEarned;
@@ -123,6 +201,20 @@ export const useAuraStore = create(
           return true;
         }
         return false;
+      },
+
+      // Reset daily counters when a new day starts
+      resetDailyIfNeeded: () => {
+        const { lastLoginDate } = get();
+        const today = getTodayStr();
+        if (lastLoginDate !== today) {
+          set({
+            todayEarned: 0,
+            todayLost: 0,
+            todayNet: 0,
+            lastLoginDate: today,
+          });
+        }
       },
 
       setLastLoginDate: (dateStr) => set({ lastLoginDate: dateStr }),

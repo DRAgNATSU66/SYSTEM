@@ -6,28 +6,42 @@
  *   Total losable per day:  2000 AP
  *
  * Split:
- *   Dailies block:        1000 AP — earned proportionally by completing the 5 dailies
- *   Goals/Hobbies block:  1000 AP — dynamically weighted by difficulty/permanence
+ *   Daily Core block:     1000 AP — earned by completing 5 daily categories
+ *   Misc block:           1000 AP — weighted by priority across goals/hobbies/projects/content
  *
- * Dailies (5 categories, equal base weight = 200 AP each):
- *   1. Workout    — day-specific (Mon/Tue/Wed: Cardio+Mobility; Thu–Sun: Hypertrophy)
- *   2. Nutrition  — all macros AND micros hit baseline
- *   3. Sleep      — ≥8h + deep sleep ≥9/10
- *   4. Study      — ≥2h
- *   5. Mood       — logged ≥ Stable (value ≥ 5)
+ * Daily Core (5 categories, weighted):
+ *   1. Workout    — 300 AP
+ *   2. Study      — 300 AP (≥2h deep work)
+ *   3. Nutrition  — 200 AP (all macros AND micros hit baseline)
+ *   4. Sleep      — 150 AP (≥8h + deep sleep ≥9/10)
+ *   5. Mood       —  50 AP (logged ≥ Stable, value ≥ 5)
+ *
+ * Misc block:     1000 AP — proportional to difficulty/type/duration/seriousness
  */
 export const AURA_RULES = {
   MAX_DAILY_EARN: 2000,
   MAX_DAILY_LOSE: 2000,
 
-  // Dailies block
+  // Daily Core block
   DAILIES_POOL: 1000,
-  DAILY_CATEGORY_WEIGHT: 200, // 5 categories × 200 = 1000
 
-  // Goals & Hobbies block
+  // Per-category caps within the daily core
+  DAILY_CATEGORY_CAP: {
+    WORKOUT:   300,
+    STUDY:     300,
+    NUTRITION: 200,
+    SLEEP:     150,
+    MOOD:       50,
+  },
+
+  // Legacy alias — average category weight (used by auraCalculator)
+  DAILY_CATEGORY_WEIGHT: 200,
+
+  // Misc block (goals, hobbies, projects, content, etc.)
   GOALS_POOL: 1000,
 
-  // Goal difficulty weights (fraction of pool)
+  // Misc difficulty weights (fraction of pool)
+  // Proportional by difficulty, type, duration, and seriousness of work
   GOAL_WEIGHTS: {
     HARD:     0.4,   // hard/permanent goal can earn up to 400 AP of the 1000 pool
     MEDIUM:   0.2,

@@ -12,7 +12,7 @@ const AuraPointsDisplay = () => {
   return (
     <div className={styles.container}>
       <h3 className={styles.label}>TOTAL AURA POINTS</h3>
-      <div className={styles.value} style={{ color: apColor }}>
+      <div className={styles.value} style={{ color: 'var(--rank-omega)' }}>
         <div className={styles.iconContainer}>
           <img src={gigachad} alt="GigaChad" className={styles.brandIcon} />
         </div>

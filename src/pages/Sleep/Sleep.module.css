@@ -1,9 +1,9 @@
-.container { padding: 3rem 2rem; max-width: 860px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
-.header { margin-bottom: 3rem; }
-.header h1 { font-family: 'Outfit'; font-size: 2.2rem; letter-spacing: 0.15em; color: #fff; margin: 0; }
-.headerTop { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem; }
-.subtitle { color: var(--text-secondary); font-size: 0.82rem; margin-top: 0.5rem; letter-spacing: 0.04em; line-height: 1.5; }
-.overallProgress { width: 280px; max-width: 100%; margin-top: 0.5rem; }
+.container { padding: 3rem 2rem; max-width: 860px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+.header { margin-bottom: 3rem; min-width: 0; }
+.header h1 { font-family: 'Outfit'; font-size: 2.2rem; letter-spacing: 0.15em; color: #fff; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.headerTop { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem; min-width: 0; }
+.subtitle { color: var(--text-secondary); font-size: 0.82rem; margin-top: 0.5rem; letter-spacing: 0.04em; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.overallProgress { width: 280px; max-width: 100%; margin-top: 0.5rem; min-width: 0; }
 
 .sleepStack { display: flex; flex-direction: column; gap: 1.5rem; flex: 1; }
 
@@ -20,13 +20,14 @@
 .progressTrack { width: 100%; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; margin-bottom: 0.6rem; }
 .progressFill { height: 100%; border-radius: 3px; transition: width 0.4s ease, background 0.3s; }
 
-.metricMeta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
-.warning { font-size: 0.65rem; font-weight: 900; letter-spacing: 0.05em; padding: 0.3rem 0.75rem; border-radius: 4px; background: rgba(255,49,49,0.08); border: 1px solid var(--rank-slacking); color: var(--rank-slacking); }
-.hint { font-size: 0.65rem; color: var(--text-secondary); font-style: italic; }
+.metricMeta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; min-width: 0; }
+.warning { font-size: 0.65rem; font-weight: 900; letter-spacing: 0.05em; padding: 0.3rem 0.75rem; border-radius: 4px; background: rgba(255,49,49,0.08); border: 1px solid var(--rank-slacking); color: var(--rank-slacking); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hint { font-size: 0.65rem; color: var(--text-secondary); font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* Score breakdown card */
 .scoreBreakdown { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1.5rem 2rem; }
-.scoreRow { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-secondary); padding: 0.35rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.scoreRow { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-secondary); padding: 0.35rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); gap: 0.5rem; min-width: 0; }
+.scoreRow span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .scoreRow strong { color: #fff; }
 .scoreTotal { margin-top: 0.75rem; font-family: 'Outfit'; font-size: 0.9rem; font-weight: 800; color: #fff; }
 

@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
 import { useProjectStore } from '../../store/assetStores';
 import { useAuraStore } from '../../store/auraStore';
+import { useUserStore } from '../../store/userStore';
+import { projectService } from '../../services/projectService';
 import HistoryModal from '../../components/ui/HistoryModal/HistoryModal';
 import styles from './Projects.module.css';
 
 const ProjectsPage = () => {
   const { projects, projectsHistory, sessions, addProject, logSession, updateProjectStatus, deleteProject } = useProjectStore();
-  const addAuraPoints = useAuraStore(state => state.addAuraPoints);
+  const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded } = useAuraStore();
+  const { user } = useUserStore();
   const [newProjectName, setNewProjectName] = useState('');
   const [type] = useState('CS');
   const [showHistory, setShowHistory] = useState(false);
@@ -15,13 +18,23 @@ const ProjectsPage = () => {
   const handleAddProject = (e) => {
     e.preventDefault();
     if(!newProjectName) return;
-    addProject(newProjectName, type, '#00BFFF', 'UPCOMING');
+    if (user?.id) {
+      projectService.addProject(user.id, newProjectName, type, '#00BFFF', 'UPCOMING');
+    } else {
+      addProject(newProjectName, type, '#00BFFF', 'UPCOMING');
+    }
     setNewProjectName('');
   };
 
   const handleLogFocus = (projectId, title) => {
-    logSession(projectId, 1, 8);
-    addAuraPoints(200, `Deep Work: ${title}`);
+    resetDailyIfNeeded();
+    if (user?.id) {
+      projectService.logSession(user.id, projectId, 1, 8);
+    } else {
+      logSession(projectId, 1, 8);
+    }
+    addCategoryAP('MISC', 200, `Deep Work: ${title}`);
+    checkAndUpdateStreak();
   };
 
   return (
@@ -57,14 +70,20 @@ const ProjectsPage = () => {
               >
                 +1H FOCUS SESSION
               </button>
-              <button 
-                onClick={() => updateProjectStatus(project.id, 'ARCHIVED')} 
+              <button
+                onClick={() => {
+                  if (user?.id) projectService.updateStatus(user.id, project.id, 'ARCHIVED');
+                  else updateProjectStatus(project.id, 'ARCHIVED');
+                }}
                 className={styles.btnArchive}
               >
                 ARCHIVE
               </button>
-              <button 
-                onClick={() => deleteProject(project.id)} 
+              <button
+                onClick={() => {
+                  if (user?.id) projectService.deleteProject(user.id, project.id);
+                  else deleteProject(project.id);
+                }}
                 className={styles.btnPurge}
               >
                 ×
@@ -80,7 +99,10 @@ const ProjectsPage = () => {
           items={projectsHistory} 
           type="project"
           onClose={() => setShowHistory(false)} 
-          onDelete={(id) => deleteProject(id, true)}
+          onDelete={(id) => {
+            if (user?.id) projectService.deleteProject(user.id, id, true);
+            else deleteProject(id, true);
+          }}
         />
       )}
       

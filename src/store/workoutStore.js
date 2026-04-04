@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export const useWorkoutStore = create(persist((set) => ({
+  _version: 2, // bump to force migration
   // Cardio Engine
   cardio: {
     lss: {}, // { date: { minutes: number, bpm: number } }
@@ -10,7 +11,7 @@ export const useWorkoutStore = create(persist((set) => ({
   
   // Muscle Matrix (Hypertrophy)
   muscles: {
-    chest: ['Upper Chest', 'Middle Chest', 'Lower Chest', 'Pec Minor'],
+    chest: ['Upper Chest', 'Middle Chest', 'Lower Chest'],
     shoulders: ['Front Delt', 'Side Delt', 'Rear Delt'],
     biceps: ['Long Head', 'Short Head', 'Brachialis'],
     triceps: ['Long Head', 'Lateral Head', 'Medial Head'],
@@ -24,12 +25,17 @@ export const useWorkoutStore = create(persist((set) => ({
   
   logs: {}, // { date: { muscleGroupId: { subGroupId: [{ sets, reps, weight }] } } }
   personalBests: {}, // { muscleGroupId: { subGroupId: number (1RM) } }
-  
+
+  // Last logged values for each exercise — persisted across sessions
+  lastLoggedValues: {}, // { muscleGroupId: { subGroupId: { sets, reps, weight } } }
+  lastLoggedCardio: { lss: { minutes: 30, bpm: 135 }, vo2max: { bpm: 160, distKm: 3.5, timeMins: 10, age: 22 } },
+
   logCardio: (type, data, date = new Date().toISOString().split('T')[0]) => set((state) => ({
     cardio: {
       ...state.cardio,
       [type]: { ...state.cardio[type], [date]: data }
-    }
+    },
+    lastLoggedCardio: { ...state.lastLoggedCardio, [type]: data }
   })),
   
   // Volume Engine (Workout 2.0)
@@ -58,11 +64,23 @@ export const useWorkoutStore = create(persist((set) => ({
         ...state.personalBests,
         [muscleGroup]: { ...state.personalBests[muscleGroup], [subGroup]: newPB }
       },
-      // Points will be handled by the caller or a side effect
+      lastLoggedValues: {
+        ...state.lastLoggedValues,
+        [muscleGroup]: { ...(state.lastLoggedValues[muscleGroup] || {}), [subGroup]: { sets, reps, weight } }
+      },
       _lastPbAchieved: isNewPB ? { subGroup, oneRM, oldPB } : null
     };
   }),
 
   hydrateFromServer: (serverData) => set(serverData),
   lastSyncedAt: null,
-}), { name: 'antigravity-workout-engine' }));
+}), {
+  name: 'antigravity-workout-engine',
+  version: 2,
+  migrate: (persisted, version) => {
+    if (version < 2 && persisted?.muscles?.chest) {
+      persisted.muscles.chest = persisted.muscles.chest.filter(s => s !== 'Pec Minor');
+    }
+    return persisted;
+  },
+}));

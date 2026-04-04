@@ -9,11 +9,14 @@ import styles from './Leaderboard.module.css';
 const RANK_NAMES  = ['IM HIM', 'ALPHA & OMEGA', 'SIGMA'];
 const RANK_COLORS = ['#00CFFF', '#39FF14', '#FFE600'];
 
-const getRankLabel = (position) => {
+const getRankLabel = (position, ap = 0) => {
+  if (ap <= 0) {
+    return { label: 'BETA', color: '#FF3131' };
+  }
   if (position >= 1 && position <= 3) {
     return { label: RANK_NAMES[position - 1], color: RANK_COLORS[position - 1] };
   }
-  return { label: `Unranked #${position}`, color: '#90EE90' };
+  return { label: `#${position}`, color: '#9E9E9E' };
 };
 
 const LeaderboardPage = () => {
@@ -72,14 +75,12 @@ const LeaderboardPage = () => {
       <div className={styles.selfCard}>
         <div className={styles.selfLabel}>YOUR AURA</div>
         <div className={styles.selfAP} style={{ color: getAPColor(totalAuraPoints || 0) }}>{(totalAuraPoints || 0).toLocaleString()} AP</div>
-        {selfRank && (
-          <div
-            className={styles.selfRank}
-            style={{ color: getRankLabel(selfRank).color }}
-          >
-            {getRankLabel(selfRank).label}
-          </div>
-        )}
+        <div
+          className={styles.selfRank}
+          style={{ color: getRankLabel(selfRank || 999, totalAuraPoints).color }}
+        >
+          {getRankLabel(selfRank || 999, totalAuraPoints).label}
+        </div>
         <div className={styles.selfName}>{profile?.username || profile?.name || 'You'}</div>
       </div>
 
@@ -109,7 +110,7 @@ const LeaderboardPage = () => {
           )}
           {leaders.map((leader, idx) => {
             const pos   = idx + 1;
-            const rank  = getRankLabel(pos);
+            const rank  = getRankLabel(pos, leader.total_aura_points);
             const isSelf = leader.id === user?.id;
             return (
               <div

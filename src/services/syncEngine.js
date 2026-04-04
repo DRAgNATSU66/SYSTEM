@@ -264,14 +264,33 @@ export async function pullAllData(userId) {
     }
 
     // — Hydrate studyStore
-    if (studySubjectsRes.data || studySessionsRes.data?.length) {
-      const sessions = {};
+    // Only hydrate if server actually has data (empty array is NOT enough to trigger a wipe)
+    if (studySubjectsRes.data?.length || studySessionsRes.data?.length) {
+      const serverSessions = {};
       (studySessionsRes.data || []).forEach(row => {
-        sessions[row.date] = row.data || {};
+        serverSessions[row.date] = row.data || {};
       });
+
+      // Merge: preserve locally-logged sessions not yet on the server.
+      // For dates present on both, keep the maximum minutes per subject
+      // so a refresh never loses progress logged since the last sync.
+      const localSessions = useStudyStore.getState().sessions;
+      const mergedSessions = { ...serverSessions };
+      Object.entries(localSessions).forEach(([date, localData]) => {
+        if (!mergedSessions[date]) {
+          mergedSessions[date] = localData;
+        } else {
+          const merged = { ...mergedSessions[date] };
+          Object.entries(localData).forEach(([subId, mins]) => {
+            merged[subId] = Math.max(merged[subId] || 0, mins);
+          });
+          mergedSessions[date] = merged;
+        }
+      });
+
       useStudyStore.getState().hydrateFromServer({
         subjects: studySubjectsRes.data?.length ? studySubjectsRes.data : useStudyStore.getState().subjects,
-        sessions,
+        sessions: mergedSessions,
         lastSyncedAt: now,
       });
     }
@@ -295,7 +314,9 @@ export async function pullAllData(userId) {
     }
 
     // — Hydrate assetStores (goals, projects, hobbies)
-    if (goalsRes.data) {
+    // Only overwrite local data if the server actually has records;
+    // otherwise keep local data intact (prevents wiping unsaved items).
+    if (goalsRes.data?.length) {
       useGoalStore.getState().hydrateFromServer({
         goals: goalsRes.data.filter(g => !g.completed && !g.archived),
         goalsHistory: goalsRes.data.filter(g => g.completed || g.archived),
@@ -303,7 +324,7 @@ export async function pullAllData(userId) {
       });
     }
 
-    if (projectsRes.data) {
+    if (projectsRes.data?.length) {
       useProjectStore.getState().hydrateFromServer({
         projects: projectsRes.data.filter(p => !p.archived),
         projectsHistory: projectsRes.data.filter(p => p.archived),
@@ -312,7 +333,7 @@ export async function pullAllData(userId) {
       });
     }
 
-    if (hobbiesRes.data) {
+    if (hobbiesRes.data?.length) {
       useHobbyStore.getState().hydrateFromServer({
         hobbies: hobbiesRes.data.filter(h => !h.archived),
         hobbiesHistory: hobbiesRes.data.filter(h => h.archived),

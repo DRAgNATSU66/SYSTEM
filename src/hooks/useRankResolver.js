@@ -25,12 +25,13 @@ export const useRankResolver = () => {
     let cancelled = false;
 
     const resolve = async () => {
-      // Fallback: offline AP-threshold resolution
+      // Fallback: offline AP-threshold resolution based on live AP
       const offlineResolve = () => {
-        if (totalAuraPoints >= 9999) { setRankLabel('IM HIM');        setRankColor('#00CFFF'); }
-        else if (totalAuraPoints >= 5000) { setRankLabel('ALPHA & OMEGA'); setRankColor('#39FF14'); }
-        else if (totalAuraPoints >= 2000) { setRankLabel('SIGMA');          setRankColor('#FFE600'); }
-        else { setRankLabel('RANKING...'); setRankColor('#FF3131'); }
+        if (totalAuraPoints >= 9999) { setRankLabel('IM HIM');        setRankColor('#00CFFF'); setRankPosition(1); }
+        else if (totalAuraPoints >= 5000) { setRankLabel('ALPHA & OMEGA'); setRankColor('#39FF14'); setRankPosition(2); }
+        else if (totalAuraPoints >= 2000) { setRankLabel('SIGMA');          setRankColor('#FFE600'); setRankPosition(3); }
+        else if (totalAuraPoints <= 0) { setRankLabel('BETA');          setRankColor('#FF3131'); setRankPosition(null); }
+        else { setRankLabel(`#${Math.max(4, Math.ceil(10000 / Math.max(1, totalAuraPoints)))}`); setRankColor('#9E9E9E'); setRankPosition(null); }
       };
 
       if (!supabase || !user?.id) {
@@ -52,16 +53,20 @@ export const useRankResolver = () => {
 
         if (cancelled) return;
 
-        if (position >= 1 && position <= 3) {
+        // Always check live AP first — 0 AP = BETA regardless of position
+        if (totalAuraPoints <= 0) {
+          setRankLabel('BETA');
+          setRankColor('#FF3131');
+          setRankPosition(null);
+        } else if (position >= 1 && position <= 3) {
           setRankLabel(TOP_RANK_NAMES[position - 1]);
           setRankColor(TOP_RANK_COLORS[position - 1]);
           setRankPosition(position);
         } else if (position > 3) {
-          setRankLabel(`Unranked #${position}`);
-          setRankColor('#90EE90');
+          setRankLabel(`#${position}`);
+          setRankColor('#9E9E9E');
           setRankPosition(position);
         } else {
-          // User not found in list yet (0 AP or not seeded)
           offlineResolve();
         }
       } catch {

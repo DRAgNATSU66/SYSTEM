@@ -1,67 +1,112 @@
 version: "2"
 type: frontend
 tech_stack:
-  - JavaScript
-  - React
+  - React 19
   - Vite
-  - CSS Modules
+  - React Router 7
   - Zustand
   - Supabase
-  - Framer Motion
-  - Lucide React
   - Recharts
+  - Framer Motion
   - Three.js
+  - Lucide React
 routes:
   - path: /auth
     file: src/pages/Auth/AuthPage.jsx
     auth_required: false
-    description: Login and Signup page
+    description: Login and signup page
   - path: /
     file: src/pages/Dashboard/DashboardPage.jsx
     auth_required: true
     description: Main dashboard overview
-  - path: /shop
-    file: src/pages/Shop/ShopPage.jsx
+  - path: /command
+    file: src/pages/Command/CommandPage.jsx
     auth_required: true
-    description: Aura Marketplace for redeeming points
+    description: Quick command interface
   - path: /habits
     file: src/pages/Habits/HabitsPage.jsx
     auth_required: true
-    description: Daily habit tracking and completion
+    description: Habit tracking page
+  - path: /workout
+    file: src/pages/Workout/WorkoutPage.jsx
+    auth_required: true
+    description: Workout logging
+  - path: /study
+    file: src/pages/Study/StudyPage.jsx
+    auth_required: true
+    description: Study sessions
+  - path: /nutrition
+    file: src/pages/Nutrition/NutritionPage.jsx
+    auth_required: true
+    description: Nutrition logging
+  - path: /sleep
+    file: src/pages/Sleep/SleepPage.jsx
+    auth_required: true
+    description: Sleep logging
+  - path: /mood
+    file: src/pages/Mood/MoodPage.jsx
+    auth_required: true
+    description: Mood logging
+  - path: /goals
+    file: src/pages/Goals/GoalsPage.jsx
+    auth_required: true
+    description: Goal management
+  - path: /sidehustles
+    file: src/pages/SideHustles/ProjectsPage.jsx
+    auth_required: true
+    description: Project tracking
+  - path: /social
+    file: src/pages/Social/FriendsPage.jsx
+    auth_required: true
+    description: Friends and social interaction
+  - path: /duels
+    file: src/pages/Duels/DuelPage.jsx
+    auth_required: true
+    description: Competitive duels
   - path: /leaderboard
     file: src/pages/Leaderboard/LeaderboardPage.jsx
     auth_required: true
-    description: Global rankings and competitive stats
+    description: Rankings
+  - path: /history
+    file: src/pages/History/AuraHistoryPage.jsx
+    auth_required: true
+    description: Aura history
+  - path: /calendar
+    file: src/pages/Calendar/CalendarPage.jsx
+    auth_required: true
+    description: System calendar
+  - path: /shop
+    file: src/pages/Shop/ShopPage.jsx
+    auth_required: true
+    description: Aura marketplace
+  - path: /settings
+    file: src/pages/Settings/SettingsPage.jsx
+    auth_required: true
+    description: User settings
 features:
-  - name: User Authentication
-    description: Login and signup functionality using Supabase
+  - name: Aura Gamification
+    description: Earn AP for habit completion
     files:
-      - src/pages/Auth/AuthPage.jsx
       - src/store/userStore.js
-    entry_route: /auth
+      - src/pages/Dashboard/DashboardPage.jsx
+    entry_route: /
     user_interactions:
-      - Fill email and password fields
-      - Click Toggle (LOGIN/JOIN)
-      - Click ORBITAL ACCESS button
-    auth_required: false
-  - name: Aura Marketplace (Shop)
-    description: Redeem Aura Points for rewards like Gift Cards and Subscriptions
+      - Complete a habit
+      - Check AP balance change
+  - name: Neural Pentagram
+    description: Radar visualization of life metrics
+    files:
+      - src/pages/Dashboard/DashboardPage.jsx
+    entry_route: /
+    user_interactions:
+      - View dashboard
+      - Interact with pentagram data points
+  - name: Marketplace
+    description: Purchase items with AP
     files:
       - src/pages/Shop/ShopPage.jsx
-      - src/pages/Shop/Shop.module.css
     entry_route: /shop
     user_interactions:
-      - View list of available rewards
-      - Click REDEEM button on a reward
-      - Confirm redemption in alert
-    auth_required: true
-  - name: Habit Tracking
-    description: Track and complete daily habits
-    files:
-      - src/pages/Habits/HabitsPage.jsx
-    entry_route: /habits
-    user_interactions:
-      - View list of active habits
-      - Mark habits as complete
-    auth_required: true
+      - Browse rewards
+      - Initiate purchase
 known_limitations: []
