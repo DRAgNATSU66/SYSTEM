@@ -8,8 +8,8 @@ const MultiplierBadge = () => {
   return (
     <div className={styles.container}>
       <h3 className={styles.label}>MULTIPLIER</h3>
-      <div className={styles.badge} style={{ '--mult-glow': multiplier > 1.0 ? '#FFD700' : 'transparent' }}>
-        <span className={styles.value}>{multiplier.toFixed(1)}x</span>
+      <div className={styles.badge} style={{ '--mult-glow': multiplier > 1.0 ? '#FFD700' : multiplier < 0 ? '#FF4444' : 'transparent' }}>
+        <span className={styles.value} style={{ color: multiplier < 0 ? '#FF4444' : undefined }}>{multiplier.toFixed(1)}x</span>
       </div>
     </div>
   );

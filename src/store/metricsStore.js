@@ -17,9 +17,12 @@ export const DEFAULT_MICROS = [
   { id: 'iron',   name: 'Iron',        minLimit: 8,    unit: 'mg' },
   { id: 'iodine', name: 'Iodine',      minLimit: 150,  unit: 'mcg' },
   { id: 'copper', name: 'Copper',      minLimit: 0.9,  unit: 'mg' },
-  { id: 'omega3', name: 'Omega-3',     minLimit: 1.6,  unit: 'g' },
-  { id: 'fiber',  name: 'Fiber',       minLimit: 30,   unit: 'g' },
-  { id: 'water',  name: 'Water',       minLimit: 3000, unit: 'ml' },
+  { id: 'omega3', name: 'Omega-3',         minLimit: 1.6,  unit: 'g' },
+  { id: 'fiber',  name: 'Fiber',           minLimit: 30,   unit: 'g' },
+  { id: 'water',  name: 'Water',           minLimit: 3000, unit: 'ml' },
+  { id: 'biotin',        name: 'Biotin',          minLimit: 30,   unit: 'mcg' },
+  { id: 'omega3_epadha', name: 'Omega-3 EPA+DHA', minLimit: 1000, unit: 'mg' },
+  { id: 'creatine',      name: 'Creatine',        minLimit: 5,    unit: 'g' },
 ];
 
 export const DEFAULT_MACROS = [
@@ -118,6 +121,28 @@ export const useMetricsStore = create(
       hydrateFromServer: (serverData) => set(serverData),
       lastSyncedAt: null,
     }),
-    { name: 'antigravity-metrics-engine' }
+    {
+      name: 'antigravity-metrics-engine',
+      version: 1,
+      migrate: (persistedState, version) => {
+        if (version === 0) {
+          // Add any micros from DEFAULT_MICROS that are missing from the stored list.
+          // This runs once when the user's localStorage is still at version 0.
+          // Existing micros (including user-customised limits) are preserved as-is.
+          const existingIds = new Set(
+            (persistedState.customMicros || []).map(m => m.id)
+          );
+          const missing = DEFAULT_MICROS.filter(m => !existingIds.has(m.id));
+          return {
+            ...persistedState,
+            customMicros: [
+              ...(persistedState.customMicros || []),
+              ...missing,
+            ],
+          };
+        }
+        return persistedState;
+      },
+    }
   )
 );

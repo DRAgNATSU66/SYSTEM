@@ -3,12 +3,15 @@ import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
 import ProgressBar from '../../components/ui/ProgressBar/ProgressBar';
 import { useMetricsStore } from '../../store/metricsStore';
 import { useAuraStore } from '../../store/auraStore';
+import { useUserStore } from '../../store/userStore';
+import { metricsService } from '../../services/metricsService';
 import { getTodayStr } from '../../utils/dateUtils';
 import styles from './Mood.module.css';
 
 const MoodPage = () => {
   const { dailyMetrics, logMetrics } = useMetricsStore();
   const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded } = useAuraStore();
+  const { user } = useUserStore();
   const today = getTodayStr();
   const currentMood = dailyMetrics[today]?.mood || 5;
 
@@ -31,7 +34,12 @@ const MoodPage = () => {
     if (!pendingMood) return;
     const face = faces.find(f => f.val === pendingMood);
     resetDailyIfNeeded();
-    logMetrics({ mood: pendingMood, moodNote: noteText });
+    const metricsData = { mood: pendingMood, moodNote: noteText };
+    if (user?.id) {
+      metricsService.logMetrics(user.id, metricsData, today);
+    } else {
+      logMetrics(metricsData);
+    }
     const moodAP = Math.round(Math.min(1, pendingMood / 5) * 100);
     addCategoryAP('MOOD', moodAP, `MOOD LOGGED: ${face.label}`);
     checkAndUpdateStreak();
@@ -128,7 +136,8 @@ const MoodPage = () => {
             {waveData.map(([, d], i) => {
               const x = pad + (i / (waveData.length - 1)) * innerW;
               const y = svgH - pad - ((d.mood / 10) * innerH);
-              return <circle key={i} cx={x} cy={y} r="3" fill="var(--rank-alpha)" />;
+              const nodeFace = faces.find(f => f.val === d.mood) || faces[2];
+              return <circle key={i} cx={x} cy={y} r="4" fill={nodeFace.color} stroke="rgba(0,0,0,0.5)" strokeWidth="1" />;
             })}
           </svg>
         </div>

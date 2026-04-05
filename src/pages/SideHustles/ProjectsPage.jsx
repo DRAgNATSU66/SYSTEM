@@ -14,6 +14,7 @@ const ProjectsPage = () => {
   const [newProjectName, setNewProjectName] = useState('');
   const [type] = useState('CS');
   const [showHistory, setShowHistory] = useState(false);
+  const [focusRatings, setFocusRatings] = useState({});
 
   const handleAddProject = (e) => {
     e.preventDefault();
@@ -27,11 +28,12 @@ const ProjectsPage = () => {
   };
 
   const handleLogFocus = (projectId, title) => {
+    const rating = Math.min(10, Math.max(1, parseInt(focusRatings[projectId] ?? 8, 10) || 8));
     resetDailyIfNeeded();
     if (user?.id) {
-      projectService.logSession(user.id, projectId, 1, 8);
+      projectService.logSession(user.id, projectId, 1, rating, title);
     } else {
-      logSession(projectId, 1, 8);
+      logSession(projectId, 1, rating, title);
     }
     addCategoryAP('MISC', 200, `Deep Work: ${title}`);
     checkAndUpdateStreak();
@@ -64,8 +66,20 @@ const ProjectsPage = () => {
             </div>
             
             <div className={styles.projectActions}>
-              <button 
-                onClick={() => handleLogFocus(project.id, project.title)} 
+              <div className={styles.focusRatingRow}>
+                <span className={styles.focusLabel}>FOCUS RATING</span>
+                <input
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={focusRatings[project.id] ?? 8}
+                  onChange={e => setFocusRatings(prev => ({ ...prev, [project.id]: e.target.value }))}
+                  className={styles.focusInput}
+                />
+                <span className={styles.focusMax}>/10</span>
+              </div>
+              <button
+                onClick={() => handleLogFocus(project.id, project.title)}
                 className={styles.btnSession}
               >
                 +1H FOCUS SESSION
@@ -108,10 +122,10 @@ const ProjectsPage = () => {
       
       <section className={styles.history}>
         <h2>RECENT SESSIONS</h2>
-        {sessions.slice(-5).map(s => (
+        {[...sessions].reverse().slice(0, 5).map(s => (
           <div key={s.id} className={styles.sessionLine}>
              <span>{s.date}</span>
-             <span>+1h Deep Work</span>
+             <span>{s.project_title || '+1h Deep Work'}</span>
              <span className={styles.efficiency}>{s.efficiency}/10 FOCUS</span>
           </div>
         ))}

@@ -108,8 +108,8 @@ export const useProjectStore = create(
         return { projects: state.projects.filter(p => p.id !== id) };
       }),
       
-      logSession: (projectId, duration, efficiency) => set((state) => {
-        const newSession = { id: Date.now(), project_id: projectId, duration, efficiency, date: getTodayStr() };
+      logSession: (projectId, duration, efficiency, project_title) => set((state) => {
+        const newSession = { id: Date.now(), project_id: projectId, project_title: project_title || '', duration, efficiency, date: getTodayStr() };
         return {
           sessions: [...state.sessions, newSession],
           projects: state.projects.map(p => p.id === projectId ? { ...p, total_hours: (p.total_hours || 0) + duration } : p)

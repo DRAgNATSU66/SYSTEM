@@ -38,8 +38,8 @@ export const socialService = {
     });
   },
 
-  resolveDuel(duelId, winnerId) {
-    useSocialStore.getState().resolveDuel(duelId, winnerId);
+  resolveDuel(duelId, winnerId, currentUserId) {
+    useSocialStore.getState().resolveDuel(duelId, winnerId, currentUserId);
     pushChange('duels', 'UPSERT', { id: duelId, state: 'resolved', winner_id: winnerId });
   },
 };

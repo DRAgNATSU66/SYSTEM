@@ -3,6 +3,8 @@ import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
 import ProgressBar from '../../components/ui/ProgressBar/ProgressBar';
 import { useMetricsStore } from '../../store/metricsStore';
 import { useAuraStore } from '../../store/auraStore';
+import { useUserStore } from '../../store/userStore';
+import { metricsService } from '../../services/metricsService';
 import { getTodayStr } from '../../utils/dateUtils';
 import styles from './Sleep.module.css';
 
@@ -23,27 +25,34 @@ const computeSleepProgress = (hours, deep) => {
 
 const SleepPage = () => {
   const { logMetrics, dailyMetrics } = useMetricsStore();
+  const { user } = useUserStore();
   const today   = getTodayStr();
   const saved   = dailyMetrics[today] || {};
 
-  const [hours, setHours] = useState(saved.sleep     ?? 8);
-  const [deep,  setDeep]  = useState(saved.deepSleep ?? 7);
+  const [hours, setHours] = useState(saved.sleep != null ? String(saved.sleep) : '8');
+  const [deep,  setDeep]  = useState(saved.deepSleep != null ? String(saved.deepSleep) : '7');
   const [saved_, setSaved_] = useState(false);
 
-  const progress       = computeSleepProgress(hours, deep);
-  const durationPct    = Math.min(100, Math.round((hours / 8) * 100));
-  const deepPct        = Math.min(100, Math.round((deep / 9) * 100));
-  const underSleep     = hours < 8;
-  const underDeep      = deep < 9;
+  const numHours       = parseFloat(hours) || 0;
+  const numDeep        = parseFloat(deep) || 0;
+  const progress       = computeSleepProgress(numHours, numDeep);
+  const durationPct    = Math.min(100, Math.round((numHours / 8) * 100));
+  const deepPct        = Math.min(100, Math.round((numDeep / 9) * 100));
+  const underSleep     = numHours < 8;
+  const underDeep      = numDeep < 9;
 
   const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded } = useAuraStore();
 
   const handleSync = () => {
     resetDailyIfNeeded();
-    logMetrics({ sleep: hours, deepSleep: deep });
-    // Award proportional AP out of 100 cap for sleep
-    const sleepAP = Math.round(progress);  // 0–100 maps to 0–100 AP
-    addCategoryAP('SLEEP', sleepAP, `SLEEP LOGGED: ${hours}h, Deep ${deep}/10`);
+    const metricsData = { sleep: numHours, deepSleep: numDeep };
+    if (user?.id) {
+      metricsService.logMetrics(user.id, metricsData, today);
+    } else {
+      logMetrics(metricsData);
+    }
+    const sleepAP = Math.round(progress);
+    addCategoryAP('SLEEP', sleepAP, `SLEEP LOGGED: ${numHours}h, Deep ${numDeep}/10`);
     checkAndUpdateStreak();
     setSaved_(true);
     setTimeout(() => setSaved_(false), 2500);
@@ -79,7 +88,7 @@ const SleepPage = () => {
               value={hours}
               min="0"
               max="14"
-              onChange={e => setHours(parseFloat(e.target.value) || 0)}
+              onChange={e => setHours(e.target.value)}
               className={styles.metricInput}
             />
             <span className={styles.unit}>hrs</span>
@@ -116,7 +125,7 @@ const SleepPage = () => {
               value={deep}
               min="0"
               max="10"
-              onChange={e => setDeep(parseFloat(e.target.value) || 0)}
+              onChange={e => setDeep(e.target.value)}
               className={styles.metricInput}
             />
             <span className={styles.unit}>/10</span>
@@ -141,12 +150,12 @@ const SleepPage = () => {
         {/* ── Scoring breakdown ────────────────────────────────────── */}
         <div className={styles.scoreBreakdown}>
           <div className={styles.scoreRow}>
-            <span>Duration ({hours}h)</span>
-            <span>×60% weight → <strong>{Math.round(Math.min(1, hours / 8) * 60)}pts</strong></span>
+            <span>Duration ({numHours}h)</span>
+            <span>×60% weight → <strong>{Math.round(Math.min(1, numHours / 8) * 60)}pts</strong></span>
           </div>
           <div className={styles.scoreRow}>
-            <span>Deep Sleep ({deep}/10)</span>
-            <span>×40% weight → <strong>{Math.round(Math.min(1, deep / 9) * 40)}pts</strong></span>
+            <span>Deep Sleep ({numDeep}/10)</span>
+            <span>×40% weight → <strong>{Math.round(Math.min(1, numDeep / 9) * 40)}pts</strong></span>
           </div>
           <div className={styles.scoreTotal}>
             Total Recovery Score: <strong style={{ color: 'var(--rank-alpha)' }}>{progress}%</strong>

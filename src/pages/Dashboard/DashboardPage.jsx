@@ -9,12 +9,13 @@ import WeeklyBarChart from './WeeklyBarChart';
 import { useUserStore } from '../../store/userStore';
 import { useAuraStore } from '../../store/auraStore';
 import { useTaskStore } from '../../store/taskStore';
+import { taskService } from '../../services/taskService';
 import { getGreeting } from '../../utils/greetingEngine';
 import { getTodayStr } from '../../utils/dateUtils';
 import styles from './Dashboard.module.css';
 
 const DashboardPage = () => {
-  const { profile } = useUserStore();
+  const { profile, user } = useUserStore();
   const resetDailyIfNeeded = useAuraStore(state => state.resetDailyIfNeeded);
   const auraHistory = useAuraStore(state => state.auraHistory);
   const totalAuraPoints = useAuraStore(state => state.totalAuraPoints);
@@ -82,7 +83,13 @@ const DashboardPage = () => {
                   <span className={styles.taskTitle}>{task.title || task.name || 'Unnamed Task'}</span>
                   <button
                     className={`${styles.btnToggle} ${done ? styles.btnDone : ''}`}
-                    onClick={() => toggleCompletion(task.id, today, !done)}
+                    onClick={() => {
+                      if (user?.id) {
+                        taskService.setCompletion(task.id, user.id, today, !done);
+                      } else {
+                        toggleCompletion(task.id, today, !done);
+                      }
+                    }}
                   >
                     {done ? 'DONE' : 'MARK DONE'}
                   </button>

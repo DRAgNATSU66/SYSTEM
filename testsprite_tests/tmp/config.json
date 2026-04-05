@@ -2,19 +2,19 @@
   "status": "commited",
   "type": "frontend",
   "scope": "codebase",
-  "localEndpoint": "http://localhost:4173",
+  "localEndpoint": "http://localhost:5173",
   "loginUser": "ushnik1p2h3d@gmail.com",
   "loginPassword": "DRAgNATSU66",
   "executionArgs": {
     "projectName": "SYSTEM",
     "projectPath": "c:\\Users\\ushni\\Documents\\TRACKER\\SYSTEM",
     "testIds": [],
-    "additionalInstruction": "Validate all core features: Aura Points accumulation, Neural Pentagram rendering, Habit completion sync, Shop transactions, and Rank tier updates. PORT: 4173. (Cleared previous locks).",
-    "serverMode": "production",
+    "additionalInstruction": "",
+    "serverMode": "development",
     "envs": {
       "API_KEY": "sk-user-qKMKsBuc4esBxJgSveI0H5zhGFcrTVBsqXRTAR5YmLlxboD1m1n9P-cyoLlNqEwITbm8C2I5Fgu_7LyNee9Uzu00jdiqws_SRC7ucDFcVzOKWLnmbB83I7ScHYbVP5PcsyY"
     }
   },
-  "serverPort": 62963,
-  "proxy": "http://73c3724a-5076-40fc-b663-702fa5737f49:sJx6t71K4nUfdBTSyLeTRzLGPX4qqBtJ@tun.testsprite.com:8080"
+  "serverPort": 60688,
+  "proxy": "http://358a4251-9179-44f6-bc53-bb9f59089e85:xdbKfeRVL7EBQciR6bLLqYfNQPbOgt4s@tun.testsprite.com:8080"
 }

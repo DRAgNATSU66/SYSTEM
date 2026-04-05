@@ -1,14 +1,20 @@
 import { MULTIPLIERS } from '../constants/multipliers';
 
 /**
- * Resolves the streak multiplier.
- * Starts building from day UNLOCK_DAY.
- * Each day above unlock adds STEP (0.1x).
- * Hard cap: 4.0x (PRD §6).
+ * Resolves the streak multiplier from streak days.
+ * Every streak day adds +0.1x from day 1.
+ * Capped between MIN_MULT (-5.0) and MAX_MULT (5.0).
  */
 export const resolveMultiplier = (streakDays) => {
-  if (streakDays < MULTIPLIERS.UNLOCK_DAY) return MULTIPLIERS.BASE;
-  const over    = streakDays - MULTIPLIERS.UNLOCK_DAY + 1;
-  const rawMult = MULTIPLIERS.BASE + (over * MULTIPLIERS.STEP);
-  return Math.min(Math.round(rawMult * 10) / 10, MULTIPLIERS.MAX_MULT);
+  if (streakDays <= 0) return MULTIPLIERS.BASE;
+  const rawMult = MULTIPLIERS.BASE + (streakDays * MULTIPLIERS.STEP);
+  return clampMultiplier(rawMult);
+};
+
+/**
+ * Clamp a multiplier value between MIN_MULT and MAX_MULT.
+ */
+export const clampMultiplier = (value) => {
+  const clamped = Math.max(MULTIPLIERS.MIN_MULT, Math.min(value, MULTIPLIERS.MAX_MULT));
+  return Math.round(clamped * 10) / 10;
 };

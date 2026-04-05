@@ -8,6 +8,7 @@ import { useEffect, useRef } from 'react';
 import { useUserStore } from '../store/userStore';
 import { useAuraStore } from '../store/auraStore';
 import { useScoreStore } from '../store/scoreStore';
+import { useStudyStore } from '../store/studyStore';
 import { pushChange, flushQueue } from '../services/syncEngine';
 
 export const useCloudSync = () => {
@@ -19,6 +20,8 @@ export const useCloudSync = () => {
   const todayEarned = useAuraStore(state => state.todayEarned);
   const todayLost = useAuraStore(state => state.todayLost);
   const todayScore = useScoreStore(state => state.todayScore);
+  const accumulatedIQ = useStudyStore(state => state.accumulatedIQ);
+  const accumulatedKnowledge = useStudyStore(state => state.accumulatedKnowledge);
 
   const auraDebounceRef = useRef(null);
 
@@ -36,13 +39,15 @@ export const useCloudSync = () => {
     auraDebounceRef.current = setTimeout(() => {
       const today = new Date().toISOString().split('T')[0];
 
-      // Push profile state
+      // Push profile state (including neural stats)
       pushChange('profiles', 'UPSERT', {
         id: user.id,
         total_aura_points: totalAuraPoints,
         current_streak: streakDays,
         max_streak: maxStreak,
         multiplier,
+        accumulated_iq: accumulatedIQ || 0,
+        accumulated_knowledge: accumulatedKnowledge || 0,
         last_login_date: today,
       });
 
@@ -70,5 +75,5 @@ export const useCloudSync = () => {
     return () => {
       if (auraDebounceRef.current) clearTimeout(auraDebounceRef.current);
     };
-  }, [user?.id, totalAuraPoints, streakDays, maxStreak, multiplier, todayEarned, todayLost, todayScore]);
+  }, [user?.id, totalAuraPoints, streakDays, maxStreak, multiplier, todayEarned, todayLost, todayScore, accumulatedIQ, accumulatedKnowledge]);
 };

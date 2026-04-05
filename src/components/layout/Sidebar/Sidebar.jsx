@@ -25,7 +25,8 @@ const Sidebar = () => {
 
   // Calculate Progress Data
   const workoutSets = Object.values(workoutLogs[today] || {}).reduce((acc, subMap) =>
-    acc + Object.values(subMap).reduce((a, bEntries) => a + bEntries.reduce((s, e) => s + e.sets, 0), 0), 0);
+    acc + Object.values(subMap).reduce((a, bEntries) =>
+      a + (Array.isArray(bEntries) ? bEntries.reduce((s, e) => s + (e.sets || 0), 0) : 0), 0), 0);
   const progWorkout = { value: Math.min(100, (workoutSets / 20) * 100), label: 'Sets', color: 'var(--rank-alpha)' };
 
   const studyMinutes = Object.values(studySessions[today] || {}).reduce((a, b) => a + b, 0);

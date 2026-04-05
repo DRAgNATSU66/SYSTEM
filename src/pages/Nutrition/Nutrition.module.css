@@ -1,8 +1,8 @@
-.container { padding: 4rem 2rem; max-width: 1400px; margin: 0 auto; min-height: 100vh; overflow: hidden; }
+.container { padding: 4rem 2rem; max-width: 1400px; margin: 0 auto; min-height: 100vh; overflow-x: hidden; }
 .header { margin-bottom: 4rem; text-align: left; min-width: 0; }
-.headerTop { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; min-width: 0; }
-.header h1 { font-family: 'Outfit'; font-size: clamp(1.8rem, 5vw, 3.5rem); font-weight: 900; letter-spacing: -0.02em; color: #fff; margin: 0; line-height: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.subtitle { color: var(--text-secondary); font-family: 'Outfit'; font-size: 1rem; margin-top: 1rem; letter-spacing: 0.05em; opacity: 0.7; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.headerTop { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem; min-width: 0; }
+.header h1 { font-family: 'Outfit'; font-size: clamp(1.8rem, 5vw, 3.5rem); font-weight: 900; letter-spacing: -0.02em; color: #fff; margin: 0; line-height: 1; }
+.subtitle { color: var(--text-secondary); font-family: 'Outfit'; font-size: 1rem; margin-top: 1rem; letter-spacing: 0.05em; opacity: 0.7; }
 
 .btnConfig { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.75rem 1.5rem; border-radius: 8px; font-family: 'Outfit'; font-weight: 700; font-size: 0.72rem; letter-spacing: 0.1em; cursor: pointer; transition: 0.3s; flex-shrink: 0; }
 .btnConfig:hover { background: var(--rank-alpha); color: #000; border-color: var(--rank-alpha); }

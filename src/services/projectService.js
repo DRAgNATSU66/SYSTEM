@@ -39,8 +39,8 @@ export const projectService = {
     pushChange('projects', 'DELETE', { id, user_id: userId });
   },
 
-  logSession(userId, projectId, duration, efficiency) {
-    useProjectStore.getState().logSession(projectId, duration, efficiency);
+  logSession(userId, projectId, duration, efficiency, project_title) {
+    useProjectStore.getState().logSession(projectId, duration, efficiency, project_title);
     const sessions = useProjectStore.getState().sessions;
     const newSession = sessions[sessions.length - 1];
     pushChange('project_sessions', 'UPSERT', { ...newSession, user_id: userId, hours: duration });

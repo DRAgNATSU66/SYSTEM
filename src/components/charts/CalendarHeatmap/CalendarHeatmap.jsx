@@ -4,25 +4,42 @@ import { getAPColorHex } from '../../../utils/apColorLogic';
 import styles from './CalendarHeatmap.module.css';
 
 const CalendarHeatmap = () => {
-  const { auraHistory, dailyCategoryAP } = useAuraStore();
+  const { auraHistory, dailyCategoryAP, todayEarned } = useAuraStore();
 
-  // Build a date→total AP map from aura history (real data)
+  // Build a date->total AP map from all available data
   const apByDate = useMemo(() => {
     const map = {};
-    // Sum net AP per date from auraHistory
+    const today = new Date().toISOString().split('T')[0];
+
+    // 1. Sum AP per date from auraHistory (includes both local + server-hydrated entries)
+    //    Use 'earned' field from server data when available, fallback to positive 'net'
     (auraHistory || []).forEach(entry => {
       if (!entry.date) return;
-      map[entry.date] = (map[entry.date] || 0) + Math.max(0, entry.net || 0);
+      const apValue = entry.earned != null ? entry.earned : Math.max(0, entry.net || 0);
+      map[entry.date] = (map[entry.date] || 0) + apValue;
     });
-    // Also check dailyCategoryAP for today's granular data
+
+    // 2. For today, use todayEarned as the most accurate live value
+    //    since auraHistory entries may be incremental or already consolidated
+    if (todayEarned > 0) {
+      map[today] = Math.max(map[today] || 0, todayEarned);
+    }
+
+    // 3. Also cross-check dailyCategoryAP for days that may not be in auraHistory
     Object.entries(dailyCategoryAP || {}).forEach(([date, cats]) => {
-      const dayTotal = Object.values(cats).reduce((a, b) => a + b, 0);
+      // Sum only numeric category values (skip boolean markers like NUTRITION_pro: true)
+      const dayTotal = Object.entries(cats).reduce((sum, [key, val]) => {
+        // Skip nutrition-specific boolean markers
+        if (key.startsWith('NUTRITION_')) return sum;
+        return sum + (typeof val === 'number' ? val : 0);
+      }, 0);
       if (dayTotal > 0 && (!map[date] || dayTotal > map[date])) {
         map[date] = dayTotal;
       }
     });
+
     return map;
-  }, [auraHistory, dailyCategoryAP]);
+  }, [auraHistory, dailyCategoryAP, todayEarned]);
 
   const days = [];
   const now = new Date();

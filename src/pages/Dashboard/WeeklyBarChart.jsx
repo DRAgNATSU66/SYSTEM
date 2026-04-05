@@ -7,12 +7,10 @@ import { useAuraStore } from '../../store/auraStore';
 import { AURA_RULES } from '../../constants/auraPoints';
 import styles from './Dashboard.module.css';
 
-const MAX_DAILY = AURA_RULES.MAX_DAILY_EARN; // 2000
-
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label, maxDaily }) => {
   if (active && payload && payload.length) {
     const val = payload[0].value;
-    const pct = Math.round((val / MAX_DAILY) * 100);
+    const pct = Math.round((val / maxDaily) * 100);
     return (
       <div className={styles.chartTooltip}>
         <p className={styles.tooltipLabel}>{label}</p>
@@ -25,7 +23,12 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const WeeklyBarChart = () => {
-  const { auraHistory, dailyCategoryAP } = useAuraStore();
+  const { auraHistory, dailyCategoryAP, multiplier } = useAuraStore();
+
+  // Effective daily cap — lifts above 2000 when multiplier > 1.0
+  const MAX_DAILY = multiplier > 1.0
+    ? Math.floor(AURA_RULES.MAX_DAILY_EARN * multiplier)
+    : AURA_RULES.MAX_DAILY_EARN;
 
   const apByDate = useMemo(() => {
     const map = {};
@@ -36,11 +39,10 @@ const WeeklyBarChart = () => {
       const dayTotal = Object.entries(cats)
         .filter(([, val]) => typeof val === 'number')
         .reduce((acc, [, val]) => acc + val, 0);
-      if (dayTotal > 0) map[date] = Math.min(dayTotal, MAX_DAILY);
+      if (dayTotal > 0) map[date] = dayTotal;
     });
 
     // Fallback: auraHistory for dates not covered by dailyCategoryAP.
-    // Sum per-date and cap at 2000 to handle legacy entries safely.
     const histByDate = {};
     (auraHistory || []).forEach(entry => {
       if (!entry.date) return;
@@ -48,7 +50,7 @@ const WeeklyBarChart = () => {
     });
     Object.entries(histByDate).forEach(([date, total]) => {
       if (map[date] === undefined) {
-        map[date] = Math.min(total, MAX_DAILY);
+        map[date] = total;
       }
     });
 
@@ -62,12 +64,14 @@ const WeeklyBarChart = () => {
     d.setDate(d.getDate() - i);
     const dateStr = d.toISOString().split('T')[0];
     const displayStr = new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(d);
-    const rawScore = apByDate[dateStr] || 0;
     data.push({
       date: displayStr,
-      score: Math.min(rawScore, MAX_DAILY) // hard cap — never display > 2000
+      score: apByDate[dateStr] || 0
     });
   }
+
+  // Y-axis ticks scaled to effective cap
+  const yTicks = [0, Math.round(MAX_DAILY * 0.25), Math.round(MAX_DAILY * 0.5), Math.round(MAX_DAILY * 0.75), MAX_DAILY];
 
   return (
     <div className={styles.weeklyChartCard}>
@@ -86,12 +90,12 @@ const WeeklyBarChart = () => {
             <YAxis
               stroke="var(--text-secondary)"
               domain={[0, MAX_DAILY]}
-              ticks={[0, 500, 1000, 1500, 2000]}
+              ticks={yTicks}
               tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
               axisLine={false}
               tickLine={false}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
+            <Tooltip content={<CustomTooltip maxDaily={MAX_DAILY} />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
             <ReferenceLine
               y={MAX_DAILY}
               stroke="rgba(0,191,255,0.25)"

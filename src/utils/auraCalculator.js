@@ -4,16 +4,19 @@ import { AURA_RULES } from '../constants/auraPoints';
  * Compute Aura Points earned today.
  *
  * @param {Object} params
- * @param {number}  params.workoutProgress   — 0–1 (fraction of today's scheduled workout done)
- * @param {number}  params.nutritionProgress — 0–1 (fraction of all macro+micro baselines met)
- * @param {number}  params.sleepProgress     — 0–1 (combined sleep score)
- * @param {number}  params.studyProgress     — 0–1 (study minutes / 120)
- * @param {number}  params.moodValue         — 0–10 mood log value
+ * @param {number}  params.workoutProgress   — 0-1 (fraction of today's scheduled workout done)
+ * @param {number}  params.nutritionProgress — 0-1 (fraction of all macro+micro baselines met)
+ * @param {number}  params.sleepProgress     — 0-1 (combined sleep score)
+ * @param {number}  params.studyProgress     — 0-1 (study minutes / 120)
+ * @param {number}  params.moodValue         — 0-10 mood log value
  * @param {Array}   params.goals             — array of { difficulty, completed } objects
  * @param {Array}   params.hobbies           — array of { type, loggedToday } objects
  * @param {number}  params.multiplier        — current streak multiplier
  *
- * Returns { earned, breakdown } where earned is already capped at MAX_DAILY_EARN.
+ * Returns { earned, breakdown } where:
+ *   - If multiplier > 1.0: cap is 2000 * multiplier (only way to exceed 2000/day)
+ *   - If multiplier <= 0: earned is negative (penalty for activity)
+ *   - Otherwise: cap is 2000
  */
 export const computeAuraPoints = ({
   workoutProgress   = 0,
@@ -27,8 +30,8 @@ export const computeAuraPoints = ({
 } = {}) => {
   const PW = AURA_RULES.DAILY_CATEGORY_WEIGHT; // 200
 
-  // ── Dailies block (1000 AP) ──────────────────────────────────────────────
-  const moodProgress = Math.min(1, Math.max(0, moodValue) / 5); // ≥5 = 100%
+  // -- Dailies block (1000 AP) --
+  const moodProgress = Math.min(1, Math.max(0, moodValue) / 5); // >=5 = 100%
 
   const dailiesEarned = Math.round(
     (workoutProgress   * PW) +
@@ -38,7 +41,7 @@ export const computeAuraPoints = ({
     (moodProgress      * PW)
   );
 
-  // ── Goals & Hobbies block (1000 AP) ─────────────────────────────────────
+  // -- Goals & Hobbies block (1000 AP) --
   let goalsEarned = 0;
   const GW = AURA_RULES.GOAL_WEIGHTS;
 
@@ -59,10 +62,20 @@ export const computeAuraPoints = ({
   // Cap goals block at pool size
   goalsEarned = Math.min(Math.round(goalsEarned), AURA_RULES.GOALS_POOL);
 
-  // ── Apply multiplier & daily cap ─────────────────────────────────────────
+  // -- Apply multiplier & dynamic daily cap --
   const rawTotal    = dailiesEarned + goalsEarned;
-  const withMult    = Math.round(rawTotal * (multiplier || 1.0));
-  const earned      = Math.min(withMult, AURA_RULES.MAX_DAILY_EARN);
+  const mult        = multiplier || 1.0;
+  const withMult    = Math.round(rawTotal * mult);
+
+  // Dynamic cap: multiplier > 1.0 lifts the daily ceiling
+  const effectiveCap = mult > 1.0
+    ? Math.floor(AURA_RULES.MAX_DAILY_EARN * mult)
+    : AURA_RULES.MAX_DAILY_EARN;
+
+  // If multiplier is negative, earned will be negative (activity penalty)
+  const earned = mult <= 0
+    ? withMult  // negative — don't cap, let it be a loss
+    : Math.min(withMult, effectiveCap);
 
   return {
     earned,
@@ -70,7 +83,8 @@ export const computeAuraPoints = ({
       dailies: dailiesEarned,
       goalsHobbies: goalsEarned,
       rawBeforeMult: rawTotal,
-      multiplier,
+      multiplier: mult,
+      effectiveCap,
       final: earned,
     }
   };

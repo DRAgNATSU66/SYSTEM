@@ -2,16 +2,17 @@ import React from 'react';
 import { Radar, RadarChart as RechartsRadar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { useTaskStore } from '../../../store/taskStore';
 import { useMetricsStore } from '../../../store/metricsStore';
-import { useStudyStore, isIQSubject } from '../../../store/studyStore';
+import { useStudyStore } from '../../../store/studyStore';
 import { useWorkoutStore } from '../../../store/workoutStore';
 import { useAuraStore } from '../../../store/auraStore';
 import { getTodayStr } from '../../../utils/dateUtils';
+import { NEURAL_PENTAGRAM_CAPS } from '../../../constants/neuralStats';
 import styles from './RadarChart.module.css';
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
-    
+
     const formatValue = (val, sub) => {
       if (sub === 'IQ') return Math.floor(70 + (val * 0.9)) + ' IQ';
       if (sub === 'MUSCLE') return (70 + (val * 0.15)).toFixed(1) + ' KG';
@@ -36,9 +37,9 @@ const CustomTooltip = ({ active, payload }) => {
 const RadarChart = () => {
   const { tasks, completions } = useTaskStore();
   const { dailyMetrics } = useMetricsStore();
-  const { subjects, sessions: studySessions } = useStudyStore();
+  const { accumulatedIQ, accumulatedKnowledge } = useStudyStore();
   const { logs: workoutLogs } = useWorkoutStore();
-  const { streakDays, maxStreak, dailyCategoryAP } = useAuraStore();
+  const { streakDays, dailyCategoryAP } = useAuraStore();
   const today = getTodayStr();
 
   const getCompletionRate = (type) => {
@@ -48,40 +49,16 @@ const RadarChart = () => {
     return Math.floor((completed / domainTasks.length) * 100);
   };
 
-  // 30-day rolling cutoff date string for cumulative metrics
-  const thirtyDaysAgo = (() => {
-    const d = new Date();
-    d.setDate(d.getDate() - 30);
-    return d.toISOString().split('T')[0];
-  })();
-
-  // IQ: rolling 30-day total on analytical/IQ subjects pulled from backend + local store.
-  // Target: 20h (1200 min) over 30 days = 100%
+  // IQ: accumulated from all study sessions — extremely hard to increase
+  // Maps accumulated IQ points to 0-100 scale for radar
   const getIQProgress = () => {
-    let iqMinutes = 0;
-    Object.entries(studySessions).forEach(([date, dayData]) => {
-      if (date >= thirtyDaysAgo) {
-        Object.entries(dayData).forEach(([subjectId, minutes]) => {
-          const subject = subjects.find(s => s.id === subjectId);
-          if (subject && isIQSubject(subject.name)) {
-            iqMinutes += minutes;
-          }
-        });
-      }
-    });
-    return Math.min(100, Math.floor((iqMinutes / 1200) * 100));
+    return Math.min(100, Math.floor((accumulatedIQ / NEURAL_PENTAGRAM_CAPS.IQ_MAX) * 100));
   };
 
-  // KNOWLEDGE: rolling 30-day total on ALL study subjects — reflects true accumulated learning
-  // from backend-stored session history. Target: 30h (1800 min) over 30 days = 100%
+  // KNOWLEDGE: accumulated from all study sessions — faster than IQ but still controlled
+  // Maps accumulated Knowledge points to 0-100 scale for radar
   const getKnowledgeProgress = () => {
-    let totalMinutes = 0;
-    Object.entries(studySessions).forEach(([date, dayData]) => {
-      if (date >= thirtyDaysAgo) {
-        totalMinutes += Object.values(dayData).reduce((a, b) => a + b, 0);
-      }
-    });
-    return Math.min(100, Math.floor((totalMinutes / 1800) * 100));
+    return Math.min(100, Math.floor((accumulatedKnowledge / NEURAL_PENTAGRAM_CAPS.KNOWLEDGE_MAX) * 100));
   };
 
   const getWorkoutProgress = () => {
@@ -108,10 +85,10 @@ const RadarChart = () => {
 
   const data = [
     { subject: 'MUSCLE', A: getWorkoutProgress(), unit: 'KG', fullMark: 100, desc: 'Hypertrophy volume and lean mass index.' },
-    { subject: 'IQ', A: getIQProgress(), unit: 'IQ', fullMark: 100, desc: 'Deep work on analytical subjects (maths, physics, aptitude, GK).' },
+    { subject: 'IQ', A: getIQProgress(), unit: 'IQ', fullMark: 100, desc: `Accumulated: ${accumulatedIQ.toFixed(1)} IQ pts. HIGH tier: 1/hr, MED: 0.5/hr, LOW: 0.1/hr.` },
     { subject: 'MOBILITY', A: 70, unit: '%', fullMark: 100, desc: 'Structural integrity and flexibility.' },
     { subject: 'MOOD', A: Math.min(100, ((metrics.mood || 5) * 10)), unit: 'PT', fullMark: 100, desc: 'Emotional equilibrium.' },
-    { subject: 'KNOWLEDGE', A: getKnowledgeProgress(), unit: '%', fullMark: 100, desc: 'Rolling 30-day total study load. Backend-accumulated knowledge score.' },
+    { subject: 'KNOWLEDGE', A: getKnowledgeProgress(), unit: '%', fullMark: 100, desc: `Accumulated: ${accumulatedKnowledge.toFixed(1)} pts. All subjects contribute 2 pts/hr.` },
     { subject: 'DISCIPLINE', A: getDisciplineScore(), unit: '%', fullMark: 100, desc: `Streaks (${streakDays}d), task completion & daily consistency.` },
   ];
 

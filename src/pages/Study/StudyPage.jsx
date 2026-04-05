@@ -3,11 +3,14 @@ import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
 import ProgressBar from '../../components/ui/ProgressBar/ProgressBar';
 import { useStudyStore } from '../../store/studyStore';
 import { useAuraStore } from '../../store/auraStore';
+import { useUserStore } from '../../store/userStore';
+import { studyService } from '../../services/studyService';
 import styles from './Study.module.css';
 
 const StudyPage = () => {
   const { subjects, addSubject, removeSubject, sessions, logSession } = useStudyStore();
   const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded } = useAuraStore();
+  const { user } = useUserStore();
   const [newSubject, setNewSubject] = useState('');
   const today = new Date().toISOString().split('T')[0];
 
@@ -38,7 +41,11 @@ const StudyPage = () => {
     if (!activeTimer || activeTimer.subjectId !== subject.id) return;
     const minutes = Math.max(1, Math.round(elapsed / 60));
     resetDailyIfNeeded();
-    logSession(subject.id, minutes);
+    if (user?.id) {
+      studyService.logSession(user.id, subject.id, minutes, today);
+    } else {
+      logSession(subject.id, minutes);
+    }
     const ap = Math.min(Math.round((minutes / 120) * 200), 200);
     addCategoryAP('STUDY', ap, `STUDY TIMED: ${subject.name} ${minutes}m`);
     checkAndUpdateStreak();
@@ -70,7 +77,15 @@ const StudyPage = () => {
           onChange={e => setNewSubject(e.target.value)}
           placeholder="ENTER NEW SUBJECT..."
         />
-        <button className={styles.btnAdd} onClick={() => { addSubject(newSubject); setNewSubject(''); }}>ADD SUBJECT</button>
+        <button className={styles.btnAdd} onClick={() => {
+          if (!newSubject) return;
+          if (user?.id) {
+            studyService.addSubject(user.id, newSubject);
+          } else {
+            addSubject(newSubject);
+          }
+          setNewSubject('');
+        }}>ADD SUBJECT</button>
       </div>
 
       <div className={styles.subjectGrid}>
@@ -99,11 +114,21 @@ const StudyPage = () => {
                 )}
                 <button className={styles.btnLog} onClick={() => {
                   resetDailyIfNeeded();
-                  logSession(s.id, 60);
+                  if (user?.id) {
+                    studyService.logSession(user.id, s.id, 60, today);
+                  } else {
+                    logSession(s.id, 60);
+                  }
                   addCategoryAP('STUDY', 100, `STUDY LOGGED: ${s.name} 60m`);
                   checkAndUpdateStreak();
                 }}>LOG 60M</button>
-                <button className={styles.btnRemove} onClick={() => removeSubject(s.id)}>DELETE</button>
+                <button className={styles.btnRemove} onClick={() => {
+                  if (user?.id) {
+                    studyService.removeSubject(user.id, s.id);
+                  } else {
+                    removeSubject(s.id);
+                  }
+                }}>DELETE</button>
               </div>
             </div>
           );

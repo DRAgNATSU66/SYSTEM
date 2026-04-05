@@ -4,8 +4,8 @@ import { getAPColor } from '../../../utils/apColorLogic';
 import styles from './XPBar.module.css';
 
 const XPBar = () => {
-  const { todayEarned } = useAuraStore();
-  const MAX_DAILY = 2000;
+  const { todayEarned, multiplier } = useAuraStore();
+  const MAX_DAILY = multiplier > 1.0 ? Math.floor(2000 * multiplier) : 2000;
 
   const progress = Math.min((todayEarned / MAX_DAILY) * 100, 100);
   const barColor = getAPColor(todayEarned);

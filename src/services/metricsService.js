@@ -31,14 +31,14 @@ export const metricsService = {
       sleep: day.sleep,
       deep_sleep: day.deepSleep,
       mood: day.mood,
+      mood_note: day.moodNote || null,
       macros: day.macros || {},
     });
   },
 
   logMacroValue(userId, id, value, date) {
     useMetricsStore.getState().logMacroValue(id, value, date);
-    const store = useMetricsStore.getState();
-    const day = store.dailyMetrics[date] || {};
+    const day = useMetricsStore.getState().dailyMetrics[date] || {};
     pushChange('daily_metrics', 'UPSERT', {
       user_id: userId,
       date,
@@ -46,6 +46,35 @@ export const metricsService = {
       deep_sleep: day.deepSleep,
       mood: day.mood,
       macros: day.macros || {},
+      micros: day.micros || {},
+    });
+  },
+
+  logMicroValue(userId, id, value, date) {
+    useMetricsStore.getState().logMicroValue(id, value, date);
+    const day = useMetricsStore.getState().dailyMetrics[date] || {};
+    pushChange('daily_metrics', 'UPSERT', {
+      user_id: userId,
+      date,
+      sleep: day.sleep,
+      deep_sleep: day.deepSleep,
+      mood: day.mood,
+      macros: day.macros || {},
+      micros: day.micros || {},
+    });
+  },
+
+  logBaselineToday(userId, today) {
+    useMetricsStore.getState().logBaselineToday();
+    const day = useMetricsStore.getState().dailyMetrics[today] || {};
+    pushChange('daily_metrics', 'UPSERT', {
+      user_id: userId,
+      date: today,
+      sleep: day.sleep,
+      deep_sleep: day.deepSleep,
+      mood: day.mood,
+      macros: day.macros || {},
+      micros: day.micros || {},
     });
   },
 

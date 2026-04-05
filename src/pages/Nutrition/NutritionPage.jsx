@@ -3,6 +3,8 @@ import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
 import DomainPieChart from '../../components/charts/DomainPieChart/DomainPieChart';
 import { useMetricsStore } from '../../store/metricsStore';
 import { useAuraStore } from '../../store/auraStore';
+import { useUserStore } from '../../store/userStore';
+import { metricsService } from '../../services/metricsService';
 import { getTodayStr } from '../../utils/dateUtils';
 import styles from './Nutrition.module.css';
 
@@ -86,6 +88,7 @@ const NutritionPage = () => {
     addMacro, deleteMacro, setMacroLimit, setMicroLimit,
     logBaselineToday
   } = useMetricsStore();
+  const { user } = useUserStore();
 
   const today       = getTodayStr();
   const todayData   = dailyMetrics[today] || {};
@@ -109,12 +112,20 @@ const NutritionPage = () => {
   const handleLogItem = (macro, rawValue) => {
     resetDailyIfNeeded();
 
-    // Always persist the entered value to the store first
+    // Always persist the entered value to the store + sync to backend
     const valueToLog = parseFloat(rawValue) || 0;
     if (tab === 'macros') {
-      logMacroValue(macro.id, valueToLog);
+      if (user?.id) {
+        metricsService.logMacroValue(user.id, macro.id, valueToLog, today);
+      } else {
+        logMacroValue(macro.id, valueToLog);
+      }
     } else {
-      logMicroValue(macro.id, valueToLog);
+      if (user?.id) {
+        metricsService.logMicroValue(user.id, macro.id, valueToLog, today);
+      } else {
+        logMicroValue(macro.id, valueToLog);
+      }
     }
 
     // Check if this specific nutrient already awarded AP today
@@ -157,7 +168,11 @@ const NutritionPage = () => {
   };
 
   const handleBaselineLog = () => {
-    logBaselineToday();
+    if (user?.id) {
+      metricsService.logBaselineToday(user.id, today);
+    } else {
+      logBaselineToday();
+    }
     setFlash('Baseline logged!');
     setTimeout(() => setFlash(''), 2000);
   };
@@ -170,7 +185,7 @@ const NutritionPage = () => {
           <div>
             <h1>METABOLIC ENGINE</h1>
             <p className={styles.subtitle}>
-              Track macros & 16 micronutrients. Overall: {overallProgress}%
+              Track macros & {customMicros.length} micronutrients. Overall: {overallProgress}%
             </p>
           </div>
           <div className={styles.headerActions}>
@@ -255,7 +270,6 @@ const NutritionPage = () => {
         <h3>METABOLIC STRATEGY</h3>
         <p>• <b>Baseline</b>: Save your current targets, then one-click log the defaults each day.</p>
         <p>• <b>100%</b>: All macros AND micros must hit their targets for full nutrition completion.</p>
-        <p>• <b>Protein</b>: Minimum {customMacros.find(m => m.id === 'pro')?.minLimit || 180}g for MPS optimization.</p>
       </div>
     </PageWrapper>
   );

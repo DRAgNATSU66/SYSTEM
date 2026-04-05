@@ -199,6 +199,8 @@ export async function pullAllData(userId) {
       const auraHistory = (auraLogsRes.data || []).map(row => ({
         date: row.date,
         net: row.net,
+        earned: row.earned || 0,
+        lost: row.lost || 0,
         multiplier: row.multiplier,
       }));
 
@@ -213,6 +215,15 @@ export async function pullAllData(userId) {
           multiplier: p.multiplier,
           auraHistory,
           lastSyncedAt: now,
+        });
+      }
+
+      // Hydrate accumulated IQ/Knowledge from profile if available
+      if (p.accumulated_iq != null || p.accumulated_knowledge != null) {
+        const localStudy = useStudyStore.getState();
+        useStudyStore.getState().hydrateFromServer({
+          accumulatedIQ: Math.max(localStudy.accumulatedIQ || 0, p.accumulated_iq || 0),
+          accumulatedKnowledge: Math.max(localStudy.accumulatedKnowledge || 0, p.accumulated_knowledge || 0),
         });
       }
     }
@@ -288,23 +299,44 @@ export async function pullAllData(userId) {
         }
       });
 
+      // Preserve accumulated IQ/Knowledge — take max of local vs server
+      const localStudy = useStudyStore.getState();
+      const serverIQ = studySessionsRes.data?.[0]?.accumulated_iq ?? 0;
+      const serverKnowledge = studySessionsRes.data?.[0]?.accumulated_knowledge ?? 0;
+
       useStudyStore.getState().hydrateFromServer({
-        subjects: studySubjectsRes.data?.length ? studySubjectsRes.data : useStudyStore.getState().subjects,
+        subjects: studySubjectsRes.data?.length ? studySubjectsRes.data : localStudy.subjects,
         sessions: mergedSessions,
+        accumulatedIQ: Math.max(localStudy.accumulatedIQ || 0, serverIQ),
+        accumulatedKnowledge: Math.max(localStudy.accumulatedKnowledge || 0, serverKnowledge),
         lastSyncedAt: now,
       });
     }
 
     // — Hydrate metricsStore
     if (metricsRes.data?.length || macroConfigRes.data) {
+      const localMetrics = useMetricsStore.getState().dailyMetrics;
       const dailyMetrics = {};
       (metricsRes.data || []).forEach(row => {
+        // If server has no micros for this date, preserve whatever is stored locally
+        // so that a background pullAllData never wipes locally-entered micro values.
+        const serverMicros = row.micros && Object.keys(row.micros).length > 0
+          ? row.micros
+          : (localMetrics[row.date]?.micros || {});
         dailyMetrics[row.date] = {
           sleep: row.sleep,
           deepSleep: row.deep_sleep,
           mood: row.mood,
+          moodNote: row.mood_note || undefined,
           macros: row.macros || {},
+          micros: serverMicros,
         };
+      });
+      // Preserve local-only dates (not yet on server) so they are not wiped
+      Object.keys(localMetrics).forEach(date => {
+        if (!dailyMetrics[date]) {
+          dailyMetrics[date] = localMetrics[date];
+        }
       });
       useMetricsStore.getState().hydrateFromServer({
         dailyMetrics,
@@ -314,29 +346,50 @@ export async function pullAllData(userId) {
     }
 
     // — Hydrate assetStores (goals, projects, hobbies)
-    // Only overwrite local data if the server actually has records;
-    // otherwise keep local data intact (prevents wiping unsaved items).
-    if (goalsRes.data?.length) {
+    // Merge strategy: combine server + local data, deduplicate by ID,
+    // prefer server version when both exist (server is source of truth).
+    // Local-only items (not yet synced) are preserved.
+
+    // Helper: merge arrays by id, server takes precedence on conflicts
+    const mergeById = (serverArr, localArr) => {
+      const serverIds = new Set((serverArr || []).map(item => item.id));
+      const localOnly = (localArr || []).filter(item => !serverIds.has(item.id));
+      return [...(serverArr || []), ...localOnly];
+    };
+
+    {
+      const serverGoals = goalsRes.data || [];
+      const localGoalState = useGoalStore.getState();
+      const serverActive = serverGoals.filter(g => !g.completed && !g.archived);
+      const serverHistory = serverGoals.filter(g => g.completed || g.archived);
       useGoalStore.getState().hydrateFromServer({
-        goals: goalsRes.data.filter(g => !g.completed && !g.archived),
-        goalsHistory: goalsRes.data.filter(g => g.completed || g.archived),
+        goals: mergeById(serverActive, localGoalState.goals),
+        goalsHistory: mergeById(serverHistory, localGoalState.goalsHistory),
         lastSyncedAt: now,
       });
     }
 
-    if (projectsRes.data?.length) {
+    {
+      const serverProjects = projectsRes.data || [];
+      const localProjectState = useProjectStore.getState();
+      const serverActive = serverProjects.filter(p => !p.archived);
+      const serverHistory = serverProjects.filter(p => p.archived);
       useProjectStore.getState().hydrateFromServer({
-        projects: projectsRes.data.filter(p => !p.archived),
-        projectsHistory: projectsRes.data.filter(p => p.archived),
-        sessions: projectSessionsRes.data || [],
+        projects: mergeById(serverActive, localProjectState.projects),
+        projectsHistory: mergeById(serverHistory, localProjectState.projectsHistory),
+        sessions: mergeById(projectSessionsRes.data || [], localProjectState.sessions),
         lastSyncedAt: now,
       });
     }
 
-    if (hobbiesRes.data?.length) {
+    {
+      const serverHobbies = hobbiesRes.data || [];
+      const localHobbyState = useHobbyStore.getState();
+      const serverActive = serverHobbies.filter(h => !h.archived);
+      const serverHistory = serverHobbies.filter(h => h.archived);
       useHobbyStore.getState().hydrateFromServer({
-        hobbies: hobbiesRes.data.filter(h => !h.archived),
-        hobbiesHistory: hobbiesRes.data.filter(h => h.archived),
+        hobbies: mergeById(serverActive, localHobbyState.hobbies),
+        hobbiesHistory: mergeById(serverHistory, localHobbyState.hobbiesHistory),
         lastSyncedAt: now,
       });
     }
@@ -369,8 +422,20 @@ export async function seedServerFromLocal(userId) {
   const goalState = useGoalStore.getState();
   const projectState = useProjectStore.getState();
   const hobbyState = useHobbyStore.getState();
+  const studyState = useStudyStore.getState();
 
   const ops = [];
+
+  // Push profile with multiplier, streak, and neural stats
+  ops.push(supabase.from('profiles').upsert({
+    id: userId,
+    total_aura_points: auraState.totalAuraPoints,
+    current_streak: auraState.streakDays,
+    max_streak: auraState.maxStreak,
+    multiplier: auraState.multiplier,
+    accumulated_iq: studyState.accumulatedIQ || 0,
+    accumulated_knowledge: studyState.accumulatedKnowledge || 0,
+  }, { onConflict: 'id' }));
 
   // Push tasks
   taskState.tasks.forEach(task => {

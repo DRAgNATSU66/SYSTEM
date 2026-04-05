@@ -1,112 +1,71 @@
 version: "2"
 type: frontend
 tech_stack:
-  - React 19
+  - React
   - Vite
-  - React Router 7
   - Zustand
-  - Supabase
-  - Recharts
+  - Vanilla CSS Modules
   - Framer Motion
-  - Three.js
-  - Lucide React
+  - Recharts
 routes:
   - path: /auth
     file: src/pages/Auth/AuthPage.jsx
     auth_required: false
-    description: Login and signup page
-  - path: /
+    description: User login and registration
+  - path: /dashboard
     file: src/pages/Dashboard/DashboardPage.jsx
     auth_required: true
-    description: Main dashboard overview
-  - path: /command
-    file: src/pages/Command/CommandPage.jsx
-    auth_required: true
-    description: Quick command interface
-  - path: /habits
-    file: src/pages/Habits/HabitsPage.jsx
-    auth_required: true
-    description: Habit tracking page
-  - path: /workout
-    file: src/pages/Workout/WorkoutPage.jsx
-    auth_required: true
-    description: Workout logging
-  - path: /study
-    file: src/pages/Study/StudyPage.jsx
-    auth_required: true
-    description: Study sessions
-  - path: /nutrition
-    file: src/pages/Nutrition/NutritionPage.jsx
-    auth_required: true
-    description: Nutrition logging
-  - path: /sleep
-    file: src/pages/Sleep/SleepPage.jsx
-    auth_required: true
-    description: Sleep logging
-  - path: /mood
-    file: src/pages/Mood/MoodPage.jsx
-    auth_required: true
-    description: Mood logging
-  - path: /goals
-    file: src/pages/Goals/GoalsPage.jsx
-    auth_required: true
-    description: Goal management
-  - path: /sidehustles
-    file: src/pages/SideHustles/ProjectsPage.jsx
-    auth_required: true
-    description: Project tracking
-  - path: /social
-    file: src/pages/Social/FriendsPage.jsx
-    auth_required: true
-    description: Friends and social interaction
-  - path: /duels
-    file: src/pages/Duels/DuelPage.jsx
-    auth_required: true
-    description: Competitive duels
-  - path: /leaderboard
-    file: src/pages/Leaderboard/LeaderboardPage.jsx
-    auth_required: true
-    description: Rankings
-  - path: /history
-    file: src/pages/History/AuraHistoryPage.jsx
-    auth_required: true
-    description: Aura history
-  - path: /calendar
-    file: src/pages/Calendar/CalendarPage.jsx
-    auth_required: true
-    description: System calendar
+    description: Main user dashboard showing daily tracker progress, XP bar, heatmap, chart
   - path: /shop
     file: src/pages/Shop/ShopPage.jsx
     auth_required: true
-    description: Aura marketplace
+    description: Shop to redeem Aura Points for real-world rewards
   - path: /settings
     file: src/pages/Settings/SettingsPage.jsx
     auth_required: true
-    description: User settings
+    description: App configuration, task management, profile
+  - path: /leaderboard
+    file: src/pages/Leaderboard/LeaderboardPage.jsx
+    auth_required: true
+    description: Leaderboard of users
+  - path: /calendar
+    file: src/pages/Calendar/CalendarPage.jsx
+    auth_required: true
+    description: Calendar view of past performance
 features:
-  - name: Aura Gamification
-    description: Earn AP for habit completion
+  - name: Authentication
+    description: Login or register to access the tracker
     files:
+      - src/pages/Auth/AuthPage.jsx
       - src/store/userStore.js
-      - src/pages/Dashboard/DashboardPage.jsx
-    entry_route: /
+    entry_route: /auth
     user_interactions:
-      - Complete a habit
-      - Check AP balance change
-  - name: Neural Pentagram
-    description: Radar visualization of life metrics
+      - Enter email and password
+      - Click Access Terminal
+      - Redirect to app upon success
+    api_calls:
+      - method: POST
+        endpoint: Supabase Auth
+    auth_required: false
+  - name: Dashboard Progress
+    description: Track daily stats, mark tasks complete, view dynamic progress bars
     files:
       - src/pages/Dashboard/DashboardPage.jsx
-    entry_route: /
+      - src/store/auraStore.js
+      - src/store/taskStore.js
+    entry_route: /dashboard
     user_interactions:
-      - View dashboard
-      - Interact with pentagram data points
-  - name: Marketplace
-    description: Purchase items with AP
+      - Click MARK DONE on daily tasks
+      - See XP bar fill up
+      - View heatmap updates
+    auth_required: true
+  - name: Shop Redemption
+    description: Redeem accrued AP for rewards
     files:
       - src/pages/Shop/ShopPage.jsx
     entry_route: /shop
     user_interactions:
-      - Browse rewards
-      - Initiate purchase
+      - See AP balance
+      - Click REDEEM on Amazon or Netflix card
+    auth_required: true
 known_limitations: []

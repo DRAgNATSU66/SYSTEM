@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useHobbyStore } from '../../store/assetStores';
+import { useUserStore } from '../../store/userStore';
+import { hobbyService } from '../../services/hobbyService';
 import styles from './HobbyForm.module.css';
 
 const HobbyForm = ({ onClose }) => {
   const addHobby = useHobbyStore(state => state.addHobby);
+  const { user } = useUserStore();
   const [title, setTitle] = useState('');
   const [type, setType] = useState('PERMANENT');
   const [categories, setCategories] = useState([]);
 
   const toggleCategory = (cat) => {
-    setCategories(prev => 
+    setCategories(prev =>
       prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
     );
   };
@@ -18,13 +21,19 @@ const HobbyForm = ({ onClose }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title) return;
-    
-    addHobby({
+
+    const hobbyData = {
       title,
       type,
       categories,
       lastLogged: null
-    });
+    };
+
+    if (user?.id) {
+      hobbyService.addHobby(user.id, hobbyData);
+    } else {
+      addHobby(hobbyData);
+    }
     onClose();
   };
 
@@ -39,10 +48,10 @@ const HobbyForm = ({ onClose }) => {
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
             <label>HOBBY NAME</label>
-            <input 
-              type="text" 
-              value={title} 
-              onChange={e => setTitle(e.target.value)} 
+            <input
+              type="text"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
               placeholder="e.g. DIGITAL ART, CHESS..."
               className={styles.input}
               autoFocus

@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS profiles (
   current_streak INTEGER DEFAULT 0,
   max_streak INTEGER DEFAULT 0,
   multiplier NUMERIC(3,1) DEFAULT 1.0,
+  accumulated_iq NUMERIC(8,2) DEFAULT 0,
+  accumulated_knowledge NUMERIC(8,2) DEFAULT 0,
   last_login_date DATE,
   rank_tier TEXT DEFAULT 'Normie',
   preferences JSONB DEFAULT '{}',

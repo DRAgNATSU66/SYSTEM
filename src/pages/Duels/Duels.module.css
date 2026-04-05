@@ -1,7 +1,8 @@
 .container { padding: 4rem 2rem; max-width: 1000px; margin: 0 auto; text-align: center; }
 .header { margin-bottom: 5rem; }
 .header h1 { font-family: 'Outfit'; font-size: 3rem; color: #fff; letter-spacing: 0.2em; }
-.activeDuels { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 2rem; margin-bottom: 4rem; }
+.activeDuels { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 2rem; margin-bottom: 4rem; justify-content: center; }
+.empty { grid-column: 1 / -1; text-align: center; color: var(--text-secondary); font-size: 0.9rem; padding: 2rem; }
 .duelCard { background: var(--bg-surface); padding: 2.5rem; border-radius: 16px; border: 1px solid var(--rank-alpha); box-shadow: 0 0 30px rgba(0,191,255,0.05); }
 .duelInfo { margin-bottom: 2rem; }
 .versus { font-family: 'Outfit'; font-size: 0.7rem; color: var(--rank-slacking); font-weight: 900; letter-spacing: 0.3em; margin-bottom: 0.5rem; }

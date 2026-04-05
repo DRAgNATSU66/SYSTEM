@@ -4,6 +4,8 @@ import ProgressBar from '../../components/ui/ProgressBar/ProgressBar';
 import SubRadar from '../../components/charts/SubRadar/SubRadar';
 import { useWorkoutStore } from '../../store/workoutStore';
 import { useAuraStore } from '../../store/auraStore';
+import { useUserStore } from '../../store/userStore';
+import { workoutService } from '../../services/workoutService';
 import { getTodayStr } from '../../utils/dateUtils';
 import { calculateVO2Max } from '../../utils/vo2MaxCalculator';
 import styles from './Workout.module.css';
@@ -89,15 +91,15 @@ const MuscleGroupCard = ({ title, subGroups, logs, pbs, onLog, onLogAll, lastLog
         <div className={styles.volumeEngine}>
           <div className={styles.field}>
             <label>SETS</label>
-            <input type="number" value={sets} onChange={e => setSets(e.target.value)} min="1" max="20" />
+            <input type="number" value={sets} onChange={e => setSets(e.target.value)} min="1" max="20" step="1" />
           </div>
           <div className={styles.field}>
             <label>REPS</label>
-            <input type="number" value={reps} onChange={e => setReps(e.target.value)} min="1" max="100" />
+            <input type="number" value={reps} onChange={e => setReps(e.target.value)} min="1" max="100" step="1" />
           </div>
           <div className={styles.field}>
             <label>KG</label>
-            <input type="number" value={weight} onChange={e => setWeight(e.target.value)} min="0" max="500" />
+            <input type="number" value={weight} onChange={e => setWeight(e.target.value)} min="0" max="500" step="1" />
           </div>
         </div>
 
@@ -119,13 +121,13 @@ const MuscleGroupCard = ({ title, subGroups, logs, pbs, onLog, onLogAll, lastLog
 // ─── VO2 Max Card ─────────────────────────────────────────────────────────────
 const VO2MaxCard = ({ onLog, lastVO2 }) => {
   const defaults = lastVO2 || { bpm: 160, distKm: 3.5, timeMins: 10, age: 22 };
-  const [bpm,      setBpm]      = useState(defaults.bpm      || 160);
-  const [distKm,   setDistKm]   = useState(defaults.distKm   || 3.5);
-  const [timeMins, setTimeMins] = useState(defaults.timeMins || 10);
-  const [age,      setAge]      = useState(defaults.age      || 22);
+  const [bpm,      setBpm]      = useState(String(defaults.bpm      || 160));
+  const [distKm,   setDistKm]   = useState(String(defaults.distKm   || 3.5));
+  const [timeMins, setTimeMins] = useState(String(defaults.timeMins || 10));
+  const [age,      setAge]      = useState(String(defaults.age      || 22));
 
   // Live preview — recalculated on every input change, no button click needed
-  const result = calculateVO2Max({ bpm, distKm, timeMins, age });
+  const result = calculateVO2Max({ bpm: parseFloat(bpm) || 0, distKm: parseFloat(distKm) || 0, timeMins: parseFloat(timeMins) || 10, age: parseInt(age) || 20 });
 
   const scoreLabel =
     result.score >= 80 ? 'ELITE' :
@@ -141,19 +143,19 @@ const VO2MaxCard = ({ onLog, lastVO2 }) => {
         <div className={styles.vo2Grid}>
           <div className={styles.field}>
             <label>AVG BPM</label>
-            <input type="number" value={bpm} onChange={e => setBpm(parseInt(e.target.value) || 0)} min="60" max="220" />
+            <input type="number" value={bpm} onChange={e => setBpm(e.target.value)} min="60" max="220" />
           </div>
           <div className={styles.field}>
             <label>DISTANCE (KM)</label>
-            <input type="number" step="0.1" value={distKm} onChange={e => setDistKm(parseFloat(e.target.value) || 0)} min="0" max="20" />
+            <input type="number" step="0.1" value={distKm} onChange={e => setDistKm(e.target.value)} min="0" max="20" />
           </div>
           <div className={styles.field}>
             <label>TIME (MIN)</label>
-            <input type="number" value={timeMins} onChange={e => setTimeMins(parseInt(e.target.value) || 10)} min="1" max="60" />
+            <input type="number" value={timeMins} onChange={e => setTimeMins(e.target.value)} min="1" max="60" />
           </div>
           <div className={styles.field}>
             <label>AGE</label>
-            <input type="number" value={age} onChange={e => setAge(parseInt(e.target.value) || 20)} min="10" max="100" />
+            <input type="number" value={age} onChange={e => setAge(e.target.value)} min="10" max="100" />
           </div>
         </div>
 
@@ -173,6 +175,7 @@ const VO2MaxCard = ({ onLog, lastVO2 }) => {
 const WorkoutPage = () => {
   const { muscles, logVolume, logCardio, logs, personalBests, lastLoggedValues, lastLoggedCardio } = useWorkoutStore();
   const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded } = useAuraStore();
+  const { user } = useUserStore();
   const today     = getTodayStr();
   const todayLogs = logs[today] || {};
   const weekDates = useMemo(() => getWeekDates(), []);
@@ -180,7 +183,7 @@ const WorkoutPage = () => {
   const scheduledType = getScheduledType();
   const [activeTab, setActiveTab] = useState('hypertrophy');
   const lastLSS = lastLoggedCardio?.lss || { minutes: 30, bpm: 135 };
-  const [lss, setLss] = useState({ minutes: lastLSS.minutes, bpm: lastLSS.bpm });
+  const [lss, setLss] = useState({ minutes: String(lastLSS.minutes), bpm: String(lastLSS.bpm) });
 
   // Muscle groups split by category
   const hypertrophyGroups = Object.entries(muscles).filter(([key]) => key !== 'mobility');
@@ -215,7 +218,11 @@ const WorkoutPage = () => {
   const handleLogVolume = (g, s, sets, reps, weight) => {
     resetDailyIfNeeded();
     const oldPB  = personalBests?.[g]?.[s] || 0;
-    logVolume(g, s, sets, reps, weight);
+    if (user?.id) {
+      workoutService.logVolume(user.id, g, s, sets, reps, weight, today);
+    } else {
+      logVolume(g, s, sets, reps, weight);
+    }
     const new1RM = weight * (1 + reps / 30);
     if (new1RM > oldPB && oldPB > 0) {
       addCategoryAP('WORKOUT', 50, `NEW PERSONAL BEST: ${s} (${Math.floor(new1RM)}kg 1RM)`);
@@ -228,7 +235,11 @@ const WorkoutPage = () => {
   const handleLogAllGroup = (group, subGroups) => {
     resetDailyIfNeeded();
     subGroups.forEach(sub => {
-      logVolume(group, sub, 3, 10, 20);
+      if (user?.id) {
+        workoutService.logVolume(user.id, group, sub, 3, 10, 20, today);
+      } else {
+        logVolume(group, sub, 3, 10, 20);
+      }
       addCategoryAP('WORKOUT', 10, `VOLUME LOGGED: ${sub}`);
     });
     checkAndUpdateStreak();
@@ -243,7 +254,11 @@ const WorkoutPage = () => {
 
     groups.forEach(([group, subs]) => {
       subs.forEach(sub => {
-        logVolume(group, sub, 3, 10, 20);
+        if (user?.id) {
+          workoutService.logVolume(user.id, group, sub, 3, 10, 20, today);
+        } else {
+          logVolume(group, sub, 3, 10, 20);
+        }
         addCategoryAP('WORKOUT', 10, `VOLUME LOGGED: ${sub}`);
       });
     });
@@ -252,7 +267,11 @@ const WorkoutPage = () => {
 
   const handleVO2Log = (res) => {
     resetDailyIfNeeded();
-    logCardio('vo2max', { value: res.rawVO2, score: res.score, date: today });
+    if (user?.id) {
+      workoutService.logCardio(user.id, 'vo2max', { value: res.rawVO2, score: res.score, date: today }, today);
+    } else {
+      logCardio('vo2max', { value: res.rawVO2, score: res.score, date: today });
+    }
     addCategoryAP('WORKOUT', 20, `VO2 MAX LOGGED: ${res.rawVO2} ml/kg/min (Score ${res.score}/100)`);
     checkAndUpdateStreak();
   };
@@ -364,7 +383,7 @@ const WorkoutPage = () => {
                   <input
                     type="number"
                     value={lss.minutes}
-                    onChange={e => setLss({ ...lss, minutes: parseInt(e.target.value) || 0 })}
+                    onChange={e => setLss({ ...lss, minutes: e.target.value })}
                     min="1" max="300"
                   />
                 </div>
@@ -373,14 +392,19 @@ const WorkoutPage = () => {
                   <input
                     type="number"
                     value={lss.bpm}
-                    onChange={e => setLss({ ...lss, bpm: parseInt(e.target.value) || 0 })}
+                    onChange={e => setLss({ ...lss, bpm: e.target.value })}
                     min="60" max="220"
                   />
                 </div>
                 <button className={styles.btnPrimary} onClick={() => {
                   resetDailyIfNeeded();
-                  logCardio('lss', lss);
-                  addCategoryAP('WORKOUT', 15, `LSS CARDIO LOGGED: ${lss.minutes}min @ ${lss.bpm}bpm`);
+                  const lssData = { minutes: parseInt(lss.minutes) || 0, bpm: parseInt(lss.bpm) || 0 };
+                  if (user?.id) {
+                    workoutService.logCardio(user.id, 'lss', lssData, today);
+                  } else {
+                    logCardio('lss', lssData);
+                  }
+                  addCategoryAP('WORKOUT', 15, `LSS CARDIO LOGGED: ${lssData.minutes}min @ ${lssData.bpm}bpm`);
                   checkAndUpdateStreak();
                 }}>SYNC DATA</button>
               </div>
