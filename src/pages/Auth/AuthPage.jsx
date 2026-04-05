@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../services/supabaseClient';
 import { useUserStore } from '../../store/userStore';
@@ -148,11 +148,64 @@ const AuthPage = () => {
   const [isLogin, setIsLogin]       = useState(true);
   const [error, setError]           = useState(null);
   const [loading, setLoading]       = useState(false);
+  const [oauthLoading, setOauthLoading] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
   const [pendingUser, setPendingUser] = useState(null); // awaiting player name
   const navigate = useNavigate();
   const setUser        = useUserStore(state => state.setUser);
   const updateProfile  = useUserStore(state => state.updateProfile);
+
+  // ── Handle OAuth callback (Google redirect lands here) ──────────────────
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        const user = session.user;
+        // Only handle OAuth providers here (email/password handled in handleSubmit)
+        const provider = user.app_metadata?.provider;
+        if (provider && provider !== 'email') {
+          setUser(user);
+          // Check if this user already has a profile
+          try {
+            const profile = await userService.getProfile(user.id);
+            if (profile?.username) {
+              // Returning user — pull data and go to dashboard
+              await pullAllData(user.id);
+              navigate('/');
+            } else {
+              // New OAuth user — show alias prompt
+              const defaultName = (user.user_metadata?.full_name || user.email?.split('@')[0] || 'GRINDER')
+                .replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 24);
+              setPendingUser({ userId: user.id, defaultName });
+            }
+          } catch {
+            // Profile doesn't exist yet — new user
+            const defaultName = (user.user_metadata?.full_name || user.email?.split('@')[0] || 'GRINDER')
+              .replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 24);
+            setPendingUser({ userId: user.id, defaultName });
+          }
+          setOauthLoading(false);
+        }
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [navigate, setUser]);
+
+  // ── Google OAuth ─────────────────────────────────────────────────────────
+  const handleGoogleSignIn = async () => {
+    setOauthLoading(true);
+    setError(null);
+    const { error: oauthErr } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth`,
+      },
+    });
+    if (oauthErr) {
+      setError(oauthErr.message);
+      setOauthLoading(false);
+    }
+    // On success, browser redirects to Google — callback handled in useEffect above
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -236,13 +289,36 @@ const AuthPage = () => {
   // ── Main Login / Signup ──────────────────────────────────────────────────
   return (
     <div className={styles.container}>
-
       <div className={styles.card}>
         <img src={systemIcon} alt="SYSTEM" className={styles.brandIcon} />
         <h1>SYSTEM</h1>
         <p className={styles.subtitle}>{isLogin ? 'Initialize Uplink' : 'Register Signature'}</p>
 
         {error && <div className={styles.error}>{error}</div>}
+
+        {/* ── Google OAuth Button ── */}
+        <button
+          className={styles.googleButton}
+          onClick={handleGoogleSignIn}
+          disabled={oauthLoading || loading}
+          type="button"
+        >
+          {oauthLoading ? (
+            <span className={styles.googleSpinner} />
+          ) : (
+            <svg viewBox="0 0 24 24" className={styles.googleIcon} aria-hidden="true">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+          )}
+          {oauthLoading ? 'CONNECTING...' : 'CONTINUE WITH GOOGLE'}
+        </button>
+
+        <div className={styles.divider}>
+          <span>or</span>
+        </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <input
@@ -263,7 +339,7 @@ const AuthPage = () => {
             minLength={isLogin ? undefined : 8}
           />
 
-          <button type="submit" className={styles.button} disabled={loading}>
+          <button type="submit" className={styles.button} disabled={loading || oauthLoading}>
             {loading ? 'SYNCING...' : (isLogin ? 'ACCESS TERMINAL' : 'INITIALIZE PROTOCOL')}
           </button>
         </form>
