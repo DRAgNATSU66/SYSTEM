@@ -6,10 +6,7 @@ import { getTodayStr } from '../utils/dateUtils';
 export const useGoalStore = create(
   persist(
     (set) => ({
-      goals: [
-        { id: 'sgpa-9', title: 'SCORE 9+ SGPA', target_date: '2026-06-30', completed: false, bounty_ap: 5000, isStagnant: true },
-        { id: 'gate-800', title: 'SCORE 800+ GATE EXAM', target_date: '2027-02-15', completed: false, bounty_ap: 10000, isStagnant: true }
-      ],
+      goals: [],
       goalsHistory: [],
       
       addGoal: (title, target_date, bounty_ap = 1000, isStagnant = true) => set((state) => ({
@@ -63,9 +60,7 @@ export const useGoalStore = create(
 export const useProjectStore = create(
   persist(
     (set) => ({
-      projects: [
-        { id: 'cs-v4', title: 'SYSTEM V4.0 OS', type: 'CS', status: 'IN_PROGRESS', color: '#00BFFF', total_hours: 0 }
-      ],
+      projects: [],
       projectsHistory: [],
       sessions: [], 
       

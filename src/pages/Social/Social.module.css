@@ -10,3 +10,12 @@
 .info h3 { margin: 0; font-family: 'Outfit'; font-size: 1rem; color: #fff; }
 .status { font-size: 0.6rem; font-weight: 900; letter-spacing: 0.1em; }
 .btnPing { margin-left: auto; background: transparent; border: 1px dashed rgba(255,255,255,0.3); color: var(--text-secondary); padding: 4px 10px; border-radius: 4px; font-size: 0.6rem; font-weight: 900; cursor: pointer; }
+
+@media (max-width: 480px) {
+  .container { padding: 1.5rem 1rem; }
+  .header h1 { font-size: 1.6rem; }
+  .addForm { flex-direction: column; }
+  .btnAdd { width: 100%; text-align: center; }
+  .grid { grid-template-columns: 1fr; }
+  .friendCard { flex-wrap: wrap; }
+}

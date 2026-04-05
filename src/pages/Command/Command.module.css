@@ -12,3 +12,9 @@
 .ai { color: var(--rank-alpha); margin-bottom: 1rem; font-weight: 100; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 0.12em; }
 .commandForm { margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem; }
 .numInput { background: transparent; border: none; outline: none; color: var(--rank-alpha); width: 100%; font-family: 'Outfit'; letter-spacing: 0.2em; font-weight: 100; font-size: 1.2rem; text-transform: uppercase; }
+
+@media (max-width: 480px) {
+  .container { padding: 1.5rem 1rem; }
+  .terminal { height: 60vh; padding: 1rem; }
+  .numInput { font-size: 0.9rem; }
+}

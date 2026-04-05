@@ -1,4 +1,4 @@
-.container { padding: 2rem; max-width: 800px; margin: 0 auto; overflow: hidden; }
+.container { padding: 2rem; max-width: 800px; margin: 0 auto; }
 .header { text-align: center; margin-bottom: 4rem; min-width: 0; }
 .header h1 { font-family: 'Outfit'; font-size: 2.5rem; color: #fff; letter-spacing: 0.1em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .headerTop { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem; min-width: 0; }
@@ -37,3 +37,26 @@
 .historyLabel { font-family: 'Outfit'; font-size: 0.75rem; font-weight: 800; color: var(--mood-color, #FFD700); letter-spacing: 0.08em; min-width: 80px; }
 .historyNote { flex: 1; font-size: 0.8rem; color: var(--text-secondary); font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .historyScore { font-family: 'Outfit'; font-weight: 900; font-size: 0.9rem; color: #fff; margin-left: auto; }
+
+@media (max-width: 768px) {
+  .container { padding: 1.5rem; }
+  .header { margin-bottom: 2rem; }
+  .header h1 { font-size: 2rem; }
+  .headerTop { flex-direction: column; align-items: stretch; gap: 1rem; }
+  .overallProgress { width: 100%; }
+  .subtitle { white-space: normal; }
+  .face { padding: 1.25rem 0.75rem; }
+  .face:hover { transform: none; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 1.25rem; }
+  .header h1 { font-size: 1.6rem; }
+  .grid { grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 0.5rem; }
+  .face { padding: 1rem 0.5rem; }
+  .val { font-size: 1.8rem; }
+  .historyEntry { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+  .historyNote { white-space: normal; }
+  .noteActions { flex-direction: column; }
+  .btnLogMood, .btnCancel { width: 100%; text-align: center; }
+}

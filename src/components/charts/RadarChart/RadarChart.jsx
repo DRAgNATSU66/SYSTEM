@@ -44,7 +44,7 @@ const RadarChart = () => {
 
   const getCompletionRate = (type) => {
     const domainTasks = tasks.filter(t => t.type === type);
-    if (domainTasks.length === 0) return 50;
+    if (domainTasks.length === 0) return 0;
     const completed = domainTasks.filter(t => completions[t.id]?.[today]).length;
     return Math.floor((completed / domainTasks.length) * 100);
   };
@@ -86,7 +86,7 @@ const RadarChart = () => {
   const data = [
     { subject: 'MUSCLE', A: getWorkoutProgress(), unit: 'KG', fullMark: 100, desc: 'Hypertrophy volume and lean mass index.' },
     { subject: 'IQ', A: getIQProgress(), unit: 'IQ', fullMark: 100, desc: `Accumulated: ${accumulatedIQ.toFixed(1)} IQ pts. HIGH tier: 1/hr, MED: 0.5/hr, LOW: 0.1/hr.` },
-    { subject: 'MOBILITY', A: 70, unit: '%', fullMark: 100, desc: 'Structural integrity and flexibility.' },
+    { subject: 'MOBILITY', A: 0, unit: '%', fullMark: 100, desc: 'Structural integrity and flexibility.' },
     { subject: 'MOOD', A: Math.min(100, ((metrics.mood || 5) * 10)), unit: 'PT', fullMark: 100, desc: 'Emotional equilibrium.' },
     { subject: 'KNOWLEDGE', A: getKnowledgeProgress(), unit: '%', fullMark: 100, desc: `Accumulated: ${accumulatedKnowledge.toFixed(1)} pts. All subjects contribute 2 pts/hr.` },
     { subject: 'DISCIPLINE', A: getDisciplineScore(), unit: '%', fullMark: 100, desc: `Streaks (${streakDays}d), task completion & daily consistency.` },

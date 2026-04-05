@@ -16,3 +16,11 @@
 .completed { opacity: 0.6; border-color: var(--color-blue); }
 .btnComplete { width: 100%; padding: 0.8rem; background: var(--color-green); border: none; border-radius: var(--radius-sm); color: #000; font-weight: 900; cursor: pointer; }
 .btnDelete { position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 0.7rem; min-height: auto; min-width: auto; }
+
+@media (max-width: 480px) {
+  .container { padding: 1.25rem; }
+  .header h1 { font-size: 1.6rem; }
+  .grid { grid-template-columns: 1fr; }
+  .addForm { flex-direction: column; }
+  .btnAdd, .btnHistory { width: 100%; text-align: center; }
+}

@@ -114,3 +114,11 @@
   cursor: pointer;
   margin-top: 1rem;
 }
+
+@media (max-width: 480px) {
+  .modal { padding: 1.25rem; }
+  .header { margin-bottom: 1.25rem; }
+  .typeGrid, .categoryGrid { grid-template-columns: repeat(2, 1fr); }
+  .input { padding: 0.75rem; }
+  .form { gap: 1rem; }
+}

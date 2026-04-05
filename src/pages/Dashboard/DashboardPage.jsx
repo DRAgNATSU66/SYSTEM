@@ -39,12 +39,12 @@ const DashboardPage = () => {
 
   return (
     <div className={styles.dashboard}>
-      <header className={styles.topHeader}>
+      <div className={styles.topHeader}>
         <div className={styles.greetingBlock}>
-          <h1>DASHBOARD</h1>
+          <h1>{playerName}</h1>
           <p className={styles.subtitle}>{greeting}</p>
         </div>
-      </header>
+      </div>
 
       {/* Top Stats Row */}
       <section className={styles.statsRow}>

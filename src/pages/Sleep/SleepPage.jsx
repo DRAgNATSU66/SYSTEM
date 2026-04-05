@@ -29,8 +29,8 @@ const SleepPage = () => {
   const today   = getTodayStr();
   const saved   = dailyMetrics[today] || {};
 
-  const [hours, setHours] = useState(saved.sleep != null ? String(saved.sleep) : '8');
-  const [deep,  setDeep]  = useState(saved.deepSleep != null ? String(saved.deepSleep) : '7');
+  const [hours, setHours] = useState(saved.sleep != null ? String(saved.sleep) : '');
+  const [deep,  setDeep]  = useState(saved.deepSleep != null ? String(saved.deepSleep) : '');
   const [saved_, setSaved_] = useState(false);
 
   const numHours       = parseFloat(hours) || 0;

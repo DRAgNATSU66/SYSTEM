@@ -278,7 +278,7 @@ const WorkoutPage = () => {
 
   return (
     <PageWrapper className={styles.container}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <div className={styles.headerTop}>
           <div>
             <h1>WORKOUT ENGINE</h1>
@@ -293,7 +293,7 @@ const WorkoutPage = () => {
             <p className={styles.progressCaption}>Resets Sunday midnight · Mon–Wed: Cardio · Thu–Sun: Hypertrophy</p>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* ── Sub-Tab Switcher ─────────────────────────────────────── */}
       <div className={styles.tabBar}>

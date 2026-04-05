@@ -14,3 +14,21 @@
 .fill { height: 100%; background: var(--rank-alpha); border-radius: 4px; }
 .btnNewDuel { padding: 1.25rem 3rem; background: transparent; border: 2px solid var(--rank-alpha); color: var(--rank-alpha); border-radius: 8px; font-weight: 900; letter-spacing: 0.2em; cursor: pointer; transition: 0.3s; }
 .btnNewDuel:hover { background: var(--rank-alpha); color: #000; box-shadow: 0 0 40px var(--rank-alpha); }
+
+@media (max-width: 768px) {
+  .container { padding: 2rem 1.25rem; }
+  .header { margin-bottom: 2.5rem; }
+  .header h1 { font-size: 2rem; }
+  .activeDuels { grid-template-columns: 1fr; gap: 1.25rem; margin-bottom: 2.5rem; }
+  .duelCard { padding: 1.75rem; }
+  .btnNewDuel { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 1.5rem 1rem; }
+  .header { margin-bottom: 2rem; }
+  .header h1 { font-size: 1.6rem; }
+  .duelCard { padding: 1.25rem; }
+  .duelInfo h3 { font-size: 1.1rem; }
+  .btnNewDuel { padding: 1rem; font-size: 0.75rem; }
+}

@@ -58,7 +58,11 @@
 .btnDelete:hover { color: #FF3131; }
 
 @media (max-width: 600px) {
+  .container { padding: 1.5rem 1rem; }
+  .header h1 { font-size: 1.6rem; }
   .headerRow { flex-direction: column; align-items: stretch; text-align: center; }
-  .item { flex-direction: column; gap: 1.5rem; text-align: center; }
+  .headerActions { width: 100%; justify-content: center; }
+  .item { flex-direction: column; gap: 1rem; text-align: center; padding: 1.25rem; }
   .actions { width: 100%; justify-content: center; }
+  .btnLog { width: 100%; text-align: center; }
 }
