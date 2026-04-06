@@ -15,6 +15,7 @@ export function AuthProvider({ children }) {
   const setUser = useUserStore(state => state.setUser);
   const clearUser = useUserStore(state => state.clearUser);
   const ensureCypherId = useUserStore(state => state.ensureCypherId);
+  const setAuthLoading = useUserStore(state => state.setAuthLoading);
 
   // Guard against duplicate auth processing (StrictMode double-mount + overlapping events)
   const processingRef = useRef(false);
@@ -27,13 +28,15 @@ export function AuthProvider({ children }) {
     if (!supabase) return; // Supabase not configured — skip auth setup
     let cancelled = false;
 
-    // Restore session on mount
+    // Restore session on mount — setAuthLoading(false) always fires so
+    // ProtectedRoute waits for this check before redirecting to /auth
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (cancelled) return;
       if (session?.user) {
         setUser(session.user);
         handleUserLogin(session.user);
       }
+      setAuthLoading(false);
     });
 
     // Listen for auth state changes

@@ -20,6 +20,9 @@ export const useUserStore = create(
       cypherId: null,  // Unique 10-digit alphanumeric ID
       preferences: { scoreWeights: DEFAULT_WEIGHTS },
       lastSyncedAt: null,
+      authLoading: true,  // true until AuthProvider confirms session status on mount
+
+      setAuthLoading: (val) => set({ authLoading: val }),
 
       setUser: (user) => {
         const state = get();
@@ -50,6 +53,13 @@ export const useUserStore = create(
 
       hydrateFromServer: (serverData) => set(serverData),
     }),
-    { name: 'antigravity-user-store' }
+    {
+      name: 'antigravity-user-store',
+      partialize: (state) => {
+        // eslint-disable-next-line no-unused-vars
+        const { authLoading, setAuthLoading, ...rest } = state;
+        return rest;
+      },
+    }
   )
 );

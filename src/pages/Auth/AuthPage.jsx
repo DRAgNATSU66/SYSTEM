@@ -131,17 +131,17 @@ const PlayerNamePrompt = ({ defaultName, onConfirm }) => {
       />
       <button
         className={styles.button}
-        style={{ marginTop: '1.25rem' }}
+        onClick={() => onConfirm(name)}
         disabled={!name.trim()}
-        onClick={() => onConfirm(name.trim())}
+        type="button"
       >
-        LOCK IN ALIAS
+        CONFIRM ALIAS
       </button>
     </div>
   );
 };
 
-// ─── Main Auth Page ──────────────────────────────────────────────────────────
+// ─── Main Auth Page ────────────────────────────────────────────────────────
 const AuthPage = () => {
   const [email, setEmail]           = useState('');
   const [password, setPassword]     = useState('');
@@ -154,41 +154,16 @@ const AuthPage = () => {
   const navigate = useNavigate();
   const setUser        = useUserStore(state => state.setUser);
   const updateProfile  = useUserStore(state => state.updateProfile);
+  // Read user reactively — AuthProvider sets this after OAuth redirect
+  const storeUser = useUserStore(state => state.user);
 
-  // ── Handle OAuth callback (Google redirect lands here) ──────────────────
+  // ── If AuthProvider already resolved a session (e.g. Google OAuth redirect)
+  //    navigate away immediately — avoids duplicate onAuthStateChange listeners
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
-        const user = session.user;
-        // Only handle OAuth providers here (email/password handled in handleSubmit)
-        const provider = user.app_metadata?.provider;
-        if (provider && provider !== 'email') {
-          setUser(user);
-          // Check if this user already has a profile
-          try {
-            const profile = await userService.getProfile(user.id);
-            if (profile?.username) {
-              // Returning user — pull data and go to dashboard
-              await pullAllData(user.id);
-              navigate('/');
-            } else {
-              // New OAuth user — show alias prompt
-              const defaultName = (user.user_metadata?.full_name || user.email?.split('@')[0] || 'GRINDER')
-                .replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 24);
-              setPendingUser({ userId: user.id, defaultName });
-            }
-          } catch {
-            // Profile doesn't exist yet — new user
-            const defaultName = (user.user_metadata?.full_name || user.email?.split('@')[0] || 'GRINDER')
-              .replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 24);
-            setPendingUser({ userId: user.id, defaultName });
-          }
-          setOauthLoading(false);
-        }
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [navigate, setUser]);
+    if (storeUser && !pendingUser) {
+      navigate('/', { replace: true });
+    }
+  }, [storeUser, pendingUser, navigate]);
 
   // ── Google OAuth ─────────────────────────────────────────────────────────
   const handleGoogleSignIn = async () => {
@@ -197,7 +172,7 @@ const AuthPage = () => {
     const { error: oauthErr } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth`,
+        redirectTo: `${window.location.origin}/`,
       },
     });
     if (oauthErr) {

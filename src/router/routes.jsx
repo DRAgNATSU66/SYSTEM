@@ -23,6 +23,8 @@ import { useUserStore } from '../store/userStore';
 
 const ProtectedRoute = ({ children }) => {
   const user = useUserStore((state) => state.user);
+  const authLoading = useUserStore((state) => state.authLoading);
+  if (authLoading) return null;
   if (!user) {
     return <Navigate to="/auth" replace />;
   }
