@@ -25,14 +25,14 @@ const AuraHistoryPage = () => {
 
   return (
     <PageWrapper className={styles.container}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <h1>TRANSACTION LEDGER</h1>
         <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Historical log of every AP vector.</p>
         <div className={styles.todaySummary}>
           <span className={styles.positive}>TODAY EARNED: +{todayEarned} AP</span>
           <span className={styles.negative}>TODAY LOST: -{todayLost} AP</span>
         </div>
-      </header>
+      </div>
 
       <div className={styles.ledger}>
         {sortedDates.length === 0 && (

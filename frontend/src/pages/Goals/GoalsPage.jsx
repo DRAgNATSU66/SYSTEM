@@ -38,12 +38,12 @@ const GoalsPage = () => {
 
   return (
     <PageWrapper className={styles.container}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <div className={styles.headerTop}>
           <h1>STRATEGIC MILESTONES</h1>
           <p>Set long-term targets to unlock massive Aura Bounties.</p>
         </div>
-      </header>
+      </div>
 
       <form onSubmit={handleAdd} className={styles.addForm}>
         <input 

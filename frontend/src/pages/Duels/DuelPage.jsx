@@ -8,10 +8,10 @@ const DuelPage = () => {
 
   return (
     <PageWrapper className={styles.container}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <h1>AURA DUELS</h1>
         <p>1v1 competitive sprints. 24h cycle. Winner takes all.</p>
-      </header>
+      </div>
 
       <div className={styles.activeDuels}>
         {duels.map(duel => (

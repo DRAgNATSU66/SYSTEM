@@ -41,10 +41,10 @@ const ProjectsPage = () => {
 
   return (
     <PageWrapper className={styles.container}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <h1>PROJECT MATRIX</h1>
         <p>Log focus sessions against strategic outcome vectors.</p>
-      </header>
+      </div>
 
       <form onSubmit={handleAddProject} className={styles.addForm}>
         <input 

@@ -69,7 +69,7 @@ const SettingsPage = () => {
 
   return (
     <PageWrapper className={styles.container}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <div className={styles.headerTitle}>
           <h1>OS . CONFIG</h1>
           <p>System parameters and user preferences.</p>
@@ -78,7 +78,7 @@ const SettingsPage = () => {
           <PulseCore />
           <span className={styles.breathingLabel}>20S CYCLE</span>
         </div>
-      </header>
+      </div>
 
       <section className={styles.section}>
         <h2>CORE IDENTITY</h2>

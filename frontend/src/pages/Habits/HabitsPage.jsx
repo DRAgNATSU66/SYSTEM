@@ -23,7 +23,7 @@ const HabitsPage = () => {
 
   return (
     <PageWrapper className={styles.container}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <div className={styles.headerRow}>
           <div>
             <h1>NEURAL RECREATION</h1>
@@ -34,7 +34,7 @@ const HabitsPage = () => {
             <button className={styles.btnHistory} onClick={() => setShowHistory(true)}>HISTORY</button>
           </div>
         </div>
-      </header>
+      </div>
       
       <div className={styles.list}>
         {hobbies.length === 0 && <p className={styles.empty}>No hobbies initialized. Balance is critical.</p>}

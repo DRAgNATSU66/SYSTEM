@@ -66,10 +66,10 @@ const LeaderboardPage = () => {
 
   return (
     <PageWrapper className={styles.container}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <h1>GLOBAL HIERARCHY</h1>
         <p className={styles.headerSub}>Top performers in the network, ranked by total Aura Points.</p>
-      </header>
+      </div>
 
       {/* Self Status Card */}
       <div className={styles.selfCard}>

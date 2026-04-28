@@ -181,7 +181,7 @@ const CalendarPage = () => {
 
   return (
     <PageWrapper className={styles.container}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <div className={styles.titleArea}>
           <h1>TEMPORAL ARCHIVE</h1>
           <div className={styles.viewToggle}>
@@ -192,7 +192,7 @@ const CalendarPage = () => {
           </div>
         </div>
         <p className={styles.subtitle}>Audit performance vectors across multiple temporal horizons.</p>
-      </header>
+      </div>
 
       <div className={styles.content}>
         {view === 'YEAR' && (

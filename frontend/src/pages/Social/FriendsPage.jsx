@@ -16,10 +16,10 @@ const FriendsPage = () => {
 
   return (
     <PageWrapper className={styles.container}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <h1>NEURAL SOCIAL HUB</h1>
         <p>Connect with other performance vectors in the collective.</p>
-      </header>
+      </div>
 
       <form onSubmit={handleAddFriend} className={styles.addForm}>
         <input 
