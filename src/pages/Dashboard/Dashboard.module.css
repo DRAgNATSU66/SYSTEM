@@ -74,8 +74,10 @@
   border-radius: var(--radius-pill);
   border: 1px solid;
   text-transform: uppercase;
-  background: rgba(0,0,0,0.3);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
 /* ── Stats Row ───────────────────────────────────────────────────────── */
@@ -95,28 +97,33 @@
 
 .radarSlot,
 .heatmapSlot {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   border-radius: 28px;
   padding: 2.5rem;
-  backdrop-filter: blur(20px);
-  transition: border-color 0.3s, background 0.3s;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+  transition: border-color var(--transition-normal), background var(--transition-normal), box-shadow var(--transition-normal);
 }
 
 .radarSlot:hover,
 .heatmapSlot:hover {
-  border-color: rgba(0, 191, 255, 0.25);
-  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(0, 191, 255, 0.3);
+  background: var(--glass-bg-hover);
+  box-shadow: var(--glass-shadow-hover);
 }
 
 /* ── Trend Row ───────────────────────────────────────────────────────── */
 .trendRow {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   border-radius: 28px;
   padding: 2.5rem;
   min-height: 420px;
-  backdrop-filter: blur(20px);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
 }
 
 /* ── Chart internals ─────────────────────────────────────────────────── */
@@ -146,12 +153,13 @@
 }
 
 .chartTooltip {
-  background: rgba(10, 10, 12, 0.96);
-  border: 1px solid var(--rank-alpha);
+  background: rgba(8, 8, 12, 0.75);
+  border: 1px solid rgba(0, 191, 255, 0.4);
   padding: 0.9rem 1.1rem;
   border-radius: 12px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
 .tooltipLabel {
@@ -171,24 +179,26 @@
 
 /* ── Daily Loop ──────────────────────────────────────────────────────── */
 .dailyLoopRow {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   border-radius: 28px;
   padding: 2.5rem;
-  backdrop-filter: blur(20px);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
 }
 .loopTitle { font-family: 'Outfit'; font-size: 0.75rem; color: var(--rank-alpha); font-weight: 950; letter-spacing: 0.3em; margin: 0 0 1.5rem 0; text-transform: uppercase; }
 .loopEmpty { color: var(--text-secondary); font-size: 0.85rem; opacity: 0.7; }
 .taskList { display: flex; flex-direction: column; gap: 0.75rem; }
-.taskItem { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 0.9rem 1.25rem; transition: 0.2s; gap: 1rem; }
-.taskItem:hover { border-color: rgba(255,255,255,0.12); }
-.taskDone { opacity: 0.55; border-color: rgba(57,255,20,0.2); background: rgba(57,255,20,0.03); }
+.taskItem { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: 14px; padding: 0.9rem 1.25rem; transition: background 0.2s, border-color 0.2s, box-shadow 0.2s; gap: 1rem; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); }
+.taskItem:hover { border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.07); box-shadow: 0 4px 16px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1); }
+.taskDone { opacity: 0.55; border-color: rgba(57,255,20,0.2); background: rgba(57,255,20,0.04); }
 .taskTitle { color: #fff; font-family: 'Outfit'; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.04em; flex: 1; }
 .taskDone .taskTitle { text-decoration: line-through; color: var(--text-secondary); }
-.btnToggle { background: rgba(0,191,255,0.1); border: 1px solid var(--rank-alpha); color: var(--rank-alpha); padding: 0.4rem 1rem; border-radius: 8px; font-family: 'Outfit'; font-weight: 900; font-size: 0.65rem; letter-spacing: 0.1em; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
-.btnToggle:hover { background: var(--rank-alpha); color: #000; }
-.btnDone { background: rgba(57,255,20,0.1); border-color: var(--rank-sigma); color: var(--rank-sigma); }
-.btnDone:hover { background: var(--rank-sigma); color: #000; }
+.btnToggle { background: rgba(0,191,255,0.1); border: 1px solid rgba(0,191,255,0.35); color: var(--rank-alpha); padding: 0.4rem 1rem; border-radius: var(--radius-pill); font-family: 'Outfit'; font-weight: 900; font-size: 0.65rem; letter-spacing: 0.1em; cursor: pointer; transition: all 0.2s; flex-shrink: 0; backdrop-filter: blur(8px); box-shadow: 0 2px 8px rgba(0,191,255,0.1), inset 0 1px 0 rgba(255,255,255,0.12); }
+.btnToggle:hover { background: var(--rank-alpha); color: #000; box-shadow: 0 4px 16px rgba(0,191,255,0.35); border-color: var(--rank-alpha); }
+.btnDone { background: rgba(57,255,20,0.1); border-color: rgba(57,255,20,0.35); color: var(--rank-sigma); box-shadow: 0 2px 8px rgba(57,255,20,0.1), inset 0 1px 0 rgba(255,255,255,0.1); }
+.btnDone:hover { background: var(--rank-sigma); color: #000; border-color: var(--rank-sigma); box-shadow: 0 4px 16px rgba(57,255,20,0.35); }
 
 /* ── Responsive ──────────────────────────────────────────────────────── */
 @media (max-width: 1200px) {

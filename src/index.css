@@ -42,6 +42,21 @@
   /* Transitions */
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Liquid Glass Tokens ──────────────────────────────────────── */
+  --glass-bg:              rgba(255, 255, 255, 0.055);
+  --glass-bg-hover:        rgba(255, 255, 255, 0.085);
+  --glass-bg-active:       rgba(255, 255, 255, 0.12);
+  --glass-border:          rgba(255, 255, 255, 0.11);
+  --glass-border-hover:    rgba(255, 255, 255, 0.22);
+  --glass-blur:            blur(24px) saturate(180%);
+  --glass-blur-light:      blur(12px) saturate(150%);
+  --glass-shadow:          0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.10);
+  --glass-shadow-hover:    0 12px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.18);
+  --glass-shadow-modal:    0 24px 80px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.10);
+  --glass-accent-bg:       rgba(0, 191, 255, 0.08);
+  --glass-accent-border:   rgba(0, 191, 255, 0.25);
+  --glass-accent-shadow:   0 4px 20px rgba(0,191,255,0.15), inset 0 1px 0 rgba(255,255,255,0.18);
 }
 
 * {
@@ -79,12 +94,97 @@ h1, h2, h3, h4, h5, h6 {
   background: #33ccff;
 }
 
-/* Glassmorphism helpers */
+/* ── Liquid Glass Utility Classes ────────────────────────────── */
 .glass-panel {
-  background: rgba(0, 0, 0, 0.3) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  background: var(--glass-bg) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: var(--glass-shadow) !important;
+}
+
+/* Reusable glass surface — drop onto any container */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--radius-xl);
+  transition: background var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+.glass-card:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
+  box-shadow: var(--glass-shadow-hover);
+}
+
+/* Glass with accent (blue) tint */
+.glass-accent {
+  background: var(--glass-accent-bg);
+  backdrop-filter: var(--glass-blur-light);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  border: 1px solid var(--glass-accent-border);
+  box-shadow: var(--glass-accent-shadow);
+}
+
+/* ── Global Input Glass ───────────────────────────────────────── */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]),
+select,
+textarea {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur-light);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]):focus,
+select:focus,
+textarea:focus {
+  border-color: rgba(0, 191, 255, 0.55);
+  background: rgba(0, 191, 255, 0.06);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.2), 0 0 0 3px rgba(0,191,255,0.12);
+}
+
+/* ── Global Range Slider (Liquid Glass) ──────────────────────── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.35);
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0, 191, 255, 0.25);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(0, 191, 255, 0.7);
+  box-shadow: 0 2px 10px rgba(0,191,255,0.35), inset 0 1px 0 rgba(255,255,255,0.4);
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(0,191,255,0.5), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0, 191, 255, 0.25);
+  border: 1.5px solid rgba(0, 191, 255, 0.7);
+  box-shadow: 0 2px 10px rgba(0,191,255,0.35);
+  cursor: pointer;
 }
 
 /* App Layout Grid setup */
@@ -203,24 +303,25 @@ html {
 .text-muted  { color: var(--text-secondary); }
 .font-outfit { font-family: 'Outfit', sans-serif; }
 
-/* ── Global Button Polish ────────────────────────────────────── */
+/* ── Global Button Polish (Liquid Glass base) ────────────────── */
 button {
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 button:hover:not(:disabled) {
-  transform: scale(1.03);
-  filter: brightness(1.1);
+  transform: translateY(-1px) scale(1.02);
+  filter: brightness(1.08);
 }
 
 button:active:not(:disabled) {
-  transform: scale(0.97);
+  transform: translateY(0) scale(0.97);
   filter: brightness(0.95);
 }
 
 button:focus-visible {
   outline: 2px solid var(--rank-alpha);
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(0,191,255,0.15);
 }
 
 /* ── Global Focus Visible ────────────────────────────────────── */
