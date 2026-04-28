@@ -2,7 +2,7 @@
 .header { margin-bottom: 3rem; overflow: hidden; }
 .titleArea { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
 .titleArea h1 { font-family: 'Outfit'; font-size: 2rem; letter-spacing: 0.15em; color: #fff; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.viewToggle { display: flex; gap: 0.5rem; background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); padding: 0.25rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); flex-shrink: 0; }
+.viewToggle { display: flex; gap: 0.5rem; background: rgba(255,255,255,0.05); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); padding: 0.25rem; border-radius: var(--radius-pill); border: 1px solid rgba(255,255,255,0.12); flex-shrink: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.08); }
 .viewToggle button { background: transparent; border: none; color: var(--text-secondary); font-family: 'Outfit'; font-weight: 900; font-size: 0.65rem; padding: 0.6rem 1rem; border-radius: 6px; cursor: pointer; letter-spacing: 0.1em; transition: 0.2s; white-space: nowrap; }
 .viewToggle .active { background: var(--rank-alpha); color: #000; box-shadow: 0 0 15px rgba(0, 191, 255, 0.4); }
 .subtitle { color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.85rem; letter-spacing: 0.05em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -10,14 +10,14 @@
 .content { margin-bottom: 4rem; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; }
 
 /* DOT VIEWS (Year, Month, Week) */
-.dotFlex { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; padding: 2rem; background: rgba(0,0,0,0.2); backdrop-filter: blur(12px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+.dotFlex { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; padding: 2rem; background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-radius: 24px; border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); }
 .dotWrapper { display: flex; flex-direction: column; align-items: center; gap: 1rem; position: relative; }
 .dot { width: 40px; height: 40px; border-radius: 50%; background: var(--day-color); box-shadow: 0 0 20px rgba(0,0,0,0.3); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .dotWrapper:hover .dot { transform: scale(1.4); filter: brightness(1.2); }
 .dotLabel { font-size: 0.65rem; font-weight: 950; color: var(--text-secondary); letter-spacing: 0.1em; }
 
 /* TRADITIONAL GRID (Overall) */
-.traditionalGrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; width: 100%; max-width: 1000px; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(12px); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+.traditionalGrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; width: 100%; max-width: 1000px; background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); padding: 1.5rem; border-radius: 20px; border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); }
 .gridHeader { text-align: center; font-size: 0.6rem; font-weight: 950; padding: 1rem 0; color: var(--text-secondary); letter-spacing: 0.2em; opacity: 0.5; }
 .gridDay { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; background: var(--day-color); border-radius: 4px; position: relative; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.02); }
 .gridDay:hover { border-color: #fff; z-index: 10; transform: scale(1.05); }
@@ -25,7 +25,7 @@
 .gridBlank { aspect-ratio: 1/1; background: transparent; }
 
 /* TOOLTIP SYSTEM */
-.tooltip { visibility: hidden; position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background: #000; padding: 1rem; border-radius: 8px; border: 1px solid var(--rank-alpha); width: 160px; z-index: 100; box-shadow: 0 10px 40px rgba(0,0,0,0.5); pointer-events: none; opacity: 0; transition: 0.3s; }
+.tooltip { visibility: hidden; position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background: rgba(8,8,14,0.7); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); padding: 1rem; border-radius: 14px; border: 1px solid rgba(0,191,255,0.35); width: 160px; z-index: 100; box-shadow: 0 16px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08); pointer-events: none; opacity: 0; transition: 0.3s; }
 .dotWrapper:hover .tooltip, .gridDay:hover .tooltip { visibility: visible; opacity: 1; bottom: 110%; }
 .ttDate { display: block; font-size: 0.6rem; color: var(--text-secondary); font-weight: 900; margin-bottom: 0.25rem; }
 .ttScore { display: block; font-size: 1.1rem; font-weight: 900; color: #fff; margin-bottom: 0.25rem; }

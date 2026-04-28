@@ -5,7 +5,7 @@
 .headerSub { color: var(--text-secondary); font-size: 0.82rem; letter-spacing: 0.04em; }
 
 /* Self card */
-.selfCard { background: rgba(0,191,255,0.05); border: 1px solid rgba(0,191,255,0.2); padding: 1.5rem 1.75rem; border-radius: 16px; margin-bottom: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; overflow: hidden; }
+.selfCard { background: rgba(0,191,255,0.07); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border: 1px solid rgba(0,191,255,0.28); box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 30px rgba(0,191,255,0.08), inset 0 1px 0 rgba(255,255,255,0.12); padding: 1.5rem 1.75rem; border-radius: 20px; margin-bottom: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; overflow: hidden; }
 .selfLabel { font-size: 0.65rem; font-weight: 900; color: var(--rank-alpha); letter-spacing: 0.2em; }
 .selfAP { font-family: 'Outfit'; font-size: 2rem; font-weight: 900; color: #fff; line-height: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
 .selfRank { font-family: 'Outfit'; font-size: 0.75rem; font-weight: 900; letter-spacing: 0.15em; }
@@ -13,15 +13,15 @@
 
 /* Toggle */
 .viewToggle { display: flex; gap: 0.5rem; margin-bottom: 2rem; }
-.toggleBtn { flex: 1; padding: 0.7rem; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: var(--text-secondary); font-family: 'Outfit'; font-weight: 700; font-size: 0.7rem; letter-spacing: 0.12em; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-.toggleBtn:hover { border-color: var(--rank-alpha); color: var(--rank-alpha); }
-.toggleActive { background: rgba(0,191,255,0.08); border-color: var(--rank-alpha); color: var(--rank-alpha); }
+.toggleBtn { flex: 1; padding: 0.7rem; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); color: var(--text-secondary); font-family: 'Outfit'; font-weight: 700; font-size: 0.7rem; letter-spacing: 0.12em; border-radius: var(--radius-pill); cursor: pointer; transition: all 0.2s; backdrop-filter: blur(8px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); }
+.toggleBtn:hover { border-color: rgba(0,191,255,0.4); color: var(--rank-alpha); background: rgba(0,191,255,0.06); }
+.toggleActive { background: rgba(0,191,255,0.1); border-color: rgba(0,191,255,0.4); color: var(--rank-alpha); box-shadow: 0 2px 10px rgba(0,191,255,0.15), inset 0 1px 0 rgba(255,255,255,0.12); }
 
 /* Leader list */
 .leaderList { display: flex; flex-direction: column; gap: 0.6rem; }
-.leaderRow { display: flex; align-items: center; gap: 1rem; background: var(--bg-surface); padding: 1.1rem 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); transition: border-color 0.2s, background 0.2s; }
-.leaderRow:hover { border-color: rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); }
-.selfRow { border-color: rgba(0,191,255,0.3) !important; background: rgba(0,191,255,0.04) !important; }
+.leaderRow { display: flex; align-items: center; gap: 1rem; background: var(--glass-bg); backdrop-filter: var(--glass-blur-light); -webkit-backdrop-filter: var(--glass-blur-light); padding: 1.1rem 1.5rem; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); transition: all 0.2s; }
+.leaderRow:hover { border-color: var(--glass-border-hover); background: var(--glass-bg-hover); box-shadow: 0 4px 16px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1); }
+.selfRow { border-color: rgba(0,191,255,0.35) !important; background: rgba(0,191,255,0.06) !important; box-shadow: 0 4px 20px rgba(0,191,255,0.08) !important; }
 .rankNum { font-family: 'Outfit'; font-size: 1.1rem; font-weight: 900; min-width: 44px; }
 .identity { flex: 1; min-width: 0; }
 .name { font-family: 'Outfit'; font-size: 0.95rem; color: #fff; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -35,7 +35,7 @@
 /* History */
 .historyTitle { font-family: 'Outfit'; font-size: 0.8rem; color: var(--rank-alpha); letter-spacing: 0.3em; margin-bottom: 1.5rem; }
 .historyList { display: flex; flex-direction: column; gap: 0.5rem; }
-.historyRow { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1rem; background: var(--bg-surface); border-radius: 10px; border: 1px solid rgba(255,255,255,0.04); }
+.historyRow { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1rem; background: var(--glass-bg); backdrop-filter: var(--glass-blur-light); -webkit-backdrop-filter: var(--glass-blur-light); border-radius: 12px; border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
 .historyDate { font-size: 0.75rem; color: var(--text-secondary); min-width: 90px; }
 .historyReason { flex: 1; font-size: 0.8rem; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .historyNet { font-family: 'Outfit'; font-weight: 900; font-size: 0.9rem; white-space: nowrap; }

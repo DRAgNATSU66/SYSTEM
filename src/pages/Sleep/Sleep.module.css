@@ -7,7 +7,8 @@
 
 .sleepStack { display: flex; flex-direction: column; gap: 1.5rem; flex: 1; }
 
-.metricCard { background: var(--bg-surface); padding: 2rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06); }
+.metricCard { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); padding: 2rem; border-radius: 20px; transition: background var(--transition-normal), border-color var(--transition-normal); }
+.metricCard:hover { background: var(--glass-bg-hover); border-color: var(--glass-border-hover); }
 
 .metricHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
 .metricHeader label { font-family: 'Outfit'; font-size: 0.7rem; color: var(--text-secondary); letter-spacing: 0.2em; font-weight: 900; }
@@ -25,14 +26,14 @@
 .hint { font-size: 0.65rem; color: var(--text-secondary); font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* Score breakdown card */
-.scoreBreakdown { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1.5rem 2rem; }
+.scoreBreakdown { background: var(--glass-bg); backdrop-filter: var(--glass-blur-light); -webkit-backdrop-filter: var(--glass-blur-light); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); border-radius: 16px; padding: 1.5rem 2rem; }
 .scoreRow { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-secondary); padding: 0.35rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); gap: 0.5rem; min-width: 0; }
 .scoreRow span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .scoreRow strong { color: #fff; }
 .scoreTotal { margin-top: 0.75rem; font-family: 'Outfit'; font-size: 0.9rem; font-weight: 800; color: #fff; }
 
-.btnSync { display: block; width: 100%; margin-top: 2.5rem; background: var(--rank-alpha); color: #000; padding: 1.1rem; border-radius: 12px; border: none; font-weight: 950; font-size: 0.85rem; letter-spacing: 0.15em; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
-.btnSync:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(0,191,255,0.35); }
+.btnSync { display: block; width: 100%; margin-top: 2.5rem; background: rgba(0,191,255,0.15); color: var(--rank-alpha); padding: 1.1rem; border-radius: var(--radius-pill); border: 1px solid rgba(0,191,255,0.4); font-weight: 950; font-size: 0.85rem; letter-spacing: 0.15em; cursor: pointer; backdrop-filter: blur(8px); box-shadow: 0 4px 20px rgba(0,191,255,0.12), inset 0 1px 0 rgba(255,255,255,0.15); transition: all 0.2s; }
+.btnSync:hover { background: var(--rank-alpha); color: #000; transform: scale(1.02); box-shadow: 0 8px 32px rgba(0,191,255,0.45); border-color: var(--rank-alpha); }
 
 @media (max-width: 600px) {
   .container { padding: 1.5rem 1rem; }

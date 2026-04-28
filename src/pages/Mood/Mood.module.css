@@ -5,14 +5,14 @@
 .subtitle { color: var(--text-secondary); font-family: 'Outfit'; font-size: 0.8rem; margin-top: 0.5rem; letter-spacing: 0.05em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .overallProgress { width: 300px; max-width: 100%; margin-top: 1rem; min-width: 0; }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; }
-.face { background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.05); padding: 2rem 1rem; border-radius: var(--radius-lg); cursor: pointer; transition: 0.2s; text-align: center; }
-.face:hover { transform: translateY(-5px); border-color: var(--mood-color); }
-.active { border-color: var(--mood-color); background: rgba(0,0,0,0.5); box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 20px var(--mood-color); }
+.face { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); padding: 2rem 1rem; border-radius: 20px; cursor: pointer; transition: all 0.2s; text-align: center; }
+.face:hover { transform: translateY(-5px); border-color: var(--mood-color, var(--glass-border-hover)); box-shadow: 0 12px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15); }
+.active { border-color: var(--mood-color); background: rgba(0,0,0,0.4); box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 0 20px var(--mood-color), inset 0 1px 0 rgba(255,255,255,0.15); }
 .val { font-family: 'Outfit'; font-size: 2.5rem; font-weight: 900; color: #fff; margin-bottom: 0.5rem; }
 .label { font-size: 0.6rem; font-weight: 800; color: var(--mood-color); letter-spacing: 0.1em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* Notes form */
-.noteForm { margin-top: 2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--mood-color, rgba(255,255,255,0.1)); border-radius: var(--radius-lg); padding: 1.5rem; }
+.noteForm { margin-top: 2rem; background: rgba(255,255,255,0.04); backdrop-filter: var(--glass-blur-light); -webkit-backdrop-filter: var(--glass-blur-light); border: 1px solid var(--mood-color, rgba(255,255,255,0.12)); border-radius: 20px; padding: 1.5rem; box-shadow: 0 8px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.08); }
 .noteFormTitle { font-family: 'Outfit'; font-size: 0.8rem; font-weight: 900; color: var(--mood-color, #FFD700); letter-spacing: 0.15em; margin: 0 0 1rem 0; }
 .noteInput { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #fff; font-family: 'Outfit'; font-size: 0.9rem; padding: 0.75rem 1rem; resize: vertical; box-sizing: border-box; }
 .noteInput:focus { outline: none; border-color: var(--mood-color, var(--rank-alpha)); }
@@ -32,7 +32,7 @@
 /* History */
 .historySection { margin-top: 2.5rem; }
 .historyList { display: flex; flex-direction: column; gap: 0.5rem; }
-.historyEntry { display: flex; align-items: center; gap: 1rem; background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid var(--mood-color, #FFD700); padding: 0.75rem 1rem; border-radius: 8px; flex-wrap: wrap; }
+.historyEntry { display: flex; align-items: center; gap: 1rem; background: var(--glass-bg); backdrop-filter: var(--glass-blur-light); -webkit-backdrop-filter: var(--glass-blur-light); border: 1px solid var(--glass-border); border-left: 3px solid var(--mood-color, #FFD700); padding: 0.75rem 1rem; border-radius: 12px; flex-wrap: wrap; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); }
 .historyDate { font-family: 'Outfit'; font-size: 0.7rem; color: var(--text-secondary); min-width: 90px; }
 .historyLabel { font-family: 'Outfit'; font-size: 0.75rem; font-weight: 800; color: var(--mood-color, #FFD700); letter-spacing: 0.08em; min-width: 80px; }
 .historyNote { flex: 1; font-size: 0.8rem; color: var(--text-secondary); font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

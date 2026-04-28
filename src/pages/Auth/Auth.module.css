@@ -14,18 +14,18 @@
 }
 
 .card {
-  background: rgba(10, 10, 14, 0.82);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(0, 191, 255, 0.12);
+  background: rgba(8, 8, 14, 0.65);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid rgba(0, 191, 255, 0.18);
   padding: 2.5rem 2rem;
-  border-radius: 20px;
+  border-radius: 28px;
   width: 100%;
   max-width: 420px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 191, 255, 0.05);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.65), 0 0 40px rgba(0,191,255,0.06), inset 0 1px 0 rgba(255,255,255,0.1);
   position: relative;
   z-index: 20;
 }
@@ -81,45 +81,48 @@
 .input {
   width: 100%;
   padding: 0.85rem 1rem;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
   color: #fff;
   font-family: 'Inter', sans-serif;
   font-size: 0.95rem;
-  transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.25);
+  transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s;
   box-sizing: border-box;
 }
 
 .input:focus {
   outline: none;
-  border-color: var(--rank-alpha);
-  box-shadow: 0 0 12px rgba(0, 191, 255, 0.2);
+  border-color: rgba(0, 191, 255, 0.55);
+  background: rgba(0, 191, 255, 0.06);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.2), 0 0 0 3px rgba(0,191,255,0.12);
 }
 
 .button {
   width: 100%;
   padding: 1rem;
-  background: var(--rank-alpha);
-  color: #000;
+  background: rgba(0, 191, 255, 0.15);
+  color: var(--rank-alpha);
   font-weight: 900;
   font-family: 'Outfit', sans-serif;
   font-size: 0.85rem;
   letter-spacing: 0.15em;
-  border: none;
-  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 191, 255, 0.4);
+  border-radius: var(--radius-pill);
   cursor: pointer;
-  transition: 
-    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 16px rgba(0,191,255,0.12), inset 0 1px 0 rgba(255,255,255,0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   margin-top: 0.5rem;
 }
 
 .button:hover:not(:disabled) {
+  background: var(--rank-alpha);
+  color: #000;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 191, 255, 0.4);
+  box-shadow: 0 6px 24px rgba(0, 191, 255, 0.4);
+  border-color: var(--rank-alpha);
 }
 
 .button:active:not(:disabled) {
@@ -238,10 +241,12 @@
   justify-content: center;
   gap: 0.65rem;
   padding: 0.85rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-pill);
   color: #fff;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
   font-family: 'Outfit', sans-serif;
   font-weight: 700;
   font-size: 0.85rem;
