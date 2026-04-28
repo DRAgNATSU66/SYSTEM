@@ -30,13 +30,23 @@ CREATE POLICY "daily_scores_leaderboard_select" ON public.daily_scores
 -- Any logged-in user could call them via supabase.rpc() and
 -- apply penalties to all users or wipe everyone's weekly progress.
 --
--- REVOKE from PUBLIC and authenticated so only the pg_cron
--- scheduler (which runs as postgres) can invoke these.
+-- Wrapped in DO blocks so this patch is safe to run even if
+-- prd_v2_migration.sql has not been applied yet on this database.
 -- calculate_vo2max() is left callable -- it is pure math, no writes.
 -- ----------------------------------------------------------------
 
-REVOKE EXECUTE ON FUNCTION public.compute_midnight_penalties() FROM PUBLIC;
-REVOKE EXECUTE ON FUNCTION public.compute_midnight_penalties() FROM authenticated;
+DO $$
+BEGIN
+  REVOKE EXECUTE ON FUNCTION public.compute_midnight_penalties() FROM PUBLIC;
+  REVOKE EXECUTE ON FUNCTION public.compute_midnight_penalties() FROM authenticated;
+EXCEPTION WHEN undefined_function THEN
+  NULL;
+END $$;
 
-REVOKE EXECUTE ON FUNCTION public.reset_weekly_progress() FROM PUBLIC;
-REVOKE EXECUTE ON FUNCTION public.reset_weekly_progress() FROM authenticated;
+DO $$
+BEGIN
+  REVOKE EXECUTE ON FUNCTION public.reset_weekly_progress() FROM PUBLIC;
+  REVOKE EXECUTE ON FUNCTION public.reset_weekly_progress() FROM authenticated;
+EXCEPTION WHEN undefined_function THEN
+  NULL;
+END $$;
