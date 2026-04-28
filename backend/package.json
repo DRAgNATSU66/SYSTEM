@@ -1,0 +1,5 @@
+{
+  "name": "system-backend",
+  "type": "module",
+  "description": "SYSTEM OS – Supabase schema migrations and backend scripts"
+}

@@ -29,7 +29,8 @@ if (!ACCESS_TOKEN) {
 }
 
 // ── Read .env to extract project ref ─────────────────────────
-const envPath = path.resolve(__dirname, '../.env');
+// .env lives in frontend/ — one level up from backend/scripts/
+const envPath = path.resolve(__dirname, '../../frontend/.env');
 const envContent = fs.readFileSync(envPath, 'utf-8');
 const urlMatch = envContent.match(/VITE_SUPABASE_URL=(.+)/);
 if (!urlMatch) {
@@ -42,6 +43,7 @@ const projectRef = supabaseUrl.replace('https://', '').split('.')[0];
 console.log(`\n🔗  Project: ${projectRef}`);
 
 // ── Read SQL file ─────────────────────────────────────────────
+// supabase/ lives at backend/supabase/ — sibling of scripts/
 const sqlPath = path.resolve(__dirname, '../supabase/init.sql');
 const fullSql = fs.readFileSync(sqlPath, 'utf-8');
 
