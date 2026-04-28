@@ -63,7 +63,7 @@ const StudyPage = () => {
         <div className={styles.headerTop}>
           <div>
             <h1>ACADEMIC DOMAIN</h1>
-            <p className={styles.subtitle}>Dynamic semester subject management and deep work logging.</p>
+            <p className={styles.subtitle}>Dynamic subject management and deep work logging.</p>
           </div>
           <div className={styles.overallProgress}>
             <ProgressBar value={progStudy} label="STUDY LOAD" />
