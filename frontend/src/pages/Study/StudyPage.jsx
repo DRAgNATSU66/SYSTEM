@@ -59,7 +59,7 @@ const StudyPage = () => {
 
   return (
     <PageWrapper className={styles.container}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <div className={styles.headerTop}>
           <div>
             <h1>ACADEMIC DOMAIN</h1>
@@ -69,7 +69,7 @@ const StudyPage = () => {
             <ProgressBar value={progStudy} label="STUDY LOAD" />
           </div>
         </div>
-      </header>
+      </div>
 
       <div className={styles.addSubjectRow}>
         <input

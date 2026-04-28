@@ -180,7 +180,7 @@ const NutritionPage = () => {
 
   return (
     <PageWrapper className={styles.container}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <div className={styles.headerTop}>
           <div>
             <h1>METABOLIC ENGINE</h1>
@@ -198,7 +198,7 @@ const NutritionPage = () => {
           </div>
         </div>
         {flash && <div className={styles.flash}>{flash}</div>}
-      </header>
+      </div>
 
       {/* ── Config Section ──────────────────────────────────────────── */}
       {isEditing && (

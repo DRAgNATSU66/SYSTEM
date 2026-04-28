@@ -60,7 +60,7 @@ const SleepPage = () => {
 
   return (
     <PageWrapper className={styles.container}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <div className={styles.headerTop}>
           <div>
             <h1>CIRCADIAN RECOVERY</h1>
@@ -72,7 +72,7 @@ const SleepPage = () => {
             <ProgressBar value={progress} label="RECOVERY SCORE" />
           </div>
         </div>
-      </header>
+      </div>
 
       <div className={styles.sleepStack}>
         {/* ── Duration ─────────────────────────────────────────────── */}

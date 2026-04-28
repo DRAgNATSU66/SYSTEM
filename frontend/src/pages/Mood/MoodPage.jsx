@@ -70,7 +70,7 @@ const MoodPage = () => {
 
   return (
     <PageWrapper className={styles.container}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <div className={styles.headerTop}>
           <div>
             <h1>NEURAL STATE</h1>
@@ -80,7 +80,7 @@ const MoodPage = () => {
             <ProgressBar value={progMood} label="BANDWIDTH" color={activeFace.color} />
           </div>
         </div>
-      </header>
+      </div>
 
       <div className={styles.grid}>
         {faces.map(f => (

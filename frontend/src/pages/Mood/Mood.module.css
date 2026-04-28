@@ -2,7 +2,7 @@
 .header { text-align: center; margin-bottom: 4rem; min-width: 0; }
 .header h1 { font-family: 'Outfit'; font-size: 2.5rem; color: #fff; letter-spacing: 0.1em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .headerTop { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem; min-width: 0; }
-.subtitle { color: var(--text-secondary); font-family: 'Outfit'; font-size: 0.8rem; margin-top: 0.5rem; letter-spacing: 0.05em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.subtitle { color: var(--text-secondary); font-family: 'Outfit'; font-size: 0.8rem; margin-top: 0.5rem; letter-spacing: 0.05em; min-width: 0; }
 .overallProgress { width: 300px; max-width: 100%; margin-top: 1rem; min-width: 0; }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; }
 .face { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); padding: 2rem 1rem; border-radius: 20px; cursor: pointer; transition: all 0.2s; text-align: center; }
