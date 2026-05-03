@@ -33,15 +33,22 @@ const SleepPage = () => {
   const [deep,  setDeep]  = useState(saved.deepSleep != null ? String(saved.deepSleep) : '');
   const [saved_, setSaved_] = useState(false);
 
-  const numHours       = parseFloat(hours) || 0;
-  const numDeep        = parseFloat(deep) || 0;
-  const progress       = computeSleepProgress(numHours, numDeep);
-  const durationPct    = Math.min(100, Math.round((numHours / 8) * 100));
-  const deepPct        = Math.min(100, Math.round((numDeep / 9) * 100));
-  const underSleep     = numHours < 8;
-  const underDeep      = numDeep < 9;
+  const numHours    = parseFloat(hours) || 0;
+  const numDeep     = parseFloat(deep) || 0;
+  const progress    = computeSleepProgress(numHours, numDeep);
+  const durationPct = Math.min(100, Math.round((numHours / 8) * 100));
+  const deepPct     = Math.min(100, Math.round((numDeep / 9) * 100));
+  const underSleep  = numHours < 8;
+  const underDeep   = numDeep < 9;
 
-  const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded } = useAuraStore();
+  // 3-tier sleep duration color: red < 6h, yellow 6-7.9h, cyan ≥ 8h
+  const sleepDurationColor =
+    numHours === 0     ? 'var(--text-secondary)' :
+    numHours < 6       ? 'var(--rank-slacking)'  :   // red — danger
+    numHours < 8       ? 'var(--rank-sigma)'     :   // yellow — sub-optimal
+                         'var(--rank-alpha)';          // cyan — optimal ≥8h
+
+  const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded, dailyCategoryAP } = useAuraStore();
 
   const handleSync = () => {
     resetDailyIfNeeded();
@@ -51,9 +58,13 @@ const SleepPage = () => {
     } else {
       logMetrics(metricsData);
     }
-    const sleepAP = Math.round(progress);
-    addCategoryAP('SLEEP', sleepAP, `SLEEP LOGGED: ${numHours}h, Deep ${numDeep}/10`);
-    checkAndUpdateStreak();
+    // Only award AP once per day — prevent double-logging AP on update
+    const alreadyAwarded = (dailyCategoryAP[today]?.SLEEP || 0) > 0;
+    if (!alreadyAwarded) {
+      const sleepAP = Math.round(progress);
+      addCategoryAP('SLEEP', sleepAP, `SLEEP LOGGED: ${numHours}h, Deep ${numDeep}/10`);
+      checkAndUpdateStreak();
+    }
     setSaved_(true);
     setTimeout(() => setSaved_(false), 2500);
   };
@@ -96,18 +107,18 @@ const SleepPage = () => {
           <div className={styles.progressTrack}>
             <div
               className={styles.progressFill}
-              style={{
-                width: `${durationPct}%`,
-                background: underSleep ? 'var(--rank-slacking)' : 'var(--rank-sigma)'
-              }}
+              style={{ width: `${durationPct}%`, background: sleepDurationColor }}
             />
           </div>
           <div className={styles.metricMeta}>
-            <span style={{ color: underSleep ? 'var(--rank-slacking)' : 'var(--rank-sigma)' }}>
+            <span style={{ color: sleepDurationColor }}>
               {durationPct}% of target
             </span>
-            {underSleep && (
-              <span className={styles.warning}>UNDERSLEEP — AURA PENALTY RISK</span>
+            {numHours < 6 && numHours > 0 && (
+              <span className={styles.warning}>CRITICAL UNDERSLEEP — AURA PENALTY RISK</span>
+            )}
+            {numHours >= 6 && numHours < 8 && (
+              <span className={styles.hint}>Sub-optimal — target ≥8h for peak recovery</span>
             )}
           </div>
         </div>

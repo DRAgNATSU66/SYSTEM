@@ -86,8 +86,12 @@
 /* ── Stats Row ───────────────────────────────────────────────────────── */
 .statsRow {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
+}
+/* XPBar (4th child) spans full width below the 3 stat cards */
+.statsRow > :last-child {
+  grid-column: 1 / -1;
 }
 
 /* ── Metrics Row ─────────────────────────────────────────────────────── */

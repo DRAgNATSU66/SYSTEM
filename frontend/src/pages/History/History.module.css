@@ -2,27 +2,13 @@
 .header { margin-bottom: 3rem; }
 .header h1 { font-family: 'Outfit'; font-size: 2.5rem; color: #fff; letter-spacing: 0.10em; text-shadow: 0 0 30px rgba(255,255,255,0.10); }
 
-.ledger { display: flex; flex-direction: column; gap: 1.25rem; }
+.todaySummary { display: flex; gap: 1.25rem; margin-top: 1rem; flex-wrap: wrap; }
+.positive { color: var(--color-green); font-family: 'Outfit'; font-weight: 900; white-space: nowrap; text-shadow: 0 0 14px rgba(34,197,94,0.28); font-size: 0.82rem; letter-spacing: 0.06em; }
+.negative { color: var(--color-red); font-family: 'Outfit'; font-weight: 900; white-space: nowrap; font-size: 0.82rem; letter-spacing: 0.06em; }
 
-.entry {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.6rem 1rem;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  transition: background 0.2s, padding-left 0.2s;
-  border-radius: 8px;
-}
-.entry:last-child { border-bottom: none; }
-.entry:hover { background: rgba(255,255,255,0.04); padding-left: 1.5rem; }
+.ledger { display: flex; flex-direction: column; gap: 1rem; }
 
-.date { font-family: 'Outfit'; font-size: 0.80rem; color: var(--text-secondary); width: 100px; }
-.reason { flex: 1; color: #fff; font-weight: 600; padding: 0 1rem; font-size: 0.85rem; }
-.positive { color: var(--color-green); font-family: 'Outfit'; font-weight: 900; white-space: nowrap; text-shadow: 0 0 14px rgba(34,197,94,0.28); }
-.negative { color: var(--color-red); font-family: 'Outfit'; font-weight: 900; white-space: nowrap; }
-
-.todaySummary { display: flex; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap; }
-
+/* ── Day card — one card per date ─────────────────────────────── */
 .dateGroup {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
@@ -31,20 +17,45 @@
   box-shadow: var(--glass-shadow);
   border-radius: var(--radius-2xl);
   overflow: hidden;
-  transition: border-color var(--transition-normal), box-shadow var(--transition-normal), transform var(--transition-normal);
+  transition: border-color var(--dur-mid) var(--ease-glass), box-shadow var(--dur-mid) var(--ease-glass), transform var(--dur-mid) var(--ease-glass);
   will-change: transform;
 }
 .dateGroup:hover { border-color: var(--glass-border-hover); box-shadow: var(--glass-shadow-hover); transform: translateY(-2px); }
 
+/* Date header row */
 .dateHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.9rem 1.5rem;
-  background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+  padding: 0.85rem 1.5rem;
+  background: linear-gradient(145deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.03) 100%);
   border-bottom: 1px solid rgba(255,255,255,0.07);
   flex-wrap: wrap;
   gap: 0.5rem;
 }
-.dateSummary { display: flex; gap: 1rem; flex-wrap: wrap; }
-.dateEntries { padding: 0.5rem 1.5rem; }
+.date {
+  font-family: 'Outfit';
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: var(--text-secondary);
+  letter-spacing: 0.12em;
+}
+.dateSummary { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+
+/* Individual entry rows inside a day card */
+.dateEntries { display: flex; flex-direction: column; padding: 0.5rem 0; }
+
+.entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.18s ease, padding-left 0.18s ease;
+  border-radius: 0;
+  gap: 0.75rem;
+}
+.entry:last-child { border-bottom: none; }
+.entry:hover { background: rgba(255,255,255,0.035); padding-left: 2rem; }
+
+.reason { flex: 1; color: rgba(255,255,255,0.82); font-weight: 500; font-size: 0.82rem; letter-spacing: 0.02em; }

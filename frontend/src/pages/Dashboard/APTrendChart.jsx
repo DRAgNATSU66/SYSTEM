@@ -110,9 +110,9 @@ const APTrendChart = () => {
           <AreaChart data={data} margin={{ top: 10, right: 4, bottom: 0, left: -20 }}>
             <defs>
               <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   stopColor="#00CFFF" stopOpacity="0.30" />
-                <stop offset="60%"  stopColor="#00CFFF" stopOpacity="0.08" />
-                <stop offset="100%" stopColor="#00CFFF" stopOpacity="0.00" />
+                <stop offset="0%"   stopColor="#00CFFF" stopOpacity="0.40" />
+                <stop offset="50%"  stopColor="#00CFFF" stopOpacity="0.15" />
+                <stop offset="100%" stopColor="#00CFFF" stopOpacity="0.02" />
               </linearGradient>
               <filter id="lineGlow" x="-20%" y="-100%" width="140%" height="300%">
                 <feGaussianBlur stdDeviation="3" result="blur" />

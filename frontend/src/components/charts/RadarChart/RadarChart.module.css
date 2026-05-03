@@ -2,7 +2,14 @@
 .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
 .title { font-family: 'Outfit'; font-size: 0.7rem; color: var(--text-secondary); letter-spacing: 0.25em; font-weight: 900; margin: 0; text-transform: uppercase; }
 .statusLine { flex: 1; height: 1px; background: linear-gradient(to right, rgba(0,191,255,0.1), transparent); margin-left: 1.5rem; }
-.chartWrapper { flex: 1; width: 100%; min-height: 380px; overflow: visible; }
+.chartWrapper {
+  flex: 1;
+  width: 100%;
+  min-height: 380px;
+  overflow: visible;
+  /* CSS glow reinforces the SVG filter for a smoother result */
+  filter: drop-shadow(0 0 8px rgba(0,207,255,0.30));
+}
 
 @media (max-width: 480px) {
   .chartWrapper { min-height: 260px; }

@@ -105,57 +105,47 @@ const NutritionPage = () => {
   const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded, getCategoryEarned, dailyCategoryAP } = useAuraStore();
   const overallProgress = computeNutritionProgress(customMacros, customMicros, todayMacros, todayMicros);
 
-  // Per-nutrient AP: total NUTRITION cap (200) divided among all nutrients, each can only award once per day
-  const totalNutrients = customMacros.length + customMicros.length;
-  const apPerNutrient = totalNutrients > 0 ? Math.floor(200 / totalNutrients) : 5;
+  // AP weights: macros = 50 each, micros = 10 each (once per day per nutrient)
+  const MACRO_AP = 50;
+  const MICRO_AP = 10;
 
   const handleLogItem = (macro, rawValue) => {
     resetDailyIfNeeded();
 
-    // Always persist the entered value to the store + sync to backend
     const valueToLog = parseFloat(rawValue) || 0;
     if (tab === 'macros') {
-      if (user?.id) {
-        metricsService.logMacroValue(user.id, macro.id, valueToLog, today);
-      } else {
-        logMacroValue(macro.id, valueToLog);
-      }
+      if (user?.id) metricsService.logMacroValue(user.id, macro.id, valueToLog, today);
+      else logMacroValue(macro.id, valueToLog);
     } else {
-      if (user?.id) {
-        metricsService.logMicroValue(user.id, macro.id, valueToLog, today);
-      } else {
-        logMicroValue(macro.id, valueToLog);
-      }
+      if (user?.id) metricsService.logMicroValue(user.id, macro.id, valueToLog, today);
+      else logMicroValue(macro.id, valueToLog);
     }
 
-    // Check if this specific nutrient already awarded AP today
-    const todayKey = today;
-    const dayData = dailyCategoryAP[todayKey] || {};
+    if (valueToLog <= 0) {
+      setFlash(`Enter a value greater than 0 to earn AP.`);
+      setTimeout(() => setFlash(''), 2000);
+      return;
+    }
+
+    // Each nutrient can only award AP once per day
     const nutrientKey = `NUTRITION_${macro.id}`;
+    const dayData = dailyCategoryAP[today] || {};
     if (dayData[nutrientKey]) {
       setFlash(`${macro.name} already logged for AP today.`);
       setTimeout(() => setFlash(''), 2000);
       return;
     }
 
-    // Check if the nutrient's value meets its minimum target
-    if (valueToLog < macro.minLimit) {
-      setFlash(`${macro.name}: value must meet target (${macro.minLimit}${macro.unit}) for AP.`);
-      setTimeout(() => setFlash(''), 2000);
-      return;
-    }
-
-    // Award AP and mark this nutrient as awarded
-    addCategoryAP('NUTRITION', apPerNutrient, `NUTRITION MET: ${macro.name}`);
-    // Mark this specific nutrient as awarded today
+    const apAmount = tab === 'macros' ? MACRO_AP : MICRO_AP;
+    addCategoryAP('NUTRITION', apAmount, `NUTRITION LOGGED: ${macro.name} ${valueToLog}${macro.unit}`);
     useAuraStore.setState((state) => ({
       dailyCategoryAP: {
         ...state.dailyCategoryAP,
-        [todayKey]: { ...(state.dailyCategoryAP[todayKey] || {}), [nutrientKey]: true }
+        [today]: { ...(state.dailyCategoryAP[today] || {}), [nutrientKey]: true }
       }
     }));
     checkAndUpdateStreak();
-    setFlash(`${macro.name} target met! +${apPerNutrient} AP`);
+    setFlash(`${macro.name} logged! +${apAmount} AP`);
     setTimeout(() => setFlash(''), 2000);
   };
 

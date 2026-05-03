@@ -102,35 +102,25 @@ const RadarChart = () => {
         <ResponsiveContainer width="100%" height="100%">
           <RechartsRadar cx="50%" cy="50%" outerRadius="80%" data={data}>
             <defs>
-              {/* Glow filter: blurs a copy, merges with original for luminous effect */}
-              <filter id="radarGlow" x="-40%" y="-40%" width="180%" height="180%">
-                <feGaussianBlur stdDeviation="6" result="blur" />
-                <feColorMatrix in="blur" type="saturate" values="3" result="saturatedBlur" />
+              {/* Clean glow: blur only — NO saturation (saturation causes pixelation artifacts) */}
+              <filter id="radarGlow" x="-35%" y="-35%" width="170%" height="170%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
                 <feMerge>
-                  <feMergeNode in="saturatedBlur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-              {/* Stroke glow — softer separate pass */}
-              <filter id="strokeGlow" x="-60%" y="-60%" width="220%" height="220%">
-                <feGaussianBlur stdDeviation="3" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
                   <feMergeNode in="blur" />
                   <feMergeNode in="SourceGraphic" />
                 </feMerge>
               </filter>
-              {/* Radial gradient: bright teal at center, transparent at edge */}
+              {/* Radial gradient: luminous teal at center → transparent edge */}
               <radialGradient id="radarFill" cx="50%" cy="50%" r="50%">
-                <stop offset="0%"   stopColor="#00CFFF" stopOpacity="0.55" />
-                <stop offset="55%"  stopColor="#00CFFF" stopOpacity="0.22" />
-                <stop offset="100%" stopColor="#00CFFF" stopOpacity="0.06" />
+                <stop offset="0%"   stopColor="#00CFFF" stopOpacity="0.50" />
+                <stop offset="50%"  stopColor="#00CFFF" stopOpacity="0.20" />
+                <stop offset="100%" stopColor="#00CFFF" stopOpacity="0.04" />
               </radialGradient>
             </defs>
-            <PolarGrid stroke="rgba(255,255,255,0.07)" />
+            <PolarGrid stroke="rgba(255,255,255,0.08)" />
             <PolarAngleAxis
               dataKey="subject"
-              tick={{ fill: 'rgba(255,255,255,0.85)', fontSize: 11, fontWeight: 900, fontFamily: 'Outfit', letterSpacing: '0.12em' }}
+              tick={{ fill: 'rgba(255,255,255,0.80)', fontSize: 11, fontWeight: 900, fontFamily: 'Outfit', letterSpacing: '0.10em' }}
             />
             <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
             <Tooltip content={<CustomTooltip />} />
@@ -138,11 +128,11 @@ const RadarChart = () => {
               name="SYSTEM"
               dataKey="A"
               stroke="#00CFFF"
-              strokeWidth={2}
+              strokeWidth={2.5}
               fill="url(#radarFill)"
               fillOpacity={1}
               filter="url(#radarGlow)"
-              dot={{ r: 4, fill: '#00CFFF', stroke: 'rgba(0,207,255,0.4)', strokeWidth: 6, filter: 'url(#strokeGlow)' }}
+              dot={{ r: 4, fill: '#00CFFF', stroke: 'rgba(0,0,0,0.4)', strokeWidth: 1.5 }}
             />
           </RechartsRadar>
         </ResponsiveContainer>
