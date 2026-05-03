@@ -1,20 +1,50 @@
 .container { padding: 2rem; max-width: 1000px; margin: 0 auto; }
 .header { margin-bottom: 3rem; }
-.header h1 { font-family: 'Outfit'; font-size: 2.5rem; color: #fff; letter-spacing: 0.1em; }
+.header h1 { font-family: 'Outfit'; font-size: 2.5rem; color: #fff; letter-spacing: 0.10em; text-shadow: 0 0 30px rgba(255,255,255,0.10); }
+
 .ledger { display: flex; flex-direction: column; gap: 1.25rem; }
-.entry { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); }
+
+.entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: background 0.2s, padding-left 0.2s;
+  border-radius: 8px;
+}
 .entry:last-child { border-bottom: none; }
-.date { font-family: 'Outfit'; font-size: 0.8rem; color: var(--text-secondary); width: 100px; }
+.entry:hover { background: rgba(255,255,255,0.04); padding-left: 1.5rem; }
+
+.date { font-family: 'Outfit'; font-size: 0.80rem; color: var(--text-secondary); width: 100px; }
 .reason { flex: 1; color: #fff; font-weight: 600; padding: 0 1rem; font-size: 0.85rem; }
-.positive { color: var(--color-green); font-family: 'Outfit'; font-weight: 900; white-space: nowrap; }
+.positive { color: var(--color-green); font-family: 'Outfit'; font-weight: 900; white-space: nowrap; text-shadow: 0 0 14px rgba(34,197,94,0.28); }
 .negative { color: var(--color-red); font-family: 'Outfit'; font-weight: 900; white-space: nowrap; }
 
-/* Today summary */
 .todaySummary { display: flex; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap; }
 
-/* Grouped date view */
-.dateGroup { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); border-radius: 20px; overflow: hidden; transition: border-color var(--transition-normal), box-shadow var(--transition-normal); }
-.dateGroup:hover { border-color: var(--glass-border-hover); box-shadow: var(--glass-shadow-hover); }
-.dateHeader { display: flex; justify-content: space-between; align-items: center; padding: 0.9rem 1.5rem; background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; gap: 0.5rem; }
+.dateGroup {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal), transform var(--transition-normal);
+  will-change: transform;
+}
+.dateGroup:hover { border-color: var(--glass-border-hover); box-shadow: var(--glass-shadow-hover); transform: translateY(-2px); }
+
+.dateHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1.5rem;
+  background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
 .dateSummary { display: flex; gap: 1rem; flex-wrap: wrap; }
 .dateEntries { padding: 0.5rem 1.5rem; }
