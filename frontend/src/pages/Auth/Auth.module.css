@@ -130,21 +130,20 @@
   position: relative;
   overflow: hidden;
 }
-/* 3D arc highlight — radial from top-center, curves like a lens */
+/* 3D arc highlight — fills entire button, gradient fades to transparent
+   long before any edge, so no visible straight line cutoff */
 .button::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 5%;
-  right: 5%;
-  height: 52%;
+  inset: 0;
+  border-radius: inherit;
   background: radial-gradient(
-    ellipse 100% 160% at 50% -15%,
-    rgba(255,255,255,0.42) 0%,
-    rgba(255,255,255,0.16) 40%,
-    transparent 70%
+    ellipse 85% 55% at 50% 0%,
+    rgba(255,255,255,0.40) 0%,
+    rgba(255,255,255,0.14) 32%,
+    rgba(255,255,255,0.03) 58%,
+    transparent 72%
   );
-  border-radius: 0 0 50% 50%;
   pointer-events: none;
   z-index: 1;
 }
@@ -220,21 +219,19 @@
   position: relative;
   overflow: hidden;
 }
-/* 3D arc highlight — same radial lens technique as ACCESS TERMINAL */
+/* 3D arc highlight — same technique, blends smoothly with no cutoff */
 .googleButton::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 5%;
-  right: 5%;
-  height: 52%;
+  inset: 0;
+  border-radius: inherit;
   background: radial-gradient(
-    ellipse 100% 160% at 50% -15%,
-    rgba(255,255,255,0.36) 0%,
-    rgba(255,255,255,0.12) 40%,
-    transparent 70%
+    ellipse 85% 55% at 50% 0%,
+    rgba(255,255,255,0.34) 0%,
+    rgba(255,255,255,0.11) 32%,
+    rgba(255,255,255,0.02) 58%,
+    transparent 72%
   );
-  border-radius: 0 0 50% 50%;
   pointer-events: none;
   z-index: 1;
 }
