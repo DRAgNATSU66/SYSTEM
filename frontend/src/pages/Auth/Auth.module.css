@@ -84,31 +84,89 @@
   background: rgba(0,191,255,0.07);
   box-shadow: inset 0 2px 6px rgba(0,0,0,0.20), 0 0 0 3px rgba(0,191,255,0.16);
 }
+/* Keep dark glass when browser autofills (prevents white flash) */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
+  -webkit-box-shadow:
+    0 0 0 1000px rgba(8, 8, 18, 0.92) inset,
+    inset 0 1px 0 rgba(255,255,255,0.14),
+    inset 0 2px 6px rgba(0,0,0,0.25) !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+  border-color: rgba(0,191,255,0.42) !important;
+  border-radius: 14px !important;
+  transition: background-color 9999s ease-in-out 0s !important;
+}
 
+/* ── ACCESS TERMINAL — 3D Liquid Glass Pill ─────────────────── */
 .button {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(145deg, rgba(0,191,255,0.24) 0%, rgba(0,191,255,0.14) 100%);
+  /* Cyan glass base — tinted translucent, not opaque */
+  background: rgba(0,191,255,0.18);
   color: var(--rank-alpha);
   font-weight: 900;
   font-family: 'Outfit', sans-serif;
   font-size: 0.85rem;
   letter-spacing: 0.15em;
-  border: 1px solid rgba(0,191,255,0.42);
+  border: 1px solid rgba(0,191,255,0.40);
   border-radius: var(--radius-pill);
   cursor: pointer;
-  backdrop-filter: blur(16px) saturate(200%);
-  -webkit-backdrop-filter: blur(16px) saturate(200%);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  /* 3D shadow stack: bright wet-lip → depth shadow → side rims → outer glow */
   box-shadow:
-    0 4px 18px rgba(0,191,255,0.18),
-    inset 0 2px 0 rgba(255,255,255,0.28),
-    inset 0 -2px 0 rgba(0,0,0,0.14);
-  transition: all 0.28s cubic-bezier(0.34,1.20,0.64,1);
+    inset 0 1px 0 rgba(255,255,255,0.55),   /* top wet-lip — brightest pixel */
+    inset 0 -2px 0 rgba(0,0,0,0.30),         /* bottom depth — glass thickness */
+    inset 1px 0 0 rgba(255,255,255,0.14),    /* left rim */
+    inset -1px 0 0 rgba(0,0,0,0.12),          /* right rim */
+    0 8px 32px rgba(0,191,255,0.28),          /* ambient cyan glow */
+    0 2px 8px rgba(0,0,0,0.30),               /* close drop shadow */
+    0 0 0 1px rgba(0,191,255,0.22);           /* hairline border */
+  transition: all var(--dur-mid) var(--ease-glass);
   margin-top: 0.5rem;
   will-change: transform;
+  position: relative;
+  overflow: hidden;
 }
-.button:hover:not(:disabled) { background: var(--rank-alpha); color: #000; transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 32px rgba(0,191,255,0.50), inset 0 2px 0 rgba(255,255,255,0.38); border-color: var(--rank-alpha); }
-.button:active:not(:disabled) { transform: translateY(1px) scale(0.96); transition: all 0.08s cubic-bezier(0.34,1.56,0.64,1); }
+/* 3D arc highlight — radial from top-center, curves like a lens */
+.button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+  height: 52%;
+  background: radial-gradient(
+    ellipse 100% 160% at 50% -15%,
+    rgba(255,255,255,0.42) 0%,
+    rgba(255,255,255,0.16) 40%,
+    transparent 70%
+  );
+  border-radius: 0 0 50% 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+.button:hover:not(:disabled) {
+  background: var(--rank-alpha);
+  color: #000;
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.65),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    0 12px 40px rgba(0,191,255,0.55),
+    0 2px 8px rgba(0,0,0,0.25),
+    0 0 0 1px var(--rank-alpha);
+  border-color: var(--rank-alpha);
+}
+.button:active:not(:disabled) {
+  transform: scale(0.97);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.20),
+    0 2px 8px rgba(0,191,255,0.20);
+  transition: all var(--dur-fast) var(--ease-press);
+}
 .button:disabled { opacity: 0.45; cursor: not-allowed; }
 
 .error { width: 100%; padding: 0.75rem 1rem; background: rgba(255,49,49,0.08); border: 1px solid var(--rank-slacking); color: var(--rank-slacking); border-radius: 12px; margin-bottom: 0.5rem; font-size: 0.82rem; text-align: center; box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.06); }
@@ -127,6 +185,7 @@
 .linkBtn { background: none; border: none; color: var(--text-secondary); font-size: 0.82rem; cursor: pointer; margin-top: 0.5rem; transition: color 0.28s cubic-bezier(0.4,0,0.2,1); font-family: 'Inter'; min-height: auto; min-width: auto; }
 .linkBtn:hover { color: var(--rank-alpha); transform: none; }
 
+/* ── CONTINUE WITH GOOGLE — 3D Neutral Glass Pill ───────────── */
 .googleButton {
   width: 100%;
   display: flex;
@@ -134,24 +193,69 @@
   justify-content: center;
   gap: 0.65rem;
   padding: 0.85rem 1rem;
-  background: linear-gradient(145deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 100%);
-  border: 1px solid rgba(255,255,255,0.15);
+  /* Flat neutral glass tint — specular lives on ::before arc */
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.16);
   border-radius: var(--radius-pill);
   color: #fff;
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.22), inset 0 2px 0 rgba(255,255,255,0.16), inset 0 -1.5px 0 rgba(0,0,0,0.10);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  /* 3D shadow stack matching the glass pill reference */
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.48),   /* wet-lip top */
+    inset 0 -2px 0 rgba(0,0,0,0.22),          /* bottom depth */
+    inset 1px 0 0 rgba(255,255,255,0.12),    /* left rim */
+    inset -1px 0 0 rgba(0,0,0,0.10),          /* right rim */
+    0 6px 24px rgba(0,0,0,0.32),              /* lift shadow */
+    0 2px 6px rgba(0,0,0,0.20),              /* close shadow */
+    0 0 0 1px rgba(255,255,255,0.08);         /* hairline */
   font-family: 'Outfit', sans-serif;
   font-weight: 700;
   font-size: 0.85rem;
   letter-spacing: 0.10em;
   cursor: pointer;
-  transition: all 0.28s cubic-bezier(0.34,1.20,0.64,1);
+  transition: all var(--dur-mid) var(--ease-glass);
   margin-top: 0.25rem;
   will-change: transform;
+  position: relative;
+  overflow: hidden;
 }
-.googleButton:hover:not(:disabled) { background: linear-gradient(145deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.08) 100%); border-color: rgba(255,255,255,0.28); transform: translateY(-2px) scale(1.01); box-shadow: 0 8px 24px rgba(0,0,0,0.32), inset 0 2px 0 rgba(255,255,255,0.22); }
-.googleButton:active:not(:disabled) { transform: translateY(1px) scale(0.97); transition: all 0.08s cubic-bezier(0.34,1.56,0.64,1); }
+/* 3D arc highlight — same radial lens technique as ACCESS TERMINAL */
+.googleButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+  height: 52%;
+  background: radial-gradient(
+    ellipse 100% 160% at 50% -15%,
+    rgba(255,255,255,0.36) 0%,
+    rgba(255,255,255,0.12) 40%,
+    transparent 70%
+  );
+  border-radius: 0 0 50% 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+.googleButton:hover:not(:disabled) {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.28);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.60),
+    inset 0 -2px 0 rgba(0,0,0,0.20),
+    0 10px 32px rgba(0,0,0,0.40),
+    0 2px 6px rgba(0,0,0,0.20),
+    0 0 0 1px rgba(255,255,255,0.14);
+}
+.googleButton:active:not(:disabled) {
+  transform: scale(0.97);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.18),
+    0 2px 6px rgba(0,0,0,0.20);
+  transition: all var(--dur-fast) var(--ease-press);
+}
 .googleButton:disabled { opacity: 0.45; cursor: not-allowed; }
 .googleIcon { width: 18px; height: 18px; flex-shrink: 0; }
 

@@ -64,8 +64,22 @@
 
 .macroInfo { display: flex; flex-direction: column; gap: 0.75rem; flex: 1; }
 .macroInfo label { font-size: 0.68rem; color: var(--text-secondary); font-weight: 900; letter-spacing: 0.22em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-transform: uppercase; }
-.macroInfo input { background: transparent; border: none; border-bottom: 2px solid rgba(255,255,255,0.12); color: #fff; font-family: 'Outfit'; font-weight: 800; font-size: 2.5rem; width: 120px; max-width: 100%; outline: none; transition: 0.3s; }
-.macroInfo input:focus { border-bottom-color: var(--rank-alpha); }
+.macroInfo input {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: var(--radius-lg);
+  color: #fff;
+  font-family: 'Outfit';
+  font-weight: 800;
+  font-size: 2.5rem;
+  width: 130px;
+  max-width: 100%;
+  outline: none;
+  padding: 0.25rem 0.5rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), inset 0 2px 6px rgba(0,0,0,0.20);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.macroInfo input:focus { border-color: rgba(0,191,255,0.55); background: rgba(0,191,255,0.06); box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 2px 6px rgba(0,0,0,0.16), 0 0 0 3px rgba(0,191,255,0.14); }
 .unit { font-size: 0.80rem; color: var(--text-secondary); margin-left: 0.5rem; vertical-align: middle; }
 
 .pieSlot { width: 100px; height: 100px; }
