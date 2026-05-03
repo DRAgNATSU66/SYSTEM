@@ -6,6 +6,7 @@ import XPBar from '../../components/gamification/XPBar/XPBar';
 import RadarChart from '../../components/charts/RadarChart/RadarChart';
 import CalendarHeatmap from '../../components/charts/CalendarHeatmap/CalendarHeatmap';
 import WeeklyBarChart from './WeeklyBarChart';
+import APTrendChart from './APTrendChart';
 import { useUserStore } from '../../store/userStore';
 import { useAuraStore } from '../../store/auraStore';
 import { useTaskStore } from '../../store/taskStore';
@@ -69,9 +70,15 @@ const DashboardPage = () => {
         <WeeklyBarChart />
       </section>
 
+      {/* AP Trend Line Chart */}
+      <APTrendChart />
+
       {/* Daily Loop */}
       <section className={styles.dailyLoopRow}>
-        <h2 className={styles.loopTitle}>DAILY LOOP</h2>
+        <div className={styles.loopHeader}>
+          <h2 className={styles.loopTitle}>DAILY LOOP</h2>
+          <div className={styles.loopHeaderLine} />
+        </div>
         {tasks.length === 0 ? (
           <p className={styles.loopEmpty}>No permanent tasks. Add tasks in Settings → Task Manager.</p>
         ) : (

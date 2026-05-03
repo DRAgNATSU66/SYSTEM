@@ -84,33 +84,110 @@
 }
 .btnCancel:hover { border-color: rgba(255,255,255,0.30); color: #fff; background: rgba(255,255,255,0.06); transform: translateY(-1px); }
 
-.sectionLabel { font-family: 'Outfit'; font-size: 0.68rem; font-weight: 900; color: var(--rank-alpha); letter-spacing: 0.32em; margin: 0 0 1rem 0; text-transform: uppercase; text-shadow: 0 0 14px rgba(0,191,255,0.28); }
+.sectionLabel {
+  font-family: 'Outfit';
+  font-size: 0.66rem;
+  font-weight: 900;
+  color: var(--rank-alpha);
+  letter-spacing: 0.28em;
+  margin: 0;
+  text-transform: uppercase;
+  text-shadow: 0 0 14px rgba(0,191,255,0.28);
+}
 
-.waveSection { margin-top: 2.5rem; }
-.waveSvg { display: block; border-radius: 12px; background: rgba(0,191,255,0.03); border: 1px solid rgba(0,191,255,0.09); }
+/* ── Shared info-card header (label + decorative line) ───────── */
+.infoCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.infoCardHeader::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, rgba(0,191,255,0.20), transparent);
+}
 
-.historySection { margin-top: 2.5rem; }
-.historyList { display: flex; flex-direction: column; gap: 0.5rem; }
+/* ── Neural Wave glass card ───────────────────────────────────── */
+.waveSection {
+  margin-top: 2.5rem;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-left: 3px solid var(--rank-alpha);
+  box-shadow: var(--glass-shadow), -3px 0 18px rgba(0,191,255,0.08);
+  border-radius: var(--radius-2xl);
+  padding: 1.5rem 1.75rem;
+  position: relative;
+  overflow: hidden;
+}
+.waveSvg {
+  display: block;
+  width: 100%;
+  border-radius: 10px;
+  background: rgba(0,191,255,0.025);
+  border: 1px solid rgba(0,191,255,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+
+/* ── Recent Entries glass card ───────────────────────────────── */
+.historySection {
+  margin-top: 1.5rem;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-left: 3px solid var(--rank-alpha);
+  box-shadow: var(--glass-shadow), -3px 0 18px rgba(0,191,255,0.08);
+  border-radius: var(--radius-2xl);
+  padding: 1.5rem 1.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.historyList { display: flex; flex-direction: column; gap: 0.4rem; }
+
 .historyEntry {
   display: flex;
   align-items: center;
   gap: 1rem;
-  background: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
-  backdrop-filter: var(--glass-blur-light);
-  -webkit-backdrop-filter: var(--glass-blur-light);
-  border: 1px solid var(--glass-border);
-  border-left: 3px solid var(--mood-color, #FFD700);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
   padding: 0.75rem 1rem;
-  border-radius: 14px;
+  border-radius: 12px;
   flex-wrap: wrap;
-  box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.08);
-  transition: all 0.22s ease;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+  transition: background 0.18s ease, border-color 0.18s ease;
 }
-.historyEntry:hover { background: linear-gradient(145deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.04) 100%); border-color: var(--glass-border-hover); box-shadow: 0 4px 14px rgba(0,0,0,0.20), inset 0 1.5px 0 rgba(255,255,255,0.12); }
-.historyDate { font-family: 'Outfit'; font-size: 0.70rem; color: var(--text-secondary); min-width: 90px; }
-.historyLabel { font-family: 'Outfit'; font-size: 0.75rem; font-weight: 800; color: var(--mood-color, #FFD700); letter-spacing: 0.08em; min-width: 80px; }
-.historyNote { flex: 1; font-size: 0.80rem; color: var(--text-secondary); font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.historyScore { font-family: 'Outfit'; font-weight: 900; font-size: 0.9rem; color: #fff; margin-left: auto; }
+.historyEntry:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.13); }
+
+.historyDate {
+  font-family: 'Outfit';
+  font-size: 0.70rem;
+  color: var(--text-secondary);
+  min-width: 92px;
+  letter-spacing: 0.04em;
+}
+
+/* Coloured pill badge */
+.historyPill {
+  font-family: 'Outfit';
+  font-size: 0.60rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  padding: 0.22rem 0.75rem;
+  border-radius: var(--radius-pill);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18);
+  white-space: nowrap;
+}
+
+.historyNote { flex: 1; font-size: 0.78rem; color: var(--text-secondary); font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.historyScore { font-family: 'Outfit'; font-weight: 900; font-size: 0.92rem; color: #fff; margin-left: auto; white-space: nowrap; }
 
 @media (max-width: 768px) {
   .container { padding: 1.5rem; }

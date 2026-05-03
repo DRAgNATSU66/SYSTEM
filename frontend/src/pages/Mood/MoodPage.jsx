@@ -56,16 +56,28 @@ const MoodPage = () => {
   // Chronological for the wave
   const waveData = [...moodHistory].reverse();
 
-  // SVG wave
-  const svgW = 400, svgH = 80, pad = 14;
+  // SVG wave — smooth cubic bezier path
+  const svgW = 500, svgH = 90, pad = 20;
   const innerW = svgW - pad * 2;
   const innerH = svgH - pad * 2;
   const wavePoints = waveData.length > 1
-    ? waveData.map(([, d], i) => {
-        const x = pad + (i / (waveData.length - 1)) * innerW;
-        const y = svgH - pad - ((d.mood / 10) * innerH);
-        return `${x},${y}`;
-      }).join(' ')
+    ? waveData.map(([, d], i) => ({
+        x: pad + (i / (waveData.length - 1)) * innerW,
+        y: svgH - pad - ((d.mood / 10) * innerH),
+      }))
+    : null;
+
+  const wavePath = wavePoints
+    ? wavePoints.reduce((d, pt, i) => {
+        if (i === 0) return `M ${pt.x} ${pt.y}`;
+        const prev = wavePoints[i - 1];
+        const cpx = (prev.x + pt.x) / 2;
+        return `${d} C ${cpx} ${prev.y}, ${cpx} ${pt.y}, ${pt.x} ${pt.y}`;
+      }, '')
+    : null;
+
+  const areaPath = wavePath
+    ? `${wavePath} L ${wavePoints[wavePoints.length - 1].x} ${svgH} L ${wavePoints[0].x} ${svgH} Z`
     : null;
 
   return (
@@ -118,26 +130,51 @@ const MoodPage = () => {
 
       {waveData.length > 1 && (
         <div className={styles.waveSection}>
-          <h3 className={styles.sectionLabel}>NEURAL WAVE</h3>
+          <div className={styles.infoCardHeader}>
+            <h3 className={styles.sectionLabel}>NEURAL WAVE</h3>
+          </div>
           <svg
             width="100%"
             viewBox={`0 0 ${svgW} ${svgH}`}
             className={styles.waveSvg}
             preserveAspectRatio="none"
           >
-            <polyline
-              points={wavePoints}
-              fill="none"
-              stroke="var(--rank-alpha)"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            {waveData.map(([, d], i) => {
-              const x = pad + (i / (waveData.length - 1)) * innerW;
-              const y = svgH - pad - ((d.mood / 10) * innerH);
+            <defs>
+              <linearGradient id="waveAreaFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stopColor="#00CFFF" stopOpacity="0.20" />
+                <stop offset="100%" stopColor="#00CFFF" stopOpacity="0.00" />
+              </linearGradient>
+              <filter id="waveGlow" x="-10%" y="-100%" width="120%" height="300%">
+                <feGaussianBlur stdDeviation="2.5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            {/* gradient fill under curve */}
+            {areaPath && <path d={areaPath} fill="url(#waveAreaFill)" />}
+            {/* glowing smooth curve */}
+            {wavePath && (
+              <path
+                d={wavePath}
+                fill="none"
+                stroke="#00CFFF"
+                strokeWidth="2"
+                strokeLinecap="round"
+                filter="url(#waveGlow)"
+              />
+            )}
+            {/* Mood nodes */}
+            {wavePoints && waveData.map(([, d], i) => {
+              const pt = wavePoints[i];
               const nodeFace = faces.find(f => f.val === d.mood) || faces[2];
-              return <circle key={i} cx={x} cy={y} r="4" fill={nodeFace.color} stroke="rgba(0,0,0,0.5)" strokeWidth="1" />;
+              return (
+                <g key={i}>
+                  <circle cx={pt.x} cy={pt.y} r="6" fill={nodeFace.color} opacity="0.20" />
+                  <circle cx={pt.x} cy={pt.y} r="3.5" fill={nodeFace.color} stroke="rgba(0,0,0,0.6)" strokeWidth="1" />
+                </g>
+              );
             })}
           </svg>
         </div>
@@ -145,14 +182,21 @@ const MoodPage = () => {
 
       {moodHistory.length > 0 && (
         <div className={styles.historySection}>
-          <h3 className={styles.sectionLabel}>RECENT ENTRIES</h3>
+          <div className={styles.infoCardHeader}>
+            <h3 className={styles.sectionLabel}>RECENT ENTRIES</h3>
+          </div>
           <div className={styles.historyList}>
             {moodHistory.map(([date, data]) => {
               const face = faces.find(f => f.val === data.mood);
               return (
                 <div key={date} className={styles.historyEntry} style={{ '--mood-color': face?.color || '#FFD700' }}>
                   <span className={styles.historyDate}>{date}</span>
-                  <span className={styles.historyLabel}>{face?.label || 'STABLE'}</span>
+                  <span
+                    className={styles.historyPill}
+                    style={{ background: `${face?.color || '#FFD700'}22`, border: `1px solid ${face?.color || '#FFD700'}55`, color: face?.color || '#FFD700' }}
+                  >
+                    {face?.label || 'STABLE'}
+                  </span>
                   {data.moodNote && <span className={styles.historyNote}>{data.moodNote}</span>}
                   <span className={styles.historyScore}>{face?.display || '0'}</span>
                 </div>
