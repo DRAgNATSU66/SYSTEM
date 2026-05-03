@@ -265,6 +265,31 @@ const WorkoutPage = () => {
     checkAndUpdateStreak();
   };
 
+  // LOG ALL CARDIO — syncs LSS with current state + VO2Max with last stored values
+  const handleLogAllCardio = () => {
+    resetDailyIfNeeded();
+    const lssData = { minutes: parseInt(lss.minutes) || 30, bpm: parseInt(lss.bpm) || 135 };
+    if (user?.id) {
+      workoutService.logCardio(user.id, 'lss', lssData, today);
+    } else {
+      logCardio('lss', lssData);
+    }
+    addCategoryAP('WORKOUT', 15, `LSS CARDIO LOGGED: ${lssData.minutes}min @ ${lssData.bpm}bpm`);
+
+    // Also log VO2Max with last stored values if available
+    const lastVO2 = lastLoggedCardio?.vo2max;
+    if (lastVO2) {
+      const vo2data = { value: lastVO2.value || lastVO2.rawVO2 || 0, score: lastVO2.score || 0, date: today };
+      if (user?.id) {
+        workoutService.logCardio(user.id, 'vo2max', vo2data, today);
+      } else {
+        logCardio('vo2max', vo2data);
+      }
+      addCategoryAP('WORKOUT', 20, `VO2 MAX LOGGED: ${vo2data.value} ml/kg/min`);
+    }
+    checkAndUpdateStreak();
+  };
+
   const handleVO2Log = (res) => {
     resetDailyIfNeeded();
     if (user?.id) {
@@ -317,14 +342,15 @@ const WorkoutPage = () => {
         </button>
       </div>
 
-      {/* ── Log All (top-level) ───────────────────────────────────── */}
-      {activeTab !== 'cardio' && (
-        <div className={styles.logAllBar}>
-          <button className={styles.btnLogAllTop} onClick={handleLogAllTab}>
-            LOG ALL {activeTab.toUpperCase()}
-          </button>
-        </div>
-      )}
+      {/* ── Log All (top-level) — shown for every tab ────────────── */}
+      <div className={styles.logAllBar}>
+        <button
+          className={styles.btnLogAllTop}
+          onClick={activeTab === 'cardio' ? handleLogAllCardio : handleLogAllTab}
+        >
+          LOG ALL {activeTab.toUpperCase()}
+        </button>
+      </div>
 
       {/* ── Hypertrophy Tab ──────────────────────────────────────── */}
       {activeTab === 'hypertrophy' && (

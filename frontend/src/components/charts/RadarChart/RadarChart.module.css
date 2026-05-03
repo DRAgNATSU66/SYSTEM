@@ -7,13 +7,20 @@
   width: 100%;
   min-height: 380px;
   overflow: visible;
-  /* CSS drop-shadow only — no SVG filter on the Radar element itself.
-     Double-layer: tight core glow + wide ambient glow. Renders clean anti-aliased
-     without the pixel/block artifacts that SVG feGaussianBlur causes. */
+  /* NO filter here — would glow the text labels too */
+}
+
+/* Glow ONLY on the filled polygon — not axis labels */
+.chartWrapper :global(.recharts-radar-polygon) {
   filter:
-    drop-shadow(0 0 6px rgba(0,207,255,0.70))
-    drop-shadow(0 0 18px rgba(0,207,255,0.35))
-    drop-shadow(0 0 40px rgba(0,207,255,0.12));
+    drop-shadow(0 0 6px rgba(0,207,255,0.75))
+    drop-shadow(0 0 16px rgba(0,207,255,0.40))
+    drop-shadow(0 0 36px rgba(0,207,255,0.15));
+}
+
+/* Glow on the vertex dots */
+.chartWrapper :global(.recharts-dot) {
+  filter: drop-shadow(0 0 5px rgba(0,207,255,0.85));
 }
 
 @media (max-width: 480px) {

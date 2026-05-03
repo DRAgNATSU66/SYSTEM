@@ -61,9 +61,19 @@ const RadarChart = () => {
     return Math.min(100, Math.floor((accumulatedKnowledge / NEURAL_PENTAGRAM_CAPS.KNOWLEDGE_MAX) * 100));
   };
 
+  // MUSCLE: count hypertrophy groups only (exclude 'mobility' key)
   const getWorkoutProgress = () => {
-    const groups = Object.keys(workoutLogs[today] || {}).length;
-    return Math.min(100, Math.floor((groups / 3) * 100)); // 3 group target
+    const todayLogs = workoutLogs[today] || {};
+    const hypertrophyKeys = Object.keys(todayLogs).filter(k => k.toLowerCase() !== 'mobility');
+    return Math.min(100, Math.floor((hypertrophyKeys.length / 3) * 100));
+  };
+
+  // MOBILITY: based on how many mobility sub-groups logged today
+  const getMobilityProgress = () => {
+    const mobilityLog = workoutLogs[today]?.mobility || {};
+    const subLogged = Object.keys(mobilityLog).length;
+    // Target: 2 sub-groups = 100% (Rotator Cuff + Hip Flexors, etc.)
+    return Math.min(100, Math.floor((subLogged / 2) * 100));
   };
 
   // Discipline: based on streaks + daily completion consistency
@@ -86,7 +96,7 @@ const RadarChart = () => {
   const data = [
     { subject: 'MUSCLE', A: getWorkoutProgress(), unit: 'KG', fullMark: 100, desc: 'Hypertrophy volume and lean mass index.' },
     { subject: 'IQ', A: getIQProgress(), unit: 'IQ', fullMark: 100, desc: `Accumulated: ${accumulatedIQ.toFixed(1)} IQ pts. HIGH tier: 1/hr, MED: 0.5/hr, LOW: 0.1/hr.` },
-    { subject: 'MOBILITY', A: 0, unit: '%', fullMark: 100, desc: 'Structural integrity and flexibility.' },
+    { subject: 'MOBILITY', A: getMobilityProgress(), unit: '%', fullMark: 100, desc: 'Log mobility subgroups in Workout → Mobility tab.' },
     { subject: 'MOOD', A: Math.min(100, ((metrics.mood || 5) * 10)), unit: 'PT', fullMark: 100, desc: 'Emotional equilibrium.' },
     { subject: 'KNOWLEDGE', A: getKnowledgeProgress(), unit: '%', fullMark: 100, desc: `Accumulated: ${accumulatedKnowledge.toFixed(1)} pts. All subjects contribute 2 pts/hr.` },
     { subject: 'DISCIPLINE', A: getDisciplineScore(), unit: '%', fullMark: 100, desc: `Streaks (${streakDays}d), task completion & daily consistency.` },
