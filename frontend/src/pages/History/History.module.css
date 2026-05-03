@@ -145,6 +145,28 @@
   flex-shrink: 0;
   box-shadow: 0 0 6px currentColor;
 }
+/* Category label — bold, coloured */
+.entryCategory {
+  font-family: 'Outfit';
+  font-size: 0.76rem;
+  font-weight: 900;
+  color: rgba(255,255,255,0.88);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+/* Detail text after category */
+.entryDetail {
+  flex: 1;
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-left: 0.35rem;
+}
+/* Legacy/fallback */
 .reason {
   flex: 1;
   color: rgba(255,255,255,0.78);
@@ -155,3 +177,16 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Legacy notice for old consolidated entries */
+.legacyNote {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.85rem 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  line-height: 1.5;
+  font-style: italic;
+}
+.legacyIcon { color: rgba(0,191,255,0.60); flex-shrink: 0; font-style: normal; }

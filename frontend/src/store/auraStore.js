@@ -135,7 +135,7 @@ export const useAuraStore = create(
             todayLost: todayLost + cappedLoss,
             todayNet: todayEarned - (todayLost + cappedLoss),
             totalAuraPoints: Math.max(0, totalAuraPoints - cappedLoss),
-            auraHistory: [...auraHistory, { date: today, net: -(cappedLoss), multiplier }],
+            auraHistory: [...auraHistory, { date: today, net: -(cappedLoss), reason: 'Multiplier Penalty', multiplier }],
           });
           return;
         }
@@ -146,14 +146,21 @@ export const useAuraStore = create(
         const newTotal = Math.max(0, totalAuraPoints + cappedEarned);
         const today    = getTodayStr();
 
-        let newHistory = [...auraHistory];
-        const todayIdx = newHistory.findIndex(h => h.date === today);
-        const net      = (todayEarned + cappedEarned) - todayLost;
-        if (todayIdx >= 0) {
-          newHistory[todayIdx] = { date: today, net, multiplier };
-        } else {
-          newHistory.push({ date: today, net, multiplier });
-        }
+        const net = (todayEarned + cappedEarned) - todayLost;
+
+        // Only write a history entry if addCategoryAP hasn't already created
+        // detailed entries for today. We never overwrite detailed entries —
+        // that destroys the per-activity breakdown (SLEEP LOGGED, VOLUME LOGGED…)
+        const hasDetailedToday = auraHistory.some(h => h.date === today && h.reason);
+        const newHistory = hasDetailedToday
+          ? auraHistory   // detailed entries exist — don't touch history
+          : (() => {
+              const hist = [...auraHistory];
+              const idx  = hist.findIndex(h => h.date === today);
+              if (idx >= 0) hist[idx] = { date: today, net, reason: 'Daily Activity' };
+              else hist.push({ date: today, net, reason: 'Daily Activity' });
+              return hist;
+            })();
 
         set({
           todayEarned:      todayEarned + cappedEarned,
