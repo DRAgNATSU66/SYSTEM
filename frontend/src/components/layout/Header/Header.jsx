@@ -23,7 +23,12 @@ const Header = () => {
         <button className={styles.hamburger} onClick={toggleSidebar} aria-label="Toggle sidebar">
           {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
-        <img src={PlayerLogo} alt="LOGO" className={styles.brandIcon} />
+        <img
+          src={profile?.avatarUrl || PlayerLogo}
+          alt="PLAYER"
+          className={styles.brandIcon}
+          onError={e => { e.target.src = PlayerLogo; }}
+        />
         <div className={styles.date}>{dateStr}</div>
       </div>
       <div className={styles.playerName}>PLAYER: {profile?.name?.toUpperCase() || 'NATSU'}</div>

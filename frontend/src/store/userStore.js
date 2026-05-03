@@ -46,6 +46,10 @@ export const useUserStore = create(
         profile: { ...state.profile, ...data }
       })),
 
+      setAvatarUrl: (url) => set((state) => ({
+        profile: { ...state.profile, avatarUrl: url }
+      })),
+
       clearUser: () => set({
         user: null,
         profile: { name: '', rank_tier: 'Normie', username: '' }

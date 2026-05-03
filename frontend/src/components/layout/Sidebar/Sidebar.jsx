@@ -12,10 +12,11 @@ import SidebarSection from './SidebarSection';
 import styles from './Sidebar.module.css';
 import { LayoutDashboard, Terminal, Dumbbell, BookOpen, Utensils, Moon, Smile, CheckCircle, Target, Video, Users, Swords, Calendar, Trophy, History, Settings, LogOut, ShoppingBag } from 'lucide-react';
 import systemIcon from '../../../assets/system.png';
+import PlayerLogo from '../../../assets/player-logo.png';
 
 const Sidebar = () => {
   const { sidebarOpen, toggleSidebar } = useUiStore();
-  const { clearUser } = useUserStore();
+  const { clearUser, profile } = useUserStore();
   const { logs: workoutLogs } = useWorkoutStore();
   const { sessions: studySessions } = useStudyStore();
   const { dailyMetrics, customMacros } = useMetricsStore();
@@ -64,7 +65,12 @@ const Sidebar = () => {
       <aside className={`${styles.sidebar} ${sidebarOpen ? styles.open : ''}`}>
         <div className={styles.brand}>
           <div className={styles.logoContainer}>
-            <img src={systemIcon} alt="System" className={styles.logo} />
+            <img
+              src={profile?.avatarUrl || systemIcon}
+              alt="Player"
+              className={styles.logo}
+              onError={e => { e.target.src = systemIcon; }}
+            />
           </div>
           <h2 className={styles.brandTitle}>SYSTEM</h2>
         </div>

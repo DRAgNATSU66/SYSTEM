@@ -105,9 +105,10 @@ const NutritionPage = () => {
   const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded, getCategoryEarned, dailyCategoryAP } = useAuraStore();
   const overallProgress = computeNutritionProgress(customMacros, customMicros, todayMacros, todayMicros);
 
-  // AP weights: macros = 50 each, micros = 10 each (once per day per nutrient)
-  const MACRO_AP = 50;
-  const MICRO_AP = 10;
+  // AP distribution: macros = 50% of 200 total, micros = 50%
+  // Each macro shares 100 AP equally; each micro shares 100 AP equally
+  const MACRO_AP = customMacros.length > 0 ? Math.max(10, Math.floor(100 / customMacros.length)) : 25;
+  const MICRO_AP = customMicros.length > 0 ? Math.max(3,  Math.floor(100 / customMicros.length)) : 5;
 
   const handleLogItem = (macro, rawValue) => {
     resetDailyIfNeeded();

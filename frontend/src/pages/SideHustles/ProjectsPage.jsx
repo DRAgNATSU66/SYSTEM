@@ -35,7 +35,9 @@ const ProjectsPage = () => {
     } else {
       logSession(projectId, 1, rating, title);
     }
-    addCategoryAP('MISC', 200, `Deep Work: ${title}`);
+    // AP scales with focus rating: 10/10 = 100 AP, 1/10 = 10 AP
+    const apAmount = Math.round(rating * 10);
+    addCategoryAP('MISC', apAmount, `Deep Work: ${title} (${rating}/10 focus)`);
     checkAndUpdateStreak();
   };
 

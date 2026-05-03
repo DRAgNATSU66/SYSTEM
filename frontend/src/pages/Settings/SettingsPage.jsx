@@ -1,18 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
 import { useUserStore } from '../../store/userStore';
 import { useUiStore } from '../../store/uiStore';
 import { useTaskStore } from '../../store/taskStore';
 import { userService } from '../../services/userService';
+import { supabase } from '../../services/supabaseClient';
 import PulseCore from '../../components/ui/PulseCore/PulseCore';
+import PlayerLogo from '../../assets/player-logo.png';
 import { DEFAULT_WEIGHTS } from '../../constants/scoreWeights';
 import styles from './Settings.module.css';
 
 const SettingsPage = () => {
-  const { user, profile, updateProfile, cypherId, ensureCypherId } = useUserStore();
+  const { user, profile, updateProfile, setAvatarUrl, cypherId, ensureCypherId } = useUserStore();
   const { offlineMode, cloudSync, toggleOfflineMode, toggleCloudSync } = useUiStore();
   const { tasks, addTask, removeTask, updateTask } = useTaskStore();
   const [name, setName] = useState(profile.name);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarMsg, setAvatarMsg] = useState('');
+  const fileRef = useRef(null);
 
   // Ensure cypher ID is generated even for local-only users
   React.useEffect(() => { ensureCypherId(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -37,6 +42,37 @@ const SettingsPage = () => {
     if (!deferredPrompt) return;
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then(() => setDeferredPrompt(null));
+  };
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { setAvatarMsg('File too large — max 5MB'); return; }
+    setAvatarUploading(true);
+    setAvatarMsg('');
+    try {
+      if (user?.id) {
+        const ext = file.name.split('.').pop();
+        const path = `${user.id}/avatar.${ext}`;
+        const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+        if (upErr) throw upErr;
+        const { data } = supabase.storage.from('avatars').getPublicUrl(path);
+        const url = `${data.publicUrl}?t=${Date.now()}`;  // cache-bust
+        setAvatarUrl(url);
+        await userService.updateProfile(user.id, { avatarUrl: url });
+        setAvatarMsg('Avatar updated!');
+      } else {
+        // Offline: use local object URL
+        const url = URL.createObjectURL(file);
+        setAvatarUrl(url);
+        setAvatarMsg('Avatar set (local only — sign in to persist).');
+      }
+    } catch (err) {
+      setAvatarMsg(`Upload failed: ${err.message}`);
+    } finally {
+      setAvatarUploading(false);
+      setTimeout(() => setAvatarMsg(''), 4000);
+    }
   };
 
   const handleUpdate = async (e) => {
@@ -79,6 +115,40 @@ const SettingsPage = () => {
           <span className={styles.breathingLabel}>20S CYCLE</span>
         </div>
       </div>
+
+      {/* ── Identity Avatar ── */}
+      <section className={styles.section}>
+        <h2>IDENTITY AVATAR</h2>
+        <p className={styles.desc}>Upload a profile picture — shown in the header and sidebar.</p>
+        <div className={styles.avatarRow}>
+          <img
+            src={profile?.avatarUrl || PlayerLogo}
+            alt="avatar"
+            className={styles.avatarPreview}
+            onError={e => { e.target.src = PlayerLogo; }}
+          />
+          <div className={styles.avatarActions}>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handleAvatarUpload}
+            />
+            <button
+              type="button"
+              className={styles.btnSave}
+              onClick={() => fileRef.current?.click()}
+              disabled={avatarUploading}
+              style={{ marginTop: 0 }}
+            >
+              {avatarUploading ? 'UPLOADING…' : 'UPLOAD IMAGE'}
+            </button>
+            {avatarMsg && <p style={{ color: avatarMsg.includes('fail') ? 'var(--color-red)' : 'var(--color-green)', fontSize: '0.78rem', marginTop: '0.5rem' }}>{avatarMsg}</p>}
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.72rem', marginTop: '0.35rem' }}>JPG, PNG, WEBP · Max 5MB</p>
+          </div>
+        </div>
+      </section>
 
       <section className={styles.section}>
         <h2>CORE IDENTITY</h2>

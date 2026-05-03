@@ -97,7 +97,12 @@
 .pbTag { font-family: 'Outfit'; font-size: 0.58rem; font-weight: 950; color: var(--rank-alpha); background: linear-gradient(145deg, rgba(0,191,255,0.14) 0%, rgba(0,191,255,0.07) 100%); padding: 0.22rem 0.6rem; border-radius: 6px; letter-spacing: 0.06em; border: 1px solid rgba(0,191,255,0.22); white-space: nowrap; flex-shrink: 0; box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.16); }
 
 .controls { display: flex; flex-direction: column; gap: 1.25rem; margin-top: auto; }
-.select { background: rgba(8,8,14,0.80); border: 1px solid rgba(255,255,255,0.12); padding: 0.75rem; border-radius: var(--radius-lg); color: #fff; font-family: 'Outfit'; font-weight: 800; font-size: 0.8rem; letter-spacing: 0.10em; cursor: pointer; appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23ffffff80' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; padding-right: 2rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.05); }
+.select {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: var(--radius-lg);
+  padding: 0.85rem 2.5rem 0.85rem 1rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.14), inset 0 2px 6px rgba(0,0,0,0.20); color: #fff; font-family: 'Outfit'; font-weight: 800; font-size: 0.8rem; letter-spacing: 0.10em; cursor: pointer; appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23ffffff80' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; padding-right: 2rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.05); }
 .select:focus { outline: none; border-color: var(--rank-alpha); box-shadow: 0 0 0 3px rgba(0,191,255,0.14); }
 .select option { background: #0a0a0e; color: #fff; padding: 0.5rem; font-family: 'Outfit'; font-weight: 700; }
 
