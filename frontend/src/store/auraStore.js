@@ -46,6 +46,12 @@ export const useAuraStore = create(
         return AURA_RULES.MAX_DAILY_EARN;
       },
 
+      // Prune history entries for a given year (called after Wrapped download)
+      pruneHistoryYear: (year) => set((state) => ({
+        auraHistory: (state.auraHistory || []).filter(h => !h.date?.startsWith(`${year}-`)),
+        penaltyLog:  (state.penaltyLog  || []).filter(p => !p.date?.startsWith(`${year}-`)),
+      })),
+
       // Add AP with per-category daily cap enforcement
       addCategoryAP: (category, amount, reason) => set((state) => {
         if (!amount || isNaN(amount) || amount <= 0) return {};

@@ -1,5 +1,110 @@
 .container { padding: 2rem; max-width: 800px; margin: 0 auto; }
 
+/* ── SYSTEM Wrapped Recap ─────────────────────────────────── */
+.wrappedSection {
+  background: linear-gradient(145deg, rgba(0,191,255,0.07) 0%, rgba(139,92,246,0.05) 100%);
+  border: 1px solid rgba(0,191,255,0.20);
+  border-radius: var(--radius-2xl);
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 4px 20px rgba(0,0,0,0.20);
+}
+.wrappedHeader { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.5rem; }
+.wrappedIcon { font-size: 1.4rem; color: var(--rank-alpha); flex-shrink: 0; margin-top: 2px; text-shadow: 0 0 16px rgba(0,191,255,0.5); }
+.wrappedTitle { font-family: 'Outfit'; font-size: 0.85rem; font-weight: 900; color: var(--rank-alpha); letter-spacing: 0.22em; margin: 0 0 0.3rem 0; text-shadow: 0 0 14px rgba(0,191,255,0.30); }
+.wrappedSub { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+
+.wrappedYears { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.wrappedCard {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.14);
+}
+.wrappedCardEmpty { opacity: 0.60; }
+.wrappedCardYear { font-family: 'Outfit'; font-size: 0.68rem; font-weight: 900; color: var(--rank-alpha); letter-spacing: 0.22em; text-transform: uppercase; }
+.wrappedCardDesc { font-size: 0.76rem; color: var(--text-secondary); line-height: 1.5; margin: 0; }
+
+.wrappedActions { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.btnWrapped {
+  background: rgba(0,191,255,0.14);
+  color: var(--rank-alpha);
+  border: 1px solid rgba(0,191,255,0.36);
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-pill);
+  font-family: 'Outfit';
+  font-weight: 900;
+  font-size: 0.70rem;
+  letter-spacing: 0.10em;
+  cursor: pointer;
+  transition: all var(--dur-mid) var(--ease-glass);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.36), 0 3px 12px rgba(0,191,255,0.16);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  will-change: transform;
+  min-height: auto;
+  min-width: auto;
+}
+.btnWrapped::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse 85% 55% at 50% 0%, rgba(255,255,255,0.30) 0%, transparent 65%);
+  pointer-events: none;
+}
+.btnWrapped:hover { background: var(--rank-alpha); color: #000; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,191,255,0.42); border-color: var(--rank-alpha); }
+.btnWrapped:active { transform: scale(0.97); transition: all var(--dur-fast) var(--ease-press); }
+
+.btnWrappedDanger {
+  background: rgba(255,49,49,0.10);
+  color: var(--color-red);
+  border: 1px solid rgba(255,49,49,0.30);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-family: 'Outfit';
+  font-weight: 800;
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all var(--dur-mid) var(--ease-glass);
+  text-align: center;
+  min-height: auto;
+  min-width: auto;
+}
+.btnWrappedDanger:hover { background: var(--color-red); color: #000; box-shadow: 0 4px 14px rgba(255,49,49,0.40); }
+
+.btnWrappedCancel {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text-secondary);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-family: 'Outfit';
+  font-size: 0.64rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--dur-mid) var(--ease-glass);
+  text-align: center;
+  min-height: auto;
+  min-width: auto;
+}
+.btnWrappedCancel:hover { border-color: rgba(255,255,255,0.25); color: #fff; }
+
+.confirmPrune { background: rgba(255,49,49,0.06); border: 1px solid rgba(255,49,49,0.20); border-radius: 12px; padding: 0.75rem; }
+.confirmPrune p { font-size: 0.74rem; color: var(--color-red); margin: 0 0 0.75rem 0; line-height: 1.5; }
+
+.wrappedMsg { font-size: 0.78rem; color: var(--color-green); letter-spacing: 0.04em; padding: 0.5rem; text-shadow: 0 0 12px rgba(34,197,94,0.30); }
+.wrappedPolicy { font-size: 0.70rem; color: var(--text-secondary); opacity: 0.60; line-height: 1.5; margin: 0; }
+
+@media (max-width: 600px) { .wrappedYears { grid-template-columns: 1fr; } }
+
 /* ── Avatar upload ─────────────────────────────────────────── */
 .avatarRow { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
 .avatarPreview {

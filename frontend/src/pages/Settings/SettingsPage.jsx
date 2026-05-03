@@ -3,8 +3,10 @@ import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
 import { useUserStore } from '../../store/userStore';
 import { useUiStore } from '../../store/uiStore';
 import { useTaskStore } from '../../store/taskStore';
+import { useAuraStore } from '../../store/auraStore';
 import { userService } from '../../services/userService';
 import { supabase } from '../../services/supabaseClient';
+import { generateWrapped, downloadWrapped, isWrappedAvailable } from '../../utils/wrappedRecap';
 import PulseCore from '../../components/ui/PulseCore/PulseCore';
 import PlayerLogo from '../../assets/player-logo.png';
 import { DEFAULT_WEIGHTS } from '../../constants/scoreWeights';
@@ -14,10 +16,34 @@ const SettingsPage = () => {
   const { user, profile, updateProfile, setAvatarUrl, cypherId, ensureCypherId } = useUserStore();
   const { offlineMode, cloudSync, toggleOfflineMode, toggleCloudSync } = useUiStore();
   const { tasks, addTask, removeTask, updateTask } = useTaskStore();
+  const { auraHistory, penaltyLog, dailyCategoryAP, pruneHistoryYear } = useAuraStore();
   const [name, setName] = useState(profile.name);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarMsg, setAvatarMsg] = useState('');
   const fileRef = useRef(null);
+
+  // Wrapped recap state
+  const currentYear = new Date().getFullYear();
+  const prevYear    = currentYear - 1;
+  const [wrappedMsg,  setWrappedMsg]  = useState('');
+  const [wrappedYear, setWrappedYear] = useState(prevYear);
+  const [confirmPrune, setConfirmPrune] = useState(false);
+
+  const hasPrevYearData = isWrappedAvailable(prevYear, auraHistory);
+  const hasCurrentYearData = isWrappedAvailable(currentYear, auraHistory);
+
+  const handleDownloadWrapped = (year, prune = false) => {
+    const data = generateWrapped(year, { auraHistory, penaltyLog, dailyCategoryAP, profile });
+    downloadWrapped(data);
+    if (prune) {
+      pruneHistoryYear(year);
+      setConfirmPrune(false);
+      setWrappedMsg(`${year} recap downloaded and detailed history pruned. AP totals preserved.`);
+    } else {
+      setWrappedMsg(`${year} recap downloaded. Detailed history still retained until you choose to prune.`);
+    }
+    setTimeout(() => setWrappedMsg(''), 6000);
+  };
 
   // Ensure cypher ID is generated even for local-only users
   React.useEffect(() => { ensureCypherId(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -282,6 +308,85 @@ const SettingsPage = () => {
       <section className={styles.section}>
         <h2>SYSTEM</h2>
         <div className={styles.systemTools}>
+          {/* ── SYSTEM WRAPPED RECAP ── */}
+          <div className={styles.wrappedSection}>
+            <div className={styles.wrappedHeader}>
+              <span className={styles.wrappedIcon}>✦</span>
+              <div>
+                <h3 className={styles.wrappedTitle}>SYSTEM WRAPPED</h3>
+                <p className={styles.wrappedSub}>
+                  Download your year-end Aura performance recap. After download you may
+                  prune the detailed history — only daily AP totals are retained.
+                  Data is automatically deleted 1 year after the year ends if not downloaded.
+                </p>
+              </div>
+            </div>
+
+            <div className={styles.wrappedYears}>
+              {/* Previous year */}
+              <div className={`${styles.wrappedCard} ${!hasPrevYearData ? styles.wrappedCardEmpty : ''}`}>
+                <div className={styles.wrappedCardYear}>{prevYear} RECAP</div>
+                {hasPrevYearData ? (
+                  <>
+                    <p className={styles.wrappedCardDesc}>Your full {prevYear} activity recap is ready to download.</p>
+                    {!confirmPrune ? (
+                      <div className={styles.wrappedActions}>
+                        <button className={styles.btnWrapped} onClick={() => handleDownloadWrapped(prevYear, false)}>
+                          ↓ DOWNLOAD {prevYear} RECAP
+                        </button>
+                        <button className={styles.btnWrappedDanger} onClick={() => setConfirmPrune(true)}>
+                          DOWNLOAD + PRUNE DETAILS
+                        </button>
+                      </div>
+                    ) : (
+                      <div className={styles.confirmPrune}>
+                        <p>This will delete all minute-level {prevYear} activity logs (AP totals kept). Confirm?</p>
+                        <div className={styles.wrappedActions}>
+                          <button className={styles.btnWrappedDanger} onClick={() => handleDownloadWrapped(prevYear, true)}>
+                            CONFIRM — DOWNLOAD + DELETE DETAILS
+                          </button>
+                          <button className={styles.btnWrappedCancel} onClick={() => setConfirmPrune(false)}>CANCEL</button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p className={styles.wrappedCardDesc} style={{ opacity: 0.5 }}>No {prevYear} data found.</p>
+                )}
+              </div>
+
+              {/* Current year preview */}
+              <div className={styles.wrappedCard}>
+                <div className={styles.wrappedCardYear}>{currentYear} RECAP</div>
+                {hasCurrentYearData ? (
+                  <>
+                    <p className={styles.wrappedCardDesc}>
+                      Download a preview of your {currentYear} progress so far.
+                      Full recap unlocks in January {currentYear + 1}.
+                    </p>
+                    <button className={styles.btnWrapped} onClick={() => handleDownloadWrapped(currentYear, false)}>
+                      ↓ DOWNLOAD {currentYear} PREVIEW
+                    </button>
+                  </>
+                ) : (
+                  <p className={styles.wrappedCardDesc} style={{ opacity: 0.5 }}>
+                    Start logging activities to build your {currentYear} recap.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {wrappedMsg && (
+              <p className={styles.wrappedMsg}>{wrappedMsg}</p>
+            )}
+
+            <p className={styles.wrappedPolicy}>
+              ⚠️ Data retention policy: detailed activity logs are kept for the current year only.
+              After the year ends you have until end of next year to download. After that, only net
+              daily AP totals are preserved.
+            </p>
+          </div>
+
           {deferredPrompt && (
             <div className={styles.installZone}>
               <p>Install SYSTEM as a native OS application.</p>
