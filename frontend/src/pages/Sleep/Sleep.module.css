@@ -74,28 +74,60 @@
 .scoreRow strong { color: #fff; }
 .scoreTotal { margin-top: 0.75rem; font-family: 'Outfit'; font-size: 0.9rem; font-weight: 800; color: #fff; }
 
+/* SYNC CIRCADIAN DATA — full-width 3D glass pill */
 .btnSync {
   display: block;
   width: 100%;
   margin-top: 2.5rem;
-  background: linear-gradient(145deg, rgba(0,191,255,0.22) 0%, rgba(0,191,255,0.12) 100%);
+  background: rgba(0,191,255,0.13);
   color: var(--rank-alpha);
   padding: 1.1rem;
   border-radius: var(--radius-pill);
-  border: 1px solid rgba(0,191,255,0.40);
+  border: 1px solid rgba(0,191,255,0.36);
   font-weight: 950;
   font-size: 0.85rem;
   letter-spacing: 0.15em;
   cursor: pointer;
-  backdrop-filter: blur(16px) saturate(200%);
-  -webkit-backdrop-filter: blur(16px) saturate(200%);
-  box-shadow: 0 4px 20px rgba(0,191,255,0.16), inset 0 2px 0 rgba(255,255,255,0.28), inset 0 -2px 0 rgba(0,0,0,0.12);
-  transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.48),
+    inset 0 -1.5px 0 rgba(0,0,0,0.18),
+    inset 1px 0 0 rgba(255,255,255,0.10),
+    inset -1px 0 0 rgba(0,0,0,0.08),
+    0 4px 20px rgba(0,191,255,0.18),
+    0 0 0 1px rgba(0,191,255,0.14);
+  transition: all var(--dur-mid) var(--ease-glass);
   will-change: transform;
   text-align: center;
+  position: relative;
+  overflow: hidden;
 }
-.btnSync:hover { background: var(--rank-alpha); color: #000; transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 32px rgba(0,191,255,0.50), inset 0 2px 0 rgba(255,255,255,0.38); border-color: var(--rank-alpha); }
-.btnSync:active { transform: translateY(1px) scale(0.97); transition: all 0.08s cubic-bezier(0.34,1.56,0.64,1); }
+.btnSync::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse 85% 55% at 50% 0%,
+    rgba(255,255,255,0.38) 0%,
+    rgba(255,255,255,0.12) 35%,
+    rgba(255,255,255,0.02) 60%,
+    transparent 75%
+  );
+  pointer-events: none;
+}
+.btnSync:hover {
+  background: var(--rank-alpha);
+  color: #000;
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.60),
+    0 8px 32px rgba(0,191,255,0.52),
+    0 0 0 1px var(--rank-alpha);
+  border-color: var(--rank-alpha);
+}
+.btnSync:active { transform: scale(0.97); box-shadow: inset 0 2px 4px rgba(0,0,0,0.20); transition: all var(--dur-fast) var(--ease-press); }
 
 @media (max-width: 600px) {
   .container { padding: 1.5rem 1rem; }

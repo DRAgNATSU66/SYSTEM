@@ -7,8 +7,13 @@
   width: 100%;
   min-height: 380px;
   overflow: visible;
-  /* CSS glow reinforces the SVG filter for a smoother result */
-  filter: drop-shadow(0 0 8px rgba(0,207,255,0.30));
+  /* CSS drop-shadow only — no SVG filter on the Radar element itself.
+     Double-layer: tight core glow + wide ambient glow. Renders clean anti-aliased
+     without the pixel/block artifacts that SVG feGaussianBlur causes. */
+  filter:
+    drop-shadow(0 0 6px rgba(0,207,255,0.70))
+    drop-shadow(0 0 18px rgba(0,207,255,0.35))
+    drop-shadow(0 0 40px rgba(0,207,255,0.12));
 }
 
 @media (max-width: 480px) {

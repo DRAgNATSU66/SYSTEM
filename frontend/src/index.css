@@ -472,11 +472,15 @@ input[type=number] {
   transform: scale(1.2);
 }
 
-/* Global Content Layout */
+/* Global Content Layout — scrollable column */
 .content-area {
   margin-left: 280px;
   width: calc(100% - 280px);
-  min-height: 100vh;
+  height: 100vh;           /* Fixed height = viewport */
+  overflow-y: auto;        /* Scroll content inside */
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
   transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

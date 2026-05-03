@@ -171,12 +171,31 @@
   box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.10), inset 0 -1px 0 rgba(0,0,0,0.08);
   will-change: transform;
 }
-.tab:hover { border-color: rgba(0,191,255,0.38); color: var(--rank-alpha); background: linear-gradient(145deg, rgba(0,191,255,0.12) 0%, rgba(0,191,255,0.06) 100%); transform: translateY(-1px); }
+.tab:hover { border-color: rgba(0,191,255,0.38); color: var(--rank-alpha); background: rgba(0,191,255,0.08); transform: translateY(-1px); }
 .tabActive {
-  background: linear-gradient(145deg, rgba(0,191,255,0.22) 0%, rgba(0,191,255,0.12) 100%);
-  border-color: rgba(0,191,255,0.40);
+  background: rgba(0,191,255,0.16);
+  border-color: rgba(0,191,255,0.42);
   color: var(--rank-alpha);
-  box-shadow: 0 2px 12px rgba(0,191,255,0.20), inset 0 2px 0 rgba(255,255,255,0.28), inset 0 -1.5px 0 rgba(0,0,0,0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    inset 0 -1px 0 rgba(0,0,0,0.12),
+    0 0 0 1px rgba(0,191,255,0.18),
+    0 4px 16px rgba(0,191,255,0.22);
+  position: relative;
+  overflow: hidden;
+}
+.tabActive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse 90% 55% at 50% 0%,
+    rgba(255,255,255,0.32) 0%,
+    rgba(255,255,255,0.08) 40%,
+    transparent 65%
+  );
+  pointer-events: none;
 }
 
 .progressTrack { width: 100%; height: 4px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; margin: 0.25rem 0; box-shadow: inset 0 1.5px 3px rgba(0,0,0,0.35); }

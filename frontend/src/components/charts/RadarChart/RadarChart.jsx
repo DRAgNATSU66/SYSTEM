@@ -102,25 +102,21 @@ const RadarChart = () => {
         <ResponsiveContainer width="100%" height="100%">
           <RechartsRadar cx="50%" cy="50%" outerRadius="80%" data={data}>
             <defs>
-              {/* Clean glow: blur only — NO saturation (saturation causes pixelation artifacts) */}
-              <filter id="radarGlow" x="-35%" y="-35%" width="170%" height="170%">
-                <feGaussianBlur stdDeviation="4" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-              {/* Radial gradient: luminous teal at center → transparent edge */}
+              {/* Radial gradient fill: luminous teal center → transparent edge
+                  NO SVG filter on the Radar itself — CSS drop-shadow handles glow cleanly */}
               <radialGradient id="radarFill" cx="50%" cy="50%" r="50%">
-                <stop offset="0%"   stopColor="#00CFFF" stopOpacity="0.50" />
-                <stop offset="50%"  stopColor="#00CFFF" stopOpacity="0.20" />
-                <stop offset="100%" stopColor="#00CFFF" stopOpacity="0.04" />
+                <stop offset="0%"   stopColor="#00CFFF" stopOpacity="0.55" />
+                <stop offset="45%"  stopColor="#00CFFF" stopOpacity="0.22" />
+                <stop offset="100%" stopColor="#00CFFF" stopOpacity="0.03" />
               </radialGradient>
             </defs>
-            <PolarGrid stroke="rgba(255,255,255,0.08)" />
+            <PolarGrid
+              stroke="rgba(255,255,255,0.09)"
+              gridType="polygon"
+            />
             <PolarAngleAxis
               dataKey="subject"
-              tick={{ fill: 'rgba(255,255,255,0.80)', fontSize: 11, fontWeight: 900, fontFamily: 'Outfit', letterSpacing: '0.10em' }}
+              tick={{ fill: 'rgba(255,255,255,0.82)', fontSize: 11, fontWeight: 900, fontFamily: 'Outfit', letterSpacing: '0.10em' }}
             />
             <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
             <Tooltip content={<CustomTooltip />} />
@@ -128,11 +124,10 @@ const RadarChart = () => {
               name="SYSTEM"
               dataKey="A"
               stroke="#00CFFF"
-              strokeWidth={2.5}
+              strokeWidth={2}
               fill="url(#radarFill)"
               fillOpacity={1}
-              filter="url(#radarGlow)"
-              dot={{ r: 4, fill: '#00CFFF', stroke: 'rgba(0,0,0,0.4)', strokeWidth: 1.5 }}
+              dot={{ r: 4, fill: '#00CFFF', stroke: 'rgba(0,0,0,0.5)', strokeWidth: 1.5 }}
             />
           </RechartsRadar>
         </ResponsiveContainer>

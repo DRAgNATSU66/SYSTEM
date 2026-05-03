@@ -2,10 +2,10 @@
   padding: 3rem;
   max-width: 1600px;
   margin: 0 auto;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   gap: 3rem;
+  padding-bottom: 4rem; /* breathing room at bottom */
 }
 
 /* ── Top Header ──────────────────────────────────────────────────────── */
@@ -87,7 +87,7 @@
 .statsRow {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 /* XPBar (4th child) spans full width below the 3 stat cards */
 .statsRow > :last-child {
