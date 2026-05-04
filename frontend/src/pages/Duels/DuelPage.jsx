@@ -18,7 +18,9 @@ const DuelPage = () => {
   const [searching, setSearching]       = useState(false);
   const [searchError, setSearchError]   = useState('');
   const [msg, setMsg]                   = useState('');
-  const [duelProgress, setDuelProgress] = useState({});  // { [duelId]: { myAP, theirAP } }
+  const [duelProgress, setDuelProgress] = useState({});
+  const [inQueue, setInQueue]           = useState(false);
+  const [queueSearching, setQueueSearching] = useState(false);
 
   const flash = (text) => { setMsg(text); setTimeout(() => setMsg(''), 4000); };
 
@@ -93,6 +95,66 @@ const DuelPage = () => {
     await supabase.from('duels').update({ state: 'rejected' }).eq('id', duel.id);
     flash('Challenge rejected.');
     pullAllData(user.id);
+  };
+
+  // Check if already in queue on mount
+  useEffect(() => {
+    if (!supabase || !user?.id) return;
+    supabase.from('matchmaking_queue').select('user_id').eq('user_id', user.id).single()
+      .then(({ data }) => { if (data) setInQueue(true); });
+  }, [user?.id]);
+
+  const handleFindOpponent = async () => {
+    if (!supabase || !user?.id) return;
+    setQueueSearching(true);
+
+    const minAP = Math.floor(totalAuraPoints * 0.75);
+    const maxAP = Math.ceil(totalAuraPoints * 1.25);
+    const stake = Math.min(totalAuraPoints, Math.max(100, parseInt(stakeInput) || 500));
+
+    // Look for an existing player in the queue within ±25% AP bracket
+    const { data: matches } = await supabase
+      .from('matchmaking_queue')
+      .select('user_id, ap_bracket, profiles!matchmaking_queue_user_id_fkey(username, cypher_id)')
+      .neq('user_id', user.id)
+      .gte('ap_bracket', minAP)
+      .lte('ap_bracket', maxAP)
+      .order('joined_at', { ascending: true })
+      .limit(1);
+
+    if (matches?.length) {
+      // Match found — create duel and clear both from queue
+      const opponent = matches[0];
+      const duelId = crypto.randomUUID();
+      await supabase.from('duels').insert({
+        id: duelId,
+        challenger_id: user.id,
+        opponent_id: opponent.user_id,
+        state: 'pending',
+        stake_ap: stake,
+        match_type: 'ranked',
+      });
+      await supabase.from('matchmaking_queue').delete().in('user_id', [user.id, opponent.user_id]);
+      setInQueue(false);
+      flash(`MATCH FOUND — challenged ${(opponent.profiles?.username || 'OPPONENT').toUpperCase()}! Awaiting acceptance.`);
+      pullAllData(user.id);
+    } else {
+      // No match — enter the queue
+      await supabase.from('matchmaking_queue').upsert(
+        { user_id: user.id, ap_bracket: totalAuraPoints },
+        { onConflict: 'user_id' }
+      );
+      setInQueue(true);
+      flash('QUEUED — waiting for an opponent near your AP bracket.');
+    }
+    setQueueSearching(false);
+  };
+
+  const handleCancelQueue = async () => {
+    if (!supabase || !user?.id) return;
+    await supabase.from('matchmaking_queue').delete().eq('user_id', user.id);
+    setInQueue(false);
+    flash('Left matchmaking queue.');
   };
 
   const pct = (a, b) => {
@@ -205,13 +267,50 @@ const DuelPage = () => {
         )}
       </div>
 
-      {/* ── Matchmaking ── */}
-      <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-        <button className={styles.btnNewDuel} disabled style={{ opacity: 0.5, cursor: 'not-allowed' }}>
-          RANKED MATCHMAKING — COMING SOON
-        </button>
-        <p style={{ fontSize: '0.62rem', color: 'var(--text-secondary)', marginTop: '0.5rem', letterSpacing: '0.08em' }}>Skill-based AP-bracket matchmaking requires server queue — pending Phase 3 backend.</p>
-      </div>
+      {/* ── Ranked Matchmaking ── */}
+      <section className={styles.challengeSection} style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+        <h2 style={{ fontSize: '0.72rem', fontWeight: 900, letterSpacing: '0.2em', color: 'var(--rank-sigma)', marginBottom: '0.5rem' }}>RANKED MATCHMAKING</h2>
+        <p style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', letterSpacing: '0.06em' }}>
+          Matched by AP bracket (±25%). First available opponent is auto-challenged.
+        </p>
+
+        {!inQueue ? (
+          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
+            <input type="number" value={stakeInput} onChange={e => setStakeInput(e.target.value)}
+              placeholder="STAKE AP" min="100" max={totalAuraPoints}
+              className={styles.stakeInput} style={{ textAlign: 'center' }} />
+            <button
+              onClick={handleFindOpponent}
+              disabled={queueSearching || !user?.id || !supabase}
+              className={styles.btnNewDuel}
+              style={{ background: 'rgba(255,230,0,0.15)', borderColor: 'rgba(255,230,0,0.40)', color: 'var(--rank-sigma)' }}
+            >
+              {queueSearching ? 'SCANNING...' : 'FIND OPPONENT'}
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <span style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--rank-sigma)', boxShadow: '0 0 8px var(--rank-sigma)', display: 'inline-block', animation: 'pulse 1.4s ease-in-out infinite' }} />
+              <span style={{ fontSize: '0.78rem', fontWeight: 800, letterSpacing: '0.12em', color: 'var(--rank-sigma)' }}>
+                IN QUEUE — SEARCHING FOR OPPONENT...
+              </span>
+            </div>
+            <p style={{ fontSize: '0.62rem', color: 'var(--text-secondary)', letterSpacing: '0.06em' }}>
+              Your bracket: {Math.floor(totalAuraPoints * 0.75).toLocaleString()} – {Math.ceil(totalAuraPoints * 1.25).toLocaleString()} AP
+            </p>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button onClick={handleFindOpponent} disabled={queueSearching} className={styles.btnNewDuel}
+                style={{ padding: '0.55rem 1.25rem', fontSize: '0.68rem', background: 'rgba(255,230,0,0.12)', borderColor: 'rgba(255,230,0,0.35)', color: 'var(--rank-sigma)' }}>
+                {queueSearching ? 'CHECKING...' : 'CHECK AGAIN'}
+              </button>
+              <button onClick={handleCancelQueue} className={styles.btnReject} style={{ padding: '0.55rem 1.25rem', fontSize: '0.68rem' }}>
+                LEAVE QUEUE
+              </button>
+            </div>
+          </div>
+        )}
+      </section>
     </PageWrapper>
   );
 };
