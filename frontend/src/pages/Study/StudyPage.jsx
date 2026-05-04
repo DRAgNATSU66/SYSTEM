@@ -12,6 +12,7 @@ const StudyPage = () => {
   const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded } = useAuraStore();
   const { user } = useUserStore();
   const [newSubject, setNewSubject] = useState('');
+  const [manualMins, setManualMins] = useState({});
   const today = new Date().toISOString().split('T')[0];
 
   // Live timer state
@@ -76,6 +77,7 @@ const StudyPage = () => {
           type="text" value={newSubject}
           onChange={e => setNewSubject(e.target.value)}
           placeholder="ENTER NEW SUBJECT..."
+          maxLength={50}
         />
         <button className={styles.btnAdd} onClick={() => {
           if (!newSubject) return;
@@ -112,16 +114,27 @@ const StudyPage = () => {
                     START TIMER
                   </button>
                 )}
-                <button className={styles.btnLog} onClick={() => {
-                  resetDailyIfNeeded();
-                  if (user?.id) {
-                    studyService.logSession(user.id, s.id, 60, today);
-                  } else {
-                    logSession(s.id, 60);
-                  }
-                  addCategoryAP('STUDY', 100, `STUDY LOGGED: ${s.name} 60m`);
-                  checkAndUpdateStreak();
-                }}>LOG 60M</button>
+                <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                  <input
+                    type="number" min="1" max="480"
+                    placeholder="min"
+                    value={manualMins[s.id] || ''}
+                    onChange={e => setManualMins(prev => ({ ...prev, [s.id]: e.target.value }))}
+                    className={styles.minsInput}
+                    title="Use the timer for accuracy"
+                  />
+                  <button className={styles.btnLog} onClick={() => {
+                    const mins = Math.min(480, Math.max(1, parseInt(manualMins[s.id]) || 0));
+                    if (!mins) return;
+                    resetDailyIfNeeded();
+                    if (user?.id) studyService.logSession(user.id, s.id, mins, today);
+                    else logSession(s.id, mins);
+                    const ap = Math.min(200, Math.round((mins / 120) * 200));
+                    addCategoryAP('STUDY', ap, `STUDY MANUAL: ${s.name} ${mins}m`);
+                    checkAndUpdateStreak();
+                    setManualMins(prev => ({ ...prev, [s.id]: '' }));
+                  }}>LOG MANUAL</button>
+                </div>
                 <button className={styles.btnRemove} onClick={() => {
                   if (user?.id) {
                     studyService.removeSubject(user.id, s.id);

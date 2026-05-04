@@ -11,7 +11,7 @@ import styles from './Header.module.css';
 
 const Header = () => {
   const { totalAuraPoints } = useAuraStore();
-  const { profile } = useUserStore();
+  const { profile, syncing } = useUserStore();
   const { sidebarOpen, toggleSidebar } = useUiStore();
   const { rankLabel, rankColor } = useRankResolver();
 
@@ -31,7 +31,10 @@ const Header = () => {
         />
         <div className={styles.date}>{dateStr}</div>
       </div>
-      <div className={styles.playerName}>PLAYER: {profile?.name?.toUpperCase() || 'NATSU'}</div>
+      <div className={styles.playerName}>
+        PLAYER: {profile?.name?.toUpperCase() || 'NATSU'}
+        {syncing && <span style={{ fontSize: '0.55rem', color: 'var(--rank-alpha)', marginLeft: '0.5rem', letterSpacing: '0.12em', opacity: 0.8 }}>SYNCING...</span>}
+      </div>
       <div className={styles.right}>
         <div className={styles.scoreContainer}>
           <span className={styles.scoreLabel}>SCORE:</span>

@@ -13,7 +13,7 @@ import { DEFAULT_WEIGHTS } from '../../constants/scoreWeights';
 import styles from './Settings.module.css';
 
 const SettingsPage = () => {
-  const { user, profile, updateProfile, setAvatarUrl, cypherId, ensureCypherId } = useUserStore();
+  const { user, profile, updateProfile, setAvatarUrl, cypherId, ensureCypherId, preferences, updatePreferences } = useUserStore();
   const { offlineMode, cloudSync, toggleOfflineMode, toggleCloudSync } = useUiStore();
   const { tasks, addTask, removeTask, updateTask } = useTaskStore();
   const { auraHistory, penaltyLog, dailyCategoryAP, pruneHistoryYear } = useAuraStore();
@@ -73,6 +73,7 @@ const SettingsPage = () => {
   const handleAvatarUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) { setAvatarMsg('Invalid file type — JPG, PNG or WEBP only.'); return; }
     if (file.size > 5 * 1024 * 1024) { setAvatarMsg('File too large — max 5MB'); return; }
     setAvatarUploading(true);
     setAvatarMsg('');
@@ -186,6 +187,7 @@ const SettingsPage = () => {
               value={name}
               onChange={e => setName(e.target.value)}
               className={styles.input}
+              maxLength={24}
             />
           </div>
           <div className={styles.inputGroup}>
@@ -213,6 +215,7 @@ const SettingsPage = () => {
             value={newTaskTitle}
             onChange={e => setNewTaskTitle(e.target.value)}
             placeholder="New task name..."
+            maxLength={100}
           />
           <button type="submit" className={styles.btnSave} style={{ marginTop: 0 }}>+ ADD TASK</button>
         </form>
@@ -266,6 +269,37 @@ const SettingsPage = () => {
             <span className={styles.weightValue}>1000 AP (proportional)</span>
           </div>
         </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2>WORKOUT SCHEDULE</h2>
+        <p className={styles.desc}>Configure your 7-day training split. WorkoutPage reads this to show today's focus.</p>
+        {(() => {
+          const DAYS = [['Mon',1],['Tue',2],['Wed',3],['Thu',4],['Fri',5],['Sat',6],['Sun',0]];
+          const TYPES = ['cardio','hypertrophy','mobility','rest'];
+          const COLORS = { cardio:'var(--rank-alpha)', hypertrophy:'var(--rank-sigma)', mobility:'var(--color-green)', rest:'var(--text-secondary)' };
+          const split = preferences?.workoutSplit || {};
+          const cycle = (day) => {
+            const cur = split[day] || 'hypertrophy';
+            const next = TYPES[(TYPES.indexOf(cur) + 1) % TYPES.length];
+            updatePreferences({ workoutSplit: { ...split, [day]: next } });
+          };
+          return (
+            <div style={{ display:'flex', gap:'0.5rem', flexWrap:'wrap', marginTop:'0.75rem' }}>
+              {DAYS.map(([label, dayNum]) => {
+                const type = split[dayNum] || 'hypertrophy';
+                return (
+                  <button key={dayNum} onClick={() => cycle(dayNum)}
+                    className={styles.btnDay}
+                    style={{ borderColor: `${COLORS[type]}50` }}>
+                    <span className={styles.btnDayLabel}>{label}</span>
+                    <span className={styles.btnDayType} style={{ color: COLORS[type] }}>{type}</span>
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })()}
       </section>
 
       <section className={styles.section}>
@@ -398,7 +432,9 @@ const SettingsPage = () => {
             <p>&#9888;&#65039; Danger zone: wipe local state caches. This action is irreversible.</p>
             <button className={styles.btnDelete} onClick={() => {
               if (window.confirm('Wipe local OS state? This cannot be undone.')) {
-                localStorage.clear();
+                Object.keys(localStorage)
+                  .filter(k => k.startsWith('antigravity-') || k === 'system-sync-queue')
+                  .forEach(k => localStorage.removeItem(k));
                 window.location.reload();
               }
             }}>PURGE LOCAL CACHE</button>

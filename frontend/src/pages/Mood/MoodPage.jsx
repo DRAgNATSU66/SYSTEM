@@ -120,6 +120,7 @@ const MoodPage = () => {
             onChange={e => setNoteText(e.target.value)}
             placeholder="Optional notes about your current state..."
             rows={3}
+            maxLength={500}
           />
           <div className={styles.noteActions}>
             <button className={styles.btnLogMood} onClick={handleLogMood}>LOG MOOD</button>

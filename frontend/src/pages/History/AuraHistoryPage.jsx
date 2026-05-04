@@ -3,7 +3,7 @@ import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
 import { useAuraStore } from '../../store/auraStore';
 import styles from './History.module.css';
 
-const DETAIL_DAYS = 10; // Only most-recent 10 days show expandable detail
+// All days are expandable — server-side aura_history_detail provides full data
 
 // Map category keywords → display names
 const CATEGORY_MAP = {
@@ -104,8 +104,8 @@ const AuraHistoryPage = () => {
     [groupedByDate]
   );
 
-  // The 10 most-recent dates are expandable with full detail
-  const detailSet = new Set(sortedDates.slice(0, DETAIL_DAYS));
+  // All dates are expandable
+  const detailSet = new Set(sortedDates);
 
   const formatNet = (n) => (n >= 0 ? `+${n}` : `${n}`);
 
@@ -118,13 +118,6 @@ const AuraHistoryPage = () => {
           <span className={styles.positive}>TODAY EARNED: +{todayEarned} AP</span>
           <span className={styles.negative}>TODAY LOST: -{todayLost} AP</span>
         </div>
-      </div>
-
-      {/* ── Detail-limit notice ── */}
-      <div className={styles.limitNotice}>
-        <span className={styles.limitIcon}>ⓘ</span>
-        Full breakdown shown for the <strong>last {DETAIL_DAYS} days</strong>.
-        Older entries show net daily totals only (detail pruned to save storage).
       </div>
 
       <div className={styles.ledger}>

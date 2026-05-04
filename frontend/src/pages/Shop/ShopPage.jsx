@@ -8,7 +8,8 @@ import gpayLogo from '../../assets/gpay.gif';
 import styles from './Shop.module.css';
 
 const ShopPage = () => {
-  const { totalAuraPoints, redeemPoints } = useAuraStore();
+  const { totalAuraPoints } = useAuraStore();
+  const [msg, setMsg] = React.useState('');
   const safePoints = totalAuraPoints ?? 0;
   const usdValue = (safePoints / 1000 * 0.1).toFixed(2);
 
@@ -19,20 +20,16 @@ const ShopPage = () => {
     { id: 'cash-1', name: 'GPAY DIRECT CASHOUT', cost: 50000, value: '$5.00', icon: gpayLogo },
   ];
 
+  const showMsg = (text) => { setMsg(text); setTimeout(() => setMsg(''), 4000); };
   const handleRedeem = (reward) => {
-    if (totalAuraPoints >= reward.cost) {
-      const success = redeemPoints(reward.cost, reward.name);
-      if (success) {
-        alert(`SUCCESS: ${reward.name} REDEEMED. VOUCHER SENT TO LINKED NEURAL NET.`);
-      }
-    } else {
-      alert('INSUFFICIENT AURA POINTS. CONTINUE GRINDING.');
-    }
+    if (totalAuraPoints < reward.cost) return showMsg('INSUFFICIENT AURA POINTS — CONTINUE GRINDING.');
+    showMsg('REDEMPTION BACKEND PENDING — COMING SOON.');
   };
 
   return (
     <PageWrapper className={styles.container}>
       <div className={styles.header}>
+        {msg && <div style={{ background: 'rgba(0,191,255,0.12)', border: '1px solid rgba(0,191,255,0.3)', borderRadius: 12, padding: '0.75rem 1.25rem', marginBottom: '1rem', fontSize: '0.8rem', fontWeight: 800, letterSpacing: '0.08em', color: msg.includes('INSUFFICIENT') ? 'var(--color-red)' : 'var(--rank-alpha)' }}>{msg}</div>}
         <div className={styles.headerLeft}>
           <h1>AURA MARKETPLACE</h1>
           <p className={styles.subtitle}>Convert abstract merit into tangible assets.</p>
@@ -60,8 +57,9 @@ const ShopPage = () => {
                 className={styles.redeemBtn}
                 onClick={() => handleRedeem(reward)}
                 disabled={totalAuraPoints < reward.cost}
+                title="Redemption backend pending"
               >
-                REDEEM
+                COMING SOON
               </button>
             </div>
           </div>

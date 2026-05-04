@@ -10,6 +10,9 @@ import { useGoalStore, useProjectStore, useHobbyStore } from '../../store/assetS
 import { useMetricsStore } from '../../store/metricsStore';
 import { useWorkoutStore } from '../../store/workoutStore';
 import { useStudyStore } from '../../store/studyStore';
+import { useSocialStore } from '../../store/socialStore';
+import { useCommandStore } from '../../store/commandStore';
+import { useSyncQueue } from '../../services/syncEngine';
 
 export function AuthProvider({ children }) {
   const setUser = useUserStore(state => state.setUser);
@@ -131,4 +134,14 @@ function clearAllStores() {
   useMetricsStore.setState({ dailyMetrics: {} });
   useWorkoutStore.setState({ logs: {}, personalBests: {} });
   useStudyStore.setState({ sessions: {}, accumulatedIQ: 0, accumulatedKnowledge: 0 });
+  useSocialStore.setState({ friends: [], duels: [], lastSyncedAt: null });
+  useCommandStore.setState({
+    history: [
+      { id: 'boot-1', type: 'system', text: 'SYSTEM_BOOT . . . [V9.0.1 ALPHA]' },
+      { id: 'boot-2', type: 'system', text: 'SCANNING_ENVIRONMENT . . . [SECURE_ENCLAVE]' },
+      { id: 'boot-3', type: 'update', text: 'SYNCING_USER_BIOMETRICS . . . [SUCCESS]' },
+    ],
+    timerStart: null,
+  });
+  useSyncQueue.getState().clearQueue();
 }

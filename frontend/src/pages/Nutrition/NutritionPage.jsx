@@ -86,7 +86,7 @@ const NutritionPage = () => {
     dailyMetrics,
     logMacroValue, logMicroValue,
     addMacro, deleteMacro, setMacroLimit, setMicroLimit,
-    logBaselineToday
+    logBaselineToday,
   } = useMetricsStore();
   const { user } = useUserStore();
 
@@ -139,6 +139,9 @@ const NutritionPage = () => {
 
     const apAmount = tab === 'macros' ? MACRO_AP : MICRO_AP;
     addCategoryAP('NUTRITION', apAmount, `NUTRITION LOGGED: ${macro.name} ${valueToLog}${macro.unit}`);
+    // Auto-save logged value as new baseline
+    if (tab === 'macros') setMacroLimit(macro.id, valueToLog);
+    else setMicroLimit(macro.id, valueToLog);
     useAuraStore.setState((state) => ({
       dailyCategoryAP: {
         ...state.dailyCategoryAP,
@@ -196,7 +199,7 @@ const NutritionPage = () => {
         <section className={styles.configSection}>
           <h2 className={styles.sectionTitle}>ADD CUSTOM MACRO</h2>
           <form className={styles.addForm} onSubmit={handleAddMacro}>
-            <input type="text" placeholder="Name" value={newName} onChange={e => setNewName(e.target.value)} />
+            <input type="text" placeholder="Name" value={newName} onChange={e => setNewName(e.target.value)} maxLength={30} />
             <input type="number" placeholder="Target" value={newLimit} onChange={e => setNewLimit(e.target.value)} />
             <input type="text" placeholder="Unit" value={newUnit} onChange={e => setNewUnit(e.target.value)} style={{ width: 60 }} />
             <button type="submit">ADD</button>

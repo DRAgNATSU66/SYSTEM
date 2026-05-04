@@ -14,7 +14,7 @@ export const useSocialStore = create(
 
       initiateDuel: (opponentId, opponentName, stake = 500) => set((state) => ({
         duels: [...state.duels, {
-          id: Date.now(),
+          id: crypto.randomUUID(),
           opponent_id: opponentId,
           opponent_name: opponentName,
           state: 'active',

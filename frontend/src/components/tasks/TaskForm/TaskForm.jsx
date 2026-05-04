@@ -21,13 +21,14 @@ const TaskForm = ({ onClose }) => {
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <h2>New Directive</h2>
         <form onSubmit={handleSubmit} className={styles.form}>
-          <input 
-            type="text" 
-            placeholder="e.g. 10 Pages Reading" 
-            value={title} 
-            onChange={(e) => setTitle(e.target.value)} 
+          <input
+            type="text"
+            placeholder="e.g. 10 Pages Reading"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             className={styles.input}
-            autoFocus 
+            maxLength={100}
+            autoFocus
           />
           <div className={styles.row}>
             <select value={type} onChange={(e) => setType(e.target.value)} className={styles.input}>

@@ -33,8 +33,9 @@ export default defineConfig({
             urlPattern: /supabase.*rest/i,
             handler: 'NetworkFirst',
             options: {
-              networkTimeoutSeconds: 3,
+              networkTimeoutSeconds: 1,
               cacheName: 'supabase-api',
+              expiration: { maxAgeSeconds: 300, maxEntries: 50 },
             },
           },
           {

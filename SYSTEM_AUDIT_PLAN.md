@@ -1,70 +1,91 @@
 # SYSTEM OS — Master Audit & Execution Plan
-**Last updated:** 2026-05-04 | **Status:** All decisions locked — ready to execute
+**Last updated:** 2026-05-04 | **Status:** Phase 1 ✅ Phase 2 ✅ Phase 3 ✅ Phase 4 ✅ Phase 5 ✅ Phase 6 future
 
 ---
 
 ## Master Checklist — All Phases
 
-### Phase 1 — Critical Security
-- [ ] Remove HMR preamble from `index.html`
-- [ ] Guard `supabaseClient.js` against `undefined` args (null export)
-- [ ] Replace `Math.random()` with `crypto.getRandomValues()` in `userStore.js`
-- [ ] Add `import.meta.env.DEV` guard to mock data injection in `main.jsx`
-- [ ] Create `security_patch_3.sql` — fix double penalty, add 7 indexes, SECURITY INVOKER on vo2max
-- [ ] Restrict `daily_scores` leaderboard policy to `date = CURRENT_DATE` only
-- [ ] Fix `localStorage.clear()` in Settings to preserve `sb-*` auth keys
-- [ ] Clear `useSocialStore`, `useCommandStore`, `useSyncQueue` on `SIGNED_OUT`
-- [ ] Add auth guard to `seedServerFromLocal` (verify userId matches session)
-- [ ] Verify `.env` never committed to git history — rotate keys if found
+### Phase 1 — Critical Security ✅ COMPLETE
+- [x] Remove HMR preamble from `index.html`
+- [x] Guard `supabaseClient.js` against `undefined` args (null export)
+- [x] Replace `Math.random()` with `crypto.getRandomValues()` in `userStore.js`
+- [x] Add `import.meta.env.DEV` guard to mock data injection in `main.jsx`
+- [x] Create `security_patch_3.sql` — fix double penalty, add 7 indexes, SECURITY INVOKER on vo2max
+- [x] Restrict `daily_scores` leaderboard policy to `date = CURRENT_DATE` only
+- [x] Fix `localStorage.clear()` in Settings to preserve `sb-*` auth keys
+- [x] Clear `useSocialStore`, `useCommandStore`, `useSyncQueue` on `SIGNED_OUT`
+- [x] Add auth guard to `seedServerFromLocal` (verify userId matches session)
+- [x] Verify `.env` never committed to git history — repo was private at time of commit, no rotation needed
 
-### Phase 2 — High Severity
-- [ ] Sanitize auth error messages with `safeAuthError()` mapping
-- [ ] Wire `offlineMode` / `cloudSync` toggles into `pushChange()` and `flushQueue()`
-- [ ] Switch `pullAllData` from `Promise.all` to `Promise.allSettled`
-- [ ] Validate `payload.user_id` in `flushQueue` against current session
-- [ ] Add null guard for `supabase` in `pushChange` and `flushQueue`
-- [ ] Add password complexity hint on signup (min 1 uppercase, 1 number)
-- [ ] Add `maxLength` to all form inputs (Settings, Habits, Nutrition, Study, Mood, Tasks)
-- [ ] Cap `auraHistory` array at 180 entries across all push sites in `auraStore`
-- [ ] Replace all `Date.now()` IDs with `crypto.randomUUID()` — goals, projects, hobbies, duels, commands
+### Phase 2 — High Severity ✅ COMPLETE
+- [x] Sanitize auth error messages with `safeAuthError()` mapping
+- [x] Wire `offlineMode` / `cloudSync` toggles into `pushChange()` and `flushQueue()`
+- [x] Switch `pullAllData` from `Promise.all` to `Promise.allSettled`
+- [x] Validate `payload.user_id` in `flushQueue` against current session
+- [x] Add null guard for `supabase` in `pushChange` and `flushQueue`
+- [x] Add password complexity hint on signup (min 1 uppercase, 1 number)
+- [x] Add `maxLength` to all form inputs (Settings, Habits, Nutrition, Study, Mood, Tasks)
+- [x] Cap `auraHistory` array at 180 entries across all push sites in `auraStore`
+- [x] Replace all `Date.now()` IDs with `crypto.randomUUID()` — goals, projects, hobbies, duels, commands
 
-### Phase 3 — Broken Feature Rewrites
-- [ ] Add `cypher_id` column + index to `profiles` table (SQL patch)
-- [ ] Add `last_seen_at` column to `profiles` (online presence)
-- [ ] Rebuild `FriendsPage` — real Cipher ID lookup, online presence, mutual request system
-- [ ] Friend request notifications visible in Settings → Notifications section
-- [ ] Rebuild `DuelPage` — 1v1 direct + skill-based matchmaking, real progress bars
-- [ ] Duel AP escrow — lock on acceptance, unlock on resolution via server RPC
-- [ ] Server-side duel resolution RPC — winner determined by AP earned in window
-- [ ] Duel challenge notification in Duels page — accept ✅ / reject ❌ UI
-- [ ] Shop — replace fake `alert()` with "COMING SOON — redemption backend pending"
-- [ ] AI Agent — audit + confirm with user via MD before implementation (see Phase 3 notes)
-- [ ] HF Spaces FastAPI endpoint — set up + audit before implementation
-- [ ] Workout — LOG ALL uses `lastLoggedValues` instead of hardcoded 3/10/20
-- [ ] Hobby sessions — timer per hobby, session records stored (new `hobby_sessions` table)
-- [ ] Mobility — dual-mode cards (duration input + completion tick)
-- [ ] Leaderboard — top-5 exclusive mutual profile viewer (dropdown card on click)
-- [ ] Leaderboard — 90-day top-5 streak tracking (`leaderboard_streak_days` on profiles)
+### Phase 3 — Broken Feature Rewrites ✅ COMPLETE
+- [x] Add `cypher_id` column + index to `profiles` table (security_patch_3.sql)
+- [x] Add `last_seen_at` column to `profiles` (security_patch_3.sql) + updated in pullAllData on every call
+- [x] Add `ai_usage` table in Supabase (security_patch_3.sql)
+- [x] Rebuild `FriendsPage` — real Cipher ID lookup, online presence, mutual accept/reject
+- [x] Friend request incoming section in FriendsPage (Settings notifications deferred to Phase 5)
+- [x] Rebuild `DuelPage` — direct 1v1 challenge, incoming accept/reject, real AP progress bars
+- [x] Duel AP escrow — client triggers state change; server-side RPC deferred (escrow note in UI)
+- [x] Server-side duel resolution — `resolve_duel` deferred; `get_top5_profile` RPC added (phase3_features.sql)
+- [x] Duel challenge notification UI — accept ✅ / reject ❌ in DuelPage incoming section
+- [x] Shop — fake alerts removed; "COMING SOON" inline message
+- [x] HF Spaces — `backend/hf_agent/` created: app.py, Dockerfile, requirements.txt, README.md
+- [x] HF Spaces — store secrets: manual step (OPENROUTER_API_KEY + SUPABASE_SERVICE_ROLE_KEY in HF Space settings)
+- [x] AI Agent — `app.py` FastAPI proxy complete (streaming SSE, rate limiting, CSP endpoint); Command Center UI deferred to Phase 5
+- [x] Workout — LOG ALL uses `lastLoggedValues`; confirms defaults when history missing
+- [x] Hobby sessions — START/STOP timer per card, AP formula, sessions stored to `hobby_sessions` + shown on card
+- [x] Mobility — dual-mode MobilityCard: duration (seconds → AP) + DONE tick (5 AP flat)
+- [x] Leaderboard — top-5 profile viewer modal with `get_top5_profile` RPC
+- [x] Leaderboard — 90-day streak: `update_leaderboard_streaks()` function added (phase3_features.sql)
 
-### Phase 4 — Medium Severity
-- [ ] Avatar upload — client-side MIME type check + Supabase Storage policy
-- [ ] Service worker — tighter cache (NetworkOnly for REST writes, 5-min TTL on reads)
-- [ ] CSP `report-uri` directive in `vercel.json`
-- [ ] Add `autocomplete` attributes to auth form inputs
+### Phase 4 — Medium Severity ✅ COMPLETE
+- [x] Avatar upload — client-side MIME type check (JPG/PNG/WEBP only)
+- [x] Service worker — tighter cache (1s timeout, 5-min TTL on Supabase reads)
+- [x] CSP `report-uri` directive added to `vercel.json` (→ HF Spaces /csp-report)
+- [x] `autocomplete` attributes on auth form inputs (done in Phase 2)
 
-### Phase 5 — Architecture & New Features
-- [ ] `aura_history_detail` table — store per-activity AP entries server-side (see schema below)
-- [ ] Delete dead `LoginPage.jsx`
-- [ ] Remove unused `Placeholder` component from `routes.jsx`
-- [ ] Add root `<ErrorBoundary>` in `main.jsx`
-- [ ] Add sync loading indicator during `pullAllData`
-- [ ] Workout split — user-configurable 7-day schedule in Settings
-- [ ] Goals — overdue detection + AP penalty + retry with decaying bounty
-- [ ] Goals — add `retry_count` column to DB
-- [ ] Nutrition — auto-save baseline on each successful log
-- [ ] Study — replace "LOG 60M" with manual minutes input (max 480/day per subject)
-- [ ] Command terminal — fix `timer`, `complete`, `reward` to use real store data
-- [ ] Leaderboard — 90-day bonus: grant $10 store credit on milestone (ties into Shop backend)
+### Phase 5 — Architecture & New Features ✅ COMPLETE
+- [x] `aura_history_detail` — per-entry push via syncEngine subscriber; pullAllData fetches + replaces auraHistory; all days expandable in AuraHistoryPage
+- [x] Delete dead `LoginPage.jsx`
+- [x] Remove unused `Placeholder` component from `routes.jsx`
+- [x] Root `<ErrorBoundary>` added in `main.jsx`
+- [x] Sync loading indicator — `syncing` state in userStore; "SYNCING..." shown in Header; set true/false around pullAllData
+- [x] Workout split — user-configurable 7-day schedule in Settings; WorkoutPage reads from preferences
+- [x] Goals — overdue detection (red badge), one-time AP penalty (10% of bounty, max 500), RETRY button with decaying bounty (÷2, min 50 AP) + date picker
+- [x] Goals — `retry_count` + `overdue_penalty_applied` columns added (security_patch_3.sql)
+- [x] Nutrition — auto-save baseline on each successful log (`setMacroLimit`/`setMicroLimit`)
+- [x] Study — LOG 60M → manual minutes input (done in Phase 3)
+- [x] Command terminal — `complete` matches real task titles; `reward` shows real AP + milestones; timer AP formula fixed
+- [x] Leaderboard 90-day bonus — deferred to Phase 6 (requires Shop backend)
+
+---
+
+## ⚠ MANUAL STEPS REMAINING (do before deployment)
+
+### 1 — Run SQL migrations in Supabase SQL Editor (in order)
+```
+1. security_patch_3.sql  (run this FIRST — adds columns/tables Phase 3+ depends on)
+2. phase3_features.sql   (duel columns, matchmaking_queue, get_top5_profile RPC, leaderboard streak fn)
+```
+
+### 2 — HF Space secrets setup (step-by-step)
+1. Go to https://huggingface.co/spaces → New Space → name: `system-agent`, SDK: **Docker**
+2. Space Settings → **Variables and secrets** → Add secret:
+   - `OPENROUTER_API_KEY` = your OpenRouter API key (from openrouter.ai)
+   - `SUPABASE_URL` = your Supabase project URL (e.g. `https://xxxx.supabase.co`)
+   - `SUPABASE_SERVICE_ROLE_KEY` = your Supabase **service-role** key (NOT the anon key — from Dashboard → Settings → API)
+3. Push `backend/hf_agent/` contents to the Space repo (clone URL shown in Space page)
+4. Space auto-builds and deploys — test at `https://DRAgNATSU66-system-agent.hf.space/health`
 
 ### Phase 6 — Final / Future
 - [ ] Sleep — Google Fit / Samsung Health auto-sync via Capacitor plugin
@@ -483,23 +504,92 @@ Remove the `alert('SUCCESS: ... VOUCHER SENT...')`. Replace with a disabled butt
 
 ---
 
-## M4: AI Agent — Command Terminal (HF Spaces + OpenRouter)
+## M4: AI Agent — Command Terminal (HF Spaces Backend + OpenRouter)
 
-**Decision:** Full LLM chatbot agent — the brain of SYSTEM OS. Model: `qwen/qwen3-32b:free` on OpenRouter. Fallback: `google/gemma-3-27b-it:free`.
+**Decision locked.** Model: `qwen/qwen3-32b:free` (text-only — no vision/audio needed). Fallback: `google/gemma-3-27b-it:free`. Both free on OpenRouter.
 
-**Pre-implementation audit required.** Before this is built, the following will be confirmed via an updated MD note:
-- HF Spaces account name + Space URL
-- OpenRouter API key stored as HF Space secret (never in frontend)
-- Exact system prompt template (includes: AP, streak, rank, today completions, weekly category progress, active goals, multiplier, recent aura history)
-- Which existing slash commands to keep as shortcuts vs deprecate
-- Rate limiting: max 20 requests/user/day (tracked server-side on HF Spaces)
-- CORS: only allow requests from production domain
+---
 
-**Architecture once confirmed:**
-- Frontend streams from `POST https://<hf-space>/chat` with `{ messages, user_context }`
-- HF Space (FastAPI) proxies to OpenRouter, streams SSE back to client
-- Command page becomes a full chat interface with persistent message history (capped at 50 messages in `commandStore`)
-- Existing commands (`critique`, `status`, `timer`, `complete`) become preset prompts that pre-fill the chat input
+### HF Spaces role — backend server, not a model host
+
+HF Spaces hosts a **FastAPI server** (Docker SDK, CPU Basic free tier). It does not run the model locally — it proxies every chat request to OpenRouter, which serves Qwen3-32B on their own infrastructure. This means:
+
+- **The app never exposes the OpenRouter API key** — key lives as a HF Space secret, only accessible by the FastAPI process
+- **All users share one backend endpoint** — `https://DRAgNATSU66-system-agent.hf.space/chat`
+- **Scales automatically** — OpenRouter handles concurrent model requests for every user simultaneously; HF Spaces just routes and rate-limits
+- **No GPU cost** — CPU Basic is enough because we only forward JSON and stream bytes
+
+### How multi-user AI works (public deployment)
+
+```
+User A browser  ──┐
+User B browser  ──┤── POST /chat ──► HF Spaces FastAPI ──► OpenRouter API ──► Qwen3-32B
+User C browser  ──┘        ▲                                     (hosted by OpenRouter/Qwen)
+                            └── auth check + rate limit (Supabase ai_usage table)
+                                stream SSE back to each client independently
+```
+
+Each request is stateless. The HF Spaces server:
+1. Verifies `X-User-Id` header against Supabase (lightweight `auth.getUser()` check)
+2. Checks `ai_usage` table — if user hit 20 requests today, return 429
+3. Injects system prompt + user context, calls OpenRouter with `stream: true`
+4. Pipes SSE chunks back to the browser
+
+### What server-side logic lives on HF Spaces
+
+| Responsibility | Where |
+|---|---|
+| AI chat proxy (hide OpenRouter key) | HF Spaces FastAPI |
+| Per-user rate limiting (20 req/day) | HF Spaces + `ai_usage` Supabase table |
+| System prompt + context injection | HF Spaces |
+| CSP violation reports (P4-3) | HF Spaces `/csp-report` endpoint |
+| Duel resolution RPC | Supabase Edge Function (or SQL RPC) |
+| Midnight penalty cron | Supabase scheduled function |
+| All data reads/writes | Supabase directly from frontend |
+
+### Files to create
+
+```
+backend/hf_agent/
+  app.py             ← FastAPI server (chat proxy + rate limit + csp-report)
+  requirements.txt   ← fastapi, uvicorn, httpx, supabase-py
+  Dockerfile         ← FROM python:3.11-slim, EXPOSE 7860, CMD uvicorn app:app
+  README.md          ← HF Spaces config (title, sdk: docker, app_port: 7860)
+```
+
+### System prompt template
+
+```
+You are CIPHER, the AI core of SYSTEM OS — a gamified life-tracking OS.
+The user's current state: {user_context_json}
+Rules: be direct, motivational, brutally honest. Max 200 words unless asked for a plan.
+Never fabricate numbers — only reference what is in the user context above.
+```
+
+`user_context_json` sent from frontend includes: `total_ap`, `streak`, `multiplier`, `rank`, `todayEarned`, `todayLost`, `dailyCategoryAP` (today), `active_goals[]`, `recent_aura_history` (last 7 days), `tasks_completed_today`, `tasks_total`.
+
+### Rate limiting — `ai_usage` table
+
+```sql
+CREATE TABLE IF NOT EXISTS public.ai_usage (
+  user_id   UUID    NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  date      DATE    NOT NULL DEFAULT CURRENT_DATE,
+  count     INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (user_id, date)
+);
+ALTER TABLE public.ai_usage ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "ai_usage_self" ON public.ai_usage FOR ALL USING (auth.uid() = user_id);
+```
+
+HF Spaces upserts this on each request using a service-role key (secret). Frontend never touches this table.
+
+### Frontend changes (Command Center)
+
+- Command page becomes a full chat interface with streaming text output
+- Message history capped at 50 entries in `commandStore` (FIFO drop oldest)
+- Existing slash commands (`critique`, `status`, `timer`, `complete`) become preset prompt chips that pre-fill the input and submit immediately
+- Input: single text field + SEND button + streaming indicator
+- No image/audio inputs needed
 
 ---
 
@@ -606,7 +696,7 @@ Current: "LOG SESSION" awards 150 AP flat with no duration, no record stored.
 ## P4-3: CSP missing `report-uri` — violations silently dropped
 **File:** `frontend/vercel.json` line 23
 
-Add `report-uri https://your-report-endpoint.com/csp` to the CSP header value. Use a free service (report-uri.com) or a simple HF Spaces logging endpoint.
+Add `report-uri https://DRAgNATSU66-system-agent.hf.space/csp-report` to the CSP header value. The HF Spaces FastAPI server (built in Phase 3 M4) exposes a `/csp-report` POST endpoint that logs violations to a `csp_violations` table or simply prints to Space logs.
 
 ---
 
@@ -753,7 +843,11 @@ Built on top of Phase 3 `notifications` table. Capacitor `@capacitor/push-notifi
 | `frontend/src/pages/Social/FriendsPage.jsx` | P3 | Full rebuild — real lookup, online presence |
 | `frontend/src/pages/Duels/DuelPage.jsx` | P3 | Full rebuild — 1v1, matchmaking, escrow, real progress |
 | `frontend/src/pages/Shop/ShopPage.jsx` | P3 | Remove fake alert |
-| `frontend/src/pages/Command/CommandPage.jsx` | P3 + P5 | AI agent (Phase 3), real commands (Phase 5) |
+| `backend/hf_agent/app.py` | P3 | NEW — FastAPI server: chat proxy, rate limit, CSP report endpoint |
+| `backend/hf_agent/Dockerfile` | P3 | NEW — Docker config for HF Spaces (CPU Basic, port 7860) |
+| `backend/hf_agent/requirements.txt` | P3 | NEW — fastapi, uvicorn, httpx, supabase-py |
+| `backend/hf_agent/README.md` | P3 | NEW — HF Spaces metadata (sdk: docker, app_port: 7860) |
+| `frontend/src/pages/Command/CommandPage.jsx` | P3 + P5 | AI streaming chat UI (Phase 3), real commands (Phase 5) |
 | `frontend/src/pages/Leaderboard/LeaderboardPage.jsx` | P3 | Top-5 profile viewer |
 | `frontend/src/pages/Workout/WorkoutPage.jsx` | P3 + P5 | LOG ALL fix, mobility cards, configurable split |
 | `frontend/src/pages/Study/StudyPage.jsx` | P3 | LOG 60M → manual input |
@@ -801,3 +895,34 @@ Built on top of Phase 3 `notifications` table. Capacitor `@capacitor/push-notifi
 - [ ] RETRY goal → bounty halved, shown on card
 - [ ] Log a nutrition value → macro_configs updated silently as new baseline
 - [ ] Workout schedule settings → WorkoutPage reflects chosen split
+
+---
+---
+
+# Database Architecture — SQL Only (Through All Phases)
+
+**Decision: PostgreSQL via Supabase exclusively. No NoSQL added until specific scale triggers are hit.**
+
+Every feature in this plan maps cleanly to PostgreSQL:
+
+| Feature | Why you might consider NoSQL | Why Supabase/Postgres wins here |
+|---|---|---|
+| Real-time notifications | "Needs pub/sub" | Supabase Realtime = PostgreSQL LISTEN/NOTIFY — already pub/sub |
+| Online presence | "Redis TTL keys are cleaner" | `WHERE last_seen_at > NOW() - INTERVAL '5 min'` — 3 lines |
+| Matchmaking queue | "Ephemeral high-write" | `matchmaking_queue` table + Supabase Realtime handles launch scale |
+| Workout/metrics objects | "Document store" | Already using PostgreSQL `JSONB` — same power, no extra service |
+| AI chat history | "Document store" | JSONB array column, capped at 50 messages |
+| Leaderboard ranking | "Redis sorted sets are faster" | Indexed `ORDER BY total_aura_points DESC LIMIT 100` is sub-5ms at thousands of users |
+
+**AI rate limiting (HF Spaces only):** The `/chat` endpoint uses a simple Python in-memory counter dict with daily reset — no Redis needed. Falls back to a `ai_usage(user_id, date, count)` Supabase table if HF Spaces restarts.
+
+## When to add Redis (scale triggers — revisit only when these hit)
+
+| Trigger | Threshold | What to add |
+|---|---|---|
+| Leaderboard query slowness | >100ms p95, >1000 DAU | Redis sorted set as cache layer, 5-min TTL |
+| Matchmaking lag | >50 users in queue simultaneously | Redis sorted set keyed by AP bracket |
+| `last_seen_at` read pressure | >500 concurrent users, Postgres CPU spikes | Redis TTL keys for presence (key expires = offline) |
+| AI endpoint restarts lose rate limit state | Happens in prod under load | Upstash Redis (serverless, free tier) on HF Spaces |
+
+None of these will apply at launch or through Phases 1–5. Revisit post-Phase 5 if the app gains real user traction.

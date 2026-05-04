@@ -54,6 +54,7 @@ const HobbyForm = ({ onClose }) => {
               onChange={e => setTitle(e.target.value)}
               placeholder="e.g. DIGITAL ART, CHESS..."
               className={styles.input}
+              maxLength={50}
               autoFocus
             />
           </div>

@@ -8,6 +8,15 @@ import { seedServerFromLocal, pullAllData } from '../../services/syncEngine';
 import systemIcon from '../../assets/system.png';
 import styles from './Auth.module.css';
 
+const safeAuthError = (msg) => {
+  if (!msg) return 'Something went wrong. Please try again.';
+  if (msg.includes('Invalid login')) return 'Incorrect email or password.';
+  if (msg.includes('already registered')) return 'An account with this email exists.';
+  if (msg.includes('rate limit') || msg.includes('429')) return 'Too many attempts. Try again later.';
+  if (msg.includes('Email not confirmed')) return 'Please verify your email before logging in.';
+  return 'Authentication failed. Please try again.';
+};
+
 // ─── Forgot Password ────────────────────────────────────────────────────────
 const ForgotPasswordView = ({ onBack }) => {
   const [step, setStep]       = useState('email'); // 'email' | 'otp' | 'done'
@@ -26,7 +35,7 @@ const ForgotPasswordView = ({ onBack }) => {
       redirectTo: undefined, // Use OTP flow, not magic link
     });
     setLoading(false);
-    if (err) return setError(err.message);
+    if (err) return setError(safeAuthError(err.message));
     setStep('otp');
   };
 
@@ -176,7 +185,7 @@ const AuthPage = () => {
       },
     });
     if (oauthErr) {
-      setError(oauthErr.message);
+      setError(safeAuthError(oauthErr.message));
       setOauthLoading(false);
     }
     // On success, browser redirects to Google — callback handled in useEffect above
@@ -191,12 +200,20 @@ const AuthPage = () => {
     setLoading(true);
     setError(null);
 
+    if (!isLogin) {
+      if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+        setError('Password must contain at least 1 uppercase letter and 1 number.');
+        setLoading(false);
+        return;
+      }
+    }
+
     const { data, error: authErr } = isLogin
       ? await supabase.auth.signInWithPassword({ email, password })
       : await supabase.auth.signUp({ email, password });
 
     if (authErr) {
-      setError(authErr.message);
+      setError(safeAuthError(authErr.message));
       setLoading(false);
       return;
     }
@@ -302,6 +319,7 @@ const AuthPage = () => {
             value={email}
             onChange={e => setEmail(e.target.value)}
             className={styles.input}
+            autoComplete="email"
             required
           />
           <input
@@ -310,9 +328,15 @@ const AuthPage = () => {
             value={password}
             onChange={e => setPassword(e.target.value)}
             className={styles.input}
+            autoComplete={isLogin ? 'current-password' : 'new-password'}
             required
             minLength={isLogin ? undefined : 8}
           />
+          {!isLogin && (
+            <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '-0.5rem' }}>
+              Min 8 chars · 1 uppercase · 1 number
+            </p>
+          )}
 
           <button type="submit" className={styles.button} disabled={loading || oauthLoading}>
             {loading ? 'SYNCING...' : (isLogin ? 'ACCESS TERMINAL' : 'INITIALIZE PROTOCOL')}

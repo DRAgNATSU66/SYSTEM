@@ -11,7 +11,7 @@ export const useGoalStore = create(
       
       addGoal: (title, target_date, bounty_ap = 1000, isStagnant = true) => set((state) => ({
         goals: [...state.goals, {
-          id: Date.now().toString(),
+          id: crypto.randomUUID(),
           title, target_date, completed: false, bounty_ap, isStagnant,
           status: 'CREATED',
           createdAt: new Date().toISOString(),
@@ -49,6 +49,20 @@ export const useGoalStore = create(
         ).filter(g => g.id !== id)
       })),
 
+      updateGoal: (id, updates) => set((state) => ({
+        goals: state.goals.map(g => g.id === id ? { ...g, ...updates } : g)
+      })),
+
+      retryGoal: (id, newTargetDate) => set((state) => ({
+        goals: state.goals.map(g => g.id === id ? {
+          ...g,
+          target_date: newTargetDate,
+          bounty_ap: Math.max(50, Math.floor((g.bounty_ap || 0) / 2)),
+          retry_count: (g.retry_count || 0) + 1,
+          overdue_penalty_applied: false,
+        } : g)
+      })),
+
       hydrateFromServer: (serverData) => set(serverData),
       lastSyncedAt: null,
     }),
@@ -66,7 +80,7 @@ export const useProjectStore = create(
       
       addProject: (title, type = 'CS', color = '#FFFFFF', status = 'UPCOMING') => set((state) => ({
         projects: [...state.projects, {
-          id: Date.now().toString(), title, type, status, color, total_hours: 0,
+          id: crypto.randomUUID(), title, type, status, color, total_hours: 0,
           lifecycle: 'CREATED',
           createdAt: new Date().toISOString(),
         }]
@@ -104,7 +118,7 @@ export const useProjectStore = create(
       }),
       
       logSession: (projectId, duration, efficiency, project_title) => set((state) => {
-        const newSession = { id: Date.now(), project_id: projectId, project_title: project_title || '', duration, efficiency, date: getTodayStr() };
+        const newSession = { id: crypto.randomUUID(), project_id: projectId, project_title: project_title || '', duration, efficiency, date: getTodayStr() };
         return {
           sessions: [...state.sessions, newSession],
           projects: state.projects.map(p => p.id === projectId ? { ...p, total_hours: (p.total_hours || 0) + duration } : p)
@@ -127,7 +141,7 @@ export const useHobbyStore = create(
       
       addHobby: (hobby) => set((state) => ({
         hobbies: [...state.hobbies, {
-          id: Date.now().toString(),
+          id: crypto.randomUUID(),
           ...hobby,
           lifecycle: 'CREATED',
           createdAt: new Date().toISOString()

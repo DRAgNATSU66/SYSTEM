@@ -69,7 +69,7 @@ export const useAuraStore = create(
             totalAuraPoints: Math.max(0, state.totalAuraPoints - loss),
             todayLost: state.todayLost + loss,
             todayNet: state.todayEarned - (state.todayLost + loss),
-            auraHistory: [...state.auraHistory, { date: getTodayStr(), net: -loss, reason: reason || 'Negative Multiplier Penalty' }]
+            auraHistory: [...state.auraHistory, { date: getTodayStr(), net: -loss, reason: reason || 'Negative Multiplier Penalty' }].slice(-180)
           };
         }
 
@@ -108,7 +108,7 @@ export const useAuraStore = create(
           todayEarned: state.todayEarned + actual,
           todayNet: (state.todayEarned + actual) - state.todayLost,
           dailyCategoryAP: { ...state.dailyCategoryAP, [today]: newDayData },
-          auraHistory: [...state.auraHistory, { date: today, net: actual, reason: reason || 'Bonus' }]
+          auraHistory: [...state.auraHistory, { date: today, net: actual, reason: reason || 'Bonus' }].slice(-180)
         };
       }),
 
@@ -135,7 +135,7 @@ export const useAuraStore = create(
             todayLost: todayLost + cappedLoss,
             todayNet: todayEarned - (todayLost + cappedLoss),
             totalAuraPoints: Math.max(0, totalAuraPoints - cappedLoss),
-            auraHistory: [...auraHistory, { date: today, net: -(cappedLoss), reason: 'Multiplier Penalty', multiplier }],
+            auraHistory: [...auraHistory, { date: today, net: -(cappedLoss), reason: 'Multiplier Penalty', multiplier }].slice(-180),
           });
           return;
         }
@@ -166,7 +166,7 @@ export const useAuraStore = create(
           todayEarned:      todayEarned + cappedEarned,
           todayNet:         net,
           totalAuraPoints:  newTotal,
-          auraHistory:      newHistory,
+          auraHistory:      newHistory.slice(-180),
         });
       },
 
@@ -299,7 +299,7 @@ export const useAuraStore = create(
           totalAuraPoints: Math.max(0, state.totalAuraPoints + actual),
           todayEarned:     state.todayEarned + actual,
           todayNet:        (state.todayEarned + actual) - state.todayLost,
-          auraHistory: [...state.auraHistory, { date: getTodayStr(), net: actual, reason: reason || 'Bonus' }]
+          auraHistory: [...state.auraHistory, { date: getTodayStr(), net: actual, reason: reason || 'Bonus' }].slice(-180)
         };
       }),
 
@@ -309,7 +309,7 @@ export const useAuraStore = create(
           const today = getTodayStr();
           set({
             totalAuraPoints: totalAuraPoints - amount,
-            auraHistory: [...auraHistory, { date: today, net: -amount, reason: `Redeemed: ${rewardName}` }]
+            auraHistory: [...auraHistory, { date: today, net: -amount, reason: `Redeemed: ${rewardName}` }].slice(-180)
           });
           return true;
         }

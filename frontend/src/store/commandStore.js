@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { generateCritique } from '../utils/critiqueEngine';
 import { useAuraStore } from './auraStore';
+import { useTaskStore } from './taskStore';
 
 export const useCommandStore = create(
   persist(
@@ -13,8 +14,8 @@ export const useCommandStore = create(
       ],
       timerStart: null,
       
-      addEntry: (entry) => set((state) => ({ 
-        history: [...state.history, { ...entry, id: Date.now().toString() }] 
+      addEntry: (entry) => set((state) => ({
+        history: [...state.history, { ...entry, id: crypto.randomUUID() }]
       })),
       
       processCommand: (command, dailyScore, rankTitle) => {
@@ -45,21 +46,34 @@ export const useCommandStore = create(
             get().addEntry({ type: 'ai', text: 'CONCLUSION: YOU_ARE_HIM.' });
           }, 800);
         } else if (cmd === 'reward') {
-          get().addEntry({ type: 'ai', text: 'UPCOMING_REWARDS:' });
-          get().addEntry({ type: 'ai', text: '• 500 AP -> NEXT_RANK_UP' });
-          get().addEntry({ type: 'ai', text: '• 1000 AP -> REDEEMABLE_CREDIT_VOUCHER' });
-          get().addEntry({ type: 'ai', text: '• 3_DAY_STREAK -> 1.25X_MULTIPLIER' });
+          const { totalAuraPoints, streakDays, multiplier } = useAuraStore.getState();
+          const MILESTONES = [10000, 50000, 100000, 250000, 500000, 1000000];
+          const next = MILESTONES.find(m => m > totalAuraPoints) || MILESTONES[MILESTONES.length - 1];
+          get().addEntry({ type: 'ai', text: `CURRENT_AP: ${totalAuraPoints.toLocaleString()} AP` });
+          get().addEntry({ type: 'ai', text: `STREAK: ${streakDays} DAYS · MULTIPLIER: ${multiplier.toFixed(2)}×` });
+          get().addEntry({ type: 'ai', text: `NEXT_MILESTONE: ${next.toLocaleString()} AP (${(next - totalAuraPoints).toLocaleString()} remaining)` });
+          get().addEntry({ type: 'ai', text: 'SHOP_REWARDS_UNLOCKED_AT_EACH_MILESTONE.' });
         } else if (cmd === 'redeem') {
           get().addEntry({ type: 'ai', text: 'EXCHANGE_RATE: 1000_AP = $0.10' });
           get().addEntry({ type: 'ai', text: 'STATUS: SHOP_MODULE_INITIALIZED.' });
           get().addEntry({ type: 'ai', text: 'NAVIGATE_TO_SHOP_TO_CONVERT_AURA_TO_REAL_WORLD_VAL.' });
         } else if (cmd.startsWith('complete')) {
-          const target = cmd.replace(/^complete\s*/i, '').trim() || 'TASK';
-          const { addCategoryAP, checkAndUpdateStreak } = useAuraStore.getState();
-          addCategoryAP('MISC', 50, `COMMAND: COMPLETED ${target.toUpperCase()}`);
-          checkAndUpdateStreak();
-          get().addEntry({ type: 'ai', text: `TASK_COMPLETED: ${target.toUpperCase()} [+50_AP_AWARDED]` });
-          get().addEntry({ type: 'ai', text: 'HABIT_LOG_CONFIRMED. KEEP_THE_MOMENTUM.' });
+          const target = cmd.replace(/^complete\s*/i, '').trim();
+          if (!target) {
+            get().addEntry({ type: 'ai', text: 'USAGE: complete <task name>' });
+          } else {
+            const tasks = useTaskStore.getState().tasks;
+            const match = tasks.find(t => (t.title || t.name || '').toUpperCase().includes(target.toUpperCase()));
+            if (!match) {
+              get().addEntry({ type: 'ai', text: `UNKNOWN_TASK: "${target.toUpperCase()}" NOT FOUND IN REGISTRY.` });
+              get().addEntry({ type: 'ai', text: `REGISTERED_TASKS: ${tasks.map(t => t.title || t.name).join(', ') || 'none'}` });
+            } else {
+              const { addCategoryAP, checkAndUpdateStreak } = useAuraStore.getState();
+              addCategoryAP('MISC', 50, `COMMAND: COMPLETED ${match.title || match.name}`);
+              checkAndUpdateStreak();
+              get().addEntry({ type: 'ai', text: `TASK_COMPLETED: ${(match.title || match.name).toUpperCase()} [+50_AP]` });
+            }
+          }
         } else if (cmd.startsWith('timer')) {
           const sub = cmd.replace(/^timer\s*/i, '').trim();
           if (sub === 'start') {
@@ -73,7 +87,7 @@ export const useCommandStore = create(
               const elapsed = Math.max(1, Math.round((Date.now() - timerStart) / 60000));
               set({ timerStart: null });
               const { addCategoryAP, checkAndUpdateStreak } = useAuraStore.getState();
-              const ap = Math.min(elapsed * 2, 200);
+              const ap = Math.min(200, Math.round((elapsed / 120) * 200));
               addCategoryAP('STUDY', ap, `COMMAND: STUDY SESSION ${elapsed}m`);
               checkAndUpdateStreak();
               get().addEntry({ type: 'ai', text: `TIMER_STOPPED. SESSION: ${elapsed}m. +${ap}_AP_AWARDED.` });

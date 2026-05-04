@@ -31,13 +31,6 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-// Generic placeholder for missing pages
-const Placeholder = ({ title }) => (
-  <div style={{padding: '5rem', color: '#fff'}}>
-    <h2 style={{fontFamily: 'Outfit', color: 'var(--rank-alpha)'}}>{title} Engine</h2>
-    <p style={{color: 'var(--text-secondary)'}}>Neural pathways initializing... System sync in progress.</p>
-  </div>
-);
 
 export const router = createBrowserRouter([
   { path: '/auth', element: <AuthPage /> },

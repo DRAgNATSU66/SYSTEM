@@ -2,14 +2,11 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { DEFAULT_WEIGHTS } from '../constants/scoreWeights';
 
-// Generate a unique 10-character alphanumeric Cypher ID
 const generateCypherId = () => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let id = '';
-  for (let i = 0; i < 10; i++) {
-    id += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return id;
+  const arr = new Uint8Array(10);
+  crypto.getRandomValues(arr);
+  return Array.from(arr).map(b => chars[b % chars.length]).join('');
 };
 
 export const useUserStore = create(
@@ -18,11 +15,20 @@ export const useUserStore = create(
       user: null,  // Holds Supabase Auth User object when signed in
       profile: { name: '', rank_tier: 'Normie', username: '' },
       cypherId: null,  // Unique 10-digit alphanumeric ID
-      preferences: { scoreWeights: DEFAULT_WEIGHTS },
+      preferences: {
+        scoreWeights: DEFAULT_WEIGHTS,
+        workoutSplit: { 0: 'hypertrophy', 1: 'cardio', 2: 'cardio', 3: 'cardio', 4: 'hypertrophy', 5: 'hypertrophy', 6: 'hypertrophy' },
+      },
       lastSyncedAt: null,
-      authLoading: true,  // true until AuthProvider confirms session status on mount
+      authLoading: true,
+      syncing: false,
 
       setAuthLoading: (val) => set({ authLoading: val }),
+      setSyncing: (val) => set({ syncing: val }),
+
+      updatePreferences: (data) => set((state) => ({
+        preferences: { ...state.preferences, ...data }
+      })),
 
       setUser: (user) => {
         const state = get();
@@ -61,7 +67,7 @@ export const useUserStore = create(
       name: 'antigravity-user-store',
       partialize: (state) => {
         // eslint-disable-next-line no-unused-vars
-        const { authLoading, setAuthLoading, ...rest } = state;
+        const { authLoading, setAuthLoading, syncing, setSyncing, ...rest } = state;
         return rest;
       },
     }

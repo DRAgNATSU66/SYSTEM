@@ -14,6 +14,7 @@ import { useMetricsStore } from '../store/metricsStore';
 import { useStudyStore } from '../store/studyStore';
 import { useSocialStore } from '../store/socialStore';
 import { useGoalStore, useProjectStore, useHobbyStore } from '../store/assetStores';
+import { useUiStore } from '../store/uiStore';
 
 // ─────────────────────────────────────────────
 // Offline Queue Store (persisted to localStorage)
@@ -51,9 +52,13 @@ export const useSyncQueue = create(
 // pushChange — online: upsert immediately; offline: enqueue
 // ─────────────────────────────────────────────
 export async function pushChange(table, op, payload) {
-  const isOnline = navigator.onLine;
+  if (!supabase) {
+    useSyncQueue.getState().enqueue(table, op, payload);
+    return;
+  }
 
-  if (!isOnline) {
+  const { offlineMode, cloudSync } = useUiStore.getState();
+  if (offlineMode || !cloudSync || !navigator.onLine) {
     useSyncQueue.getState().enqueue(table, op, payload);
     return;
   }
@@ -96,8 +101,10 @@ function getConflictKey(table) {
 // flushQueue — process all queued mutations
 // ─────────────────────────────────────────────
 export async function flushQueue() {
+  if (!supabase) return;
   const { queue, dequeue } = useSyncQueue.getState();
   if (!queue.length || !navigator.onLine) return;
+  const { data: { user: currentUser } } = await supabase.auth.getUser().catch(() => ({ data: { user: null } }));
 
   // Deduplicate: keep last write per (table + primary key identifier)
   const seen = new Map();
@@ -111,6 +118,10 @@ export async function flushQueue() {
   }
 
   for (const item of deduped) {
+    if (item.payload.user_id && currentUser && item.payload.user_id !== currentUser.id) {
+      dequeue(item.id);
+      continue;
+    }
     try {
       if (item.op === 'DELETE') {
         await supabase.from(item.table).delete().eq('id', item.payload.id);
@@ -134,31 +145,56 @@ if (typeof window !== 'undefined') {
 }
 
 // ─────────────────────────────────────────────
+// aura_history_detail — push new category AP entries to server
+// Uses subscriber instead of importing into auraStore to avoid circular deps
+// ─────────────────────────────────────────────
+const _catFromReason = (r = '') => {
+  const u = r.toUpperCase();
+  if (u.includes('WORKOUT') || u.includes('VOLUME') || u.includes('CARDIO') || u.includes('VO2') || u.includes('MOBILITY') || u.includes('PERSONAL BEST')) return 'WORKOUT';
+  if (u.includes('SLEEP')) return 'SLEEP';
+  if (u.includes('STUDY') || u.includes('DEEP WORK') || u.includes('TIMER')) return 'STUDY';
+  if (u.includes('MOOD')) return 'MOOD';
+  if (u.includes('NUTRITION')) return 'NUTRITION';
+  return 'MISC';
+};
+
+let _isSyncing = false;
+// Expose setter so pullAllData can guard against re-pushing server data
+export const setDetailSyncing = (v) => { _isSyncing = v; };
+
+useAuraStore.subscribe((state, prevState) => {
+  if (_isSyncing || !supabase) return;
+  const userId = useUserStore.getState().user?.id;
+  if (!userId) return;
+  const added = state.auraHistory.length - prevState.auraHistory.length;
+  if (added <= 0) return;
+  const today = new Date().toISOString().split('T')[0];
+  state.auraHistory.slice(-added).forEach(entry => {
+    if (entry.date !== today || !entry.reason || entry.reason === 'Daily Activity') return;
+    pushChange('aura_history_detail', 'INSERT', {
+      id: crypto.randomUUID(),
+      user_id: userId,
+      date: entry.date,
+      category: _catFromReason(entry.reason),
+      reason: entry.reason,
+      net: entry.net,
+    });
+  });
+});
+
+// ─────────────────────────────────────────────
 // pullAllData — hydrate all stores from Supabase
 // ─────────────────────────────────────────────
 export async function pullAllData(userId) {
   if (!userId || !supabase) return;
 
+  useUserStore.getState().setSyncing(true);
+  _isSyncing = true;
+  // Update online presence — fire-and-forget
+  supabase.from('profiles').update({ last_seen_at: new Date().toISOString() }).eq('id', userId).then(() => {});
+
   try {
-    const [
-      profileRes,
-      tasksRes,
-      completionsRes,
-      scoresRes,
-      auraLogsRes,
-      workoutRes,
-      pbRes,
-      studySubjectsRes,
-      studySessionsRes,
-      metricsRes,
-      macroConfigRes,
-      goalsRes,
-      projectsRes,
-      projectSessionsRes,
-      hobbiesRes,
-      friendsRes,
-      duelsRes,
-    ] = await Promise.all([
+    const settled = await Promise.allSettled([
       supabase.from('profiles').select('*').eq('id', userId).single(),
       supabase.from('tasks').select('*').eq('user_id', userId),
       supabase.from('task_completions').select('*').eq('user_id', userId),
@@ -176,7 +212,20 @@ export async function pullAllData(userId) {
       supabase.from('hobbies').select('*').eq('user_id', userId),
       supabase.from('friends').select('*').eq('user_id', userId),
       supabase.from('duels').select('*').or(`challenger_id.eq.${userId},opponent_id.eq.${userId}`),
+      supabase.from('aura_history_detail').select('date,net,reason').eq('user_id', userId).order('created_at', { ascending: false }).limit(500),
     ]);
+
+    const unwrap = (r) => r.status === 'fulfilled' ? r.value : { data: null, error: r.reason };
+    const [
+      profileRes, tasksRes, completionsRes, scoresRes, auraLogsRes,
+      workoutRes, pbRes, studySubjectsRes, studySessionsRes, metricsRes,
+      macroConfigRes, goalsRes, projectsRes, projectSessionsRes, hobbiesRes,
+      friendsRes, duelsRes, auraDetailRes,
+    ] = settled.map(unwrap);
+
+    settled.forEach((r, i) => {
+      if (r.status === 'rejected') console.warn(`[syncEngine] pullAllData query ${i} failed:`, r.reason);
+    });
 
     const now = new Date().toISOString();
 
@@ -209,12 +258,16 @@ export async function pullAllData(userId) {
       const serverNewer = !localAura.lastSyncedAt || new Date(p.updated_at) > new Date(localAura.lastSyncedAt);
 
       if (serverNewer) {
+        // If per-entry detail rows exist, use them as auraHistory (richer data than daily totals)
+        const detailHistory = auraDetailRes.data?.length
+          ? auraDetailRes.data.map(r => ({ date: r.date, net: r.net, reason: r.reason }))
+          : auraHistory;
         useAuraStore.getState().hydrateFromServer({
           totalAuraPoints: p.total_aura_points,
           streakDays: p.current_streak,
           maxStreak: p.max_streak,
           multiplier: p.multiplier,
-          auraHistory,
+          auraHistory: detailHistory,
           lastSyncedAt: now,
         });
       }
@@ -407,6 +460,9 @@ export async function pullAllData(userId) {
 
   } catch (err) {
     console.error('[syncEngine] pullAllData error:', err);
+  } finally {
+    _isSyncing = false;
+    useUserStore.getState().setSyncing(false);
   }
 }
 
@@ -416,6 +472,8 @@ export async function pullAllData(userId) {
 // ─────────────────────────────────────────────
 export async function seedServerFromLocal(userId) {
   if (!userId || !supabase) return;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || user.id !== userId) return;
 
   const taskState = useTaskStore.getState();
   const auraState = useAuraStore.getState();

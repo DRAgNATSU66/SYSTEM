@@ -173,3 +173,4 @@
   .cardActions { flex-direction: column; }
   .btnLog, .btnRemove, .btnTimer, .btnStop { min-width: 0; width: 100%; text-align: center; }
 }
+.minsInput { width: 64px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: #fff; font-size: 0.75rem; padding: 0.4rem 0.5rem; text-align: center; font-family: inherit; transition: border-color 0.2s; } .minsInput:focus { outline: none; border-color: rgba(0,191,255,0.5); box-shadow: 0 0 0 2px rgba(0,191,255,0.12); }

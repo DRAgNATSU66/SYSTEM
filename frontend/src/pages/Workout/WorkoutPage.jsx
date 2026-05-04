@@ -32,6 +32,57 @@ const getWeekDates = () => {
   return dates;
 };
 
+// ─── Mobility Card — duration hold or tick completion ────────────────────────
+const MobilityCard = ({ title, subGroups, logs, onLog }) => {
+  const [durations, setDurations] = useState({});
+  const [done, setDone]           = useState({});
+
+  const handleDurationLog = (sub) => {
+    const secs = parseInt(durations[sub]) || 0;
+    if (secs <= 0) return;
+    const ap = Math.min(30, Math.round(secs / 30) * 5);
+    onLog(title, sub, secs, ap);
+    setDurations(prev => ({ ...prev, [sub]: '' }));
+  };
+
+  const radarData = subGroups.map(sg => ({
+    label: sg,
+    value: (done[sg] || logs[sg]) ? 100 : 0,
+  }));
+
+  return (
+    <div className={styles.muscleCard}>
+      <div className={styles.cardHeader}>
+        <h3>{title.toUpperCase()}</h3>
+      </div>
+
+      <SubRadar data={radarData} color="var(--color-green)" />
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.5rem' }}>
+        {subGroups.map(sub => {
+          const isLogged = !!done[sub] || !!(logs[sub]);
+          return (
+            <div key={sub} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ flex: 1, fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em', color: isLogged ? 'var(--color-green)' : 'var(--text-secondary)', minWidth: 80 }}>{sub}</span>
+              <input
+                type="number" min="0" max="600"
+                placeholder="secs"
+                value={durations[sub] || ''}
+                onChange={e => setDurations(prev => ({ ...prev, [sub]: e.target.value }))}
+                className={styles.secsInput}
+              />
+              <button
+                className={isLogged ? styles.btnLogCompactDone : styles.btnLogCompact}
+                onClick={() => handleDurationLog(sub)}
+              >{isLogged ? '✓ LOGGED' : 'LOG'}</button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 // ─── Muscle Volume Card ───────────────────────────────────────────────────────
 const MuscleGroupCard = ({ title, subGroups, logs, pbs, onLog, onLogAll, lastLoggedValues }) => {
   const [selectedSub, setSelectedSub] = useState(subGroups[0]);
@@ -175,12 +226,12 @@ const VO2MaxCard = ({ onLog, lastVO2 }) => {
 const WorkoutPage = () => {
   const { muscles, logVolume, logCardio, logs, personalBests, lastLoggedValues, lastLoggedCardio } = useWorkoutStore();
   const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded } = useAuraStore();
-  const { user } = useUserStore();
+  const { user, preferences } = useUserStore();
   const today     = getTodayStr();
   const todayLogs = logs[today] || {};
   const weekDates = useMemo(() => getWeekDates(), []);
 
-  const scheduledType = getScheduledType();
+  const scheduledType = preferences?.workoutSplit?.[new Date().getDay()] ?? getScheduledType();
   const [activeTab, setActiveTab] = useState('hypertrophy');
   const lastLSS = lastLoggedCardio?.lss || { minutes: 30, bpm: 135 };
   const [lss, setLss] = useState({ minutes: String(lastLSS.minutes), bpm: String(lastLSS.bpm) });
@@ -233,35 +284,50 @@ const WorkoutPage = () => {
   };
 
   const handleLogAllGroup = (group, subGroups) => {
+    const groupLast = lastLoggedValues[group] || {};
+    const hasMissing = subGroups.some(sub => !groupLast[sub]);
+    if (hasMissing && !window.confirm(`Some exercises in ${group.toUpperCase()} have no history.\nLog defaults (3×10×20kg) for those?`)) return;
     resetDailyIfNeeded();
     subGroups.forEach(sub => {
-      if (user?.id) {
-        workoutService.logVolume(user.id, group, sub, 3, 10, 20, today);
-      } else {
-        logVolume(group, sub, 3, 10, 20);
-      }
+      const { sets, reps, weight } = groupLast[sub] || { sets: 3, reps: 10, weight: 20 };
+      if (user?.id) workoutService.logVolume(user.id, group, sub, sets, reps, weight, today);
+      else logVolume(group, sub, sets, reps, weight);
       addCategoryAP('WORKOUT', 10, `VOLUME LOGGED: ${sub}`);
     });
     checkAndUpdateStreak();
   };
 
   const handleLogAllTab = () => {
-    resetDailyIfNeeded();
     let groups;
     if (activeTab === 'hypertrophy') groups = hypertrophyGroups;
     else if (activeTab === 'mobility') groups = mobilityGroups;
-    else return; // cardio has its own log mechanism
-
+    else return;
+    const hasMissing = groups.some(([g, subs]) => subs.some(sub => !lastLoggedValues[g]?.[sub]));
+    if (hasMissing && !window.confirm('Some exercises have no logged history.\nLog defaults (3×10×20kg) for those?')) return;
+    resetDailyIfNeeded();
     groups.forEach(([group, subs]) => {
+      const groupLast = lastLoggedValues[group] || {};
       subs.forEach(sub => {
-        if (user?.id) {
-          workoutService.logVolume(user.id, group, sub, 3, 10, 20, today);
-        } else {
-          logVolume(group, sub, 3, 10, 20);
-        }
+        const { sets, reps, weight } = groupLast[sub] || { sets: 3, reps: 10, weight: 20 };
+        if (user?.id) workoutService.logVolume(user.id, group, sub, sets, reps, weight, today);
+        else logVolume(group, sub, sets, reps, weight);
         addCategoryAP('WORKOUT', 10, `VOLUME LOGGED: ${sub}`);
       });
     });
+    checkAndUpdateStreak();
+  };
+
+  const handleMobilityLog = (group, sub, seconds, ap) => {
+    resetDailyIfNeeded();
+    if (seconds > 0) {
+      if (user?.id) workoutService.logVolume(user.id, group, sub, 1, seconds, 0, today);
+      else logVolume(group, sub, 1, seconds, 0);
+      addCategoryAP('WORKOUT', ap, `MOBILITY: ${sub} ${seconds}s hold`);
+    } else {
+      if (user?.id) workoutService.logVolume(user.id, group, sub, 1, 1, 0, today);
+      else logVolume(group, sub, 1, 1, 0);
+      addCategoryAP('WORKOUT', 5, `MOBILITY: ${sub} completed`);
+    }
     checkAndUpdateStreak();
   };
 
@@ -378,18 +444,15 @@ const WorkoutPage = () => {
       {activeTab === 'mobility' && (
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>MOBILITY & FLEXIBILITY</h2>
-          <p className={styles.sectionSubtitle}>Track rotator cuff, hip flexors, glutes, and ankle mobility work</p>
+          <p className={styles.sectionSubtitle}>Enter hold time in seconds OR tick DONE — each exercise awards up to 30 AP</p>
           <div className={styles.muscleGrid}>
             {mobilityGroups.map(([group, subs]) => (
-              <MuscleGroupCard
+              <MobilityCard
                 key={group}
                 title={group}
                 subGroups={subs}
                 logs={todayLogs[group] || {}}
-                pbs={personalBests[group] || {}}
-                onLog={handleLogVolume}
-                onLogAll={handleLogAllGroup}
-                lastLoggedValues={lastLoggedValues[group] || {}}
+                onLog={handleMobilityLog}
               />
             ))}
           </div>
@@ -444,7 +507,7 @@ const WorkoutPage = () => {
       <div className={styles.anatomicalCues}>
         <h3>ANATOMICAL BIAS REGISTRY</h3>
         <p>• <b>Volume Formula</b>: Sets × Reps × Weight — all pentagram values reflect total tonnage lifted.</p>
-        <p>• <b>Weekly Cycle</b>: Mon/Tue/Wed = Cardio + Mobility · Thu/Fri/Sat/Sun = Hypertrophy.</p>
+        <p>• <b>Weekly Cycle</b>: Configurable in Settings → Workout Schedule.</p>
         <p>• <b>VO2 Max</b>: Based on 10-min max intensity Airbike session. Enter BPM, distance, time and age.</p>
       </div>
     </PageWrapper>
