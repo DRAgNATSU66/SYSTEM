@@ -303,8 +303,8 @@ const DuelPage = () => {
                 style={{ padding: '0.55rem 1.25rem', fontSize: '0.68rem' }}>
                 {queueSearching ? 'CHECKING...' : 'CHECK AGAIN'}
               </button>
-              <button onClick={handleCancelQueue} className={styles.btnNewDuel}
-                style={{ padding: '0.55rem 1.25rem', fontSize: '0.68rem', background: 'rgba(0,191,255,0.08)', borderColor: 'rgba(0,191,255,0.25)' }}>
+              <button onClick={handleCancelQueue} className={styles.btnReject}
+                style={{ padding: '0.55rem 1.25rem', fontSize: '0.68rem' }}>
                 LEAVE QUEUE
               </button>
             </div>
