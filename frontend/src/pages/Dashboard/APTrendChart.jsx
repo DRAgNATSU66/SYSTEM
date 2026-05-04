@@ -73,8 +73,12 @@ const APTrendChart = () => {
     return pts;
   }, [apByDate, range]);
   const prevTotal = prevData.reduce((s, v) => s + v, 0);
-  const changePct = prevTotal > 0 ? Math.round(((total - prevTotal) / prevTotal) * 100) : 0;
-  const isUp = changePct >= 0;
+
+  // changePct: null when no prior period data (avoid the always-0 bug)
+  const changePct = prevTotal > 0
+    ? Math.round(((total - prevTotal) / prevTotal) * 100)
+    : null;
+  const isUp = changePct === null ? true : changePct >= 0;
 
   const tickCount = range <= 7 ? range : range <= 14 ? 7 : 10;
   const step = Math.max(1, Math.floor(data.length / tickCount));
@@ -87,9 +91,15 @@ const APTrendChart = () => {
           <span className={styles.metaLabel}>AP TREND · LAST {range} DAYS</span>
           <div className={styles.stats}>
             <span className={styles.totalAP}>{total >= 1000 ? `+${(total / 1000).toFixed(1)}k` : `+${total}`}</span>
-            <span className={`${styles.pct} ${isUp ? styles.up : styles.down}`}>
-              {isUp ? '▲' : '▼'} {Math.abs(changePct)}%
-            </span>
+            {changePct !== null ? (
+              <span className={`${styles.pct} ${isUp ? styles.up : styles.down}`}>
+                {isUp ? '▲' : '▼'} {Math.abs(changePct)}%
+              </span>
+            ) : (
+              <span className={`${styles.pct} ${total > 0 ? styles.up : ''}`}>
+                {total > 0 ? '▲ NEW' : '—'}
+              </span>
+            )}
           </div>
         </div>
         <div className={styles.segBar}>

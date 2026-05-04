@@ -332,7 +332,19 @@ export const useAuraStore = create(
 
       setLastLoginDate: (dateStr) => set({ lastLoginDate: dateStr }),
 
-      hydrateFromServer: (serverData) => set(serverData),
+      hydrateFromServer: (serverData) => set((state) => ({
+        ...serverData,
+        // dailyCategoryAP is local-only — never stored server-side.
+        // NEVER overwrite it with undefined during server hydration or we
+        // lose today's per-category tracking and the AP double-log guard.
+        dailyCategoryAP: serverData.dailyCategoryAP !== undefined
+          ? serverData.dailyCategoryAP
+          : state.dailyCategoryAP,
+        // Same for penaltyLog — preserve local entries not yet synced
+        penaltyLog: serverData.penaltyLog !== undefined
+          ? serverData.penaltyLog
+          : state.penaltyLog,
+      })),
     }),
     { name: 'antigravity-aura-store' }
   )

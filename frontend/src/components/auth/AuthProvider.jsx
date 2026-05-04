@@ -109,7 +109,9 @@ export function AuthProvider({ children }) {
 function clearAllStores() {
   useAuraStore.setState({
     totalAuraPoints: 0, todayEarned: 0, todayLost: 0, todayNet: 0,
-    multiplier: 1.0, streakDays: 0, maxStreak: 0, penaltyLog: [], auraHistory: [],
+    multiplier: 1.0, streakDays: 0, maxStreak: 0,
+    penaltyLog: [], auraHistory: [],
+    dailyCategoryAP: {},  // clear per-category tracking on logout
   });
   useTaskStore.setState({ tasks: [], completions: {} });
   useScoreStore.setState({ dailyScores: {}, todayScore: 0, weeklyScores: [] });

@@ -163,12 +163,12 @@ export async function pullAllData(userId) {
       supabase.from('tasks').select('*').eq('user_id', userId),
       supabase.from('task_completions').select('*').eq('user_id', userId),
       supabase.from('daily_scores').select('*').eq('user_id', userId),
-      supabase.from('aura_logs').select('*').eq('user_id', userId).order('date', { ascending: false }).limit(90),
-      supabase.from('workout_logs').select('*').eq('user_id', userId).order('date', { ascending: false }).limit(90),
+      supabase.from('aura_logs').select('*').eq('user_id', userId).order('date', { ascending: false }).limit(30),
+      supabase.from('workout_logs').select('*').eq('user_id', userId).order('date', { ascending: false }).limit(30),
       supabase.from('personal_bests').select('*').eq('user_id', userId).single(),
       supabase.from('study_subjects').select('*').eq('user_id', userId),
-      supabase.from('study_sessions').select('*').eq('user_id', userId).order('date', { ascending: false }).limit(90),
-      supabase.from('daily_metrics').select('*').eq('user_id', userId).order('date', { ascending: false }).limit(90),
+      supabase.from('study_sessions').select('*').eq('user_id', userId).order('date', { ascending: false }).limit(30),
+      supabase.from('daily_metrics').select('*').eq('user_id', userId).order('date', { ascending: false }).limit(30),
       supabase.from('macro_configs').select('*').eq('user_id', userId).single(),
       supabase.from('goals').select('*').eq('user_id', userId),
       supabase.from('projects').select('*').eq('user_id', userId),
@@ -180,7 +180,7 @@ export async function pullAllData(userId) {
 
     const now = new Date().toISOString();
 
-    // — Hydrate userStore
+    // — Hydrate userStore (including avatar URL stored in profiles.avatar_url)
     if (profileRes.data) {
       const p = profileRes.data;
       useUserStore.getState().hydrateFromServer({
@@ -188,6 +188,7 @@ export async function pullAllData(userId) {
           name: p.username || 'Grinder',
           rank_tier: p.rank_tier || 'Normie',
           username: p.username,
+          avatarUrl: p.avatar_url || undefined,
         },
         lastSyncedAt: now,
       });

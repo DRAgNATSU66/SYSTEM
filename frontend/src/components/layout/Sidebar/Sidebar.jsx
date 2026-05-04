@@ -17,6 +17,7 @@ import PlayerLogo from '../../../assets/player-logo.png';
 const Sidebar = () => {
   const { sidebarOpen, toggleSidebar } = useUiStore();
   const { clearUser, profile } = useUserStore();
+  const [wideMode, setWideMode] = React.useState(false);
   const { logs: workoutLogs } = useWorkoutStore();
   const { sessions: studySessions } = useStudyStore();
   const { dailyMetrics, customMacros } = useMetricsStore();
@@ -62,7 +63,7 @@ const Sidebar = () => {
       {/* Backdrop overlay for mobile */}
       {sidebarOpen && <div className={styles.backdrop} onClick={toggleSidebar} />}
 
-      <aside className={`${styles.sidebar} ${sidebarOpen ? styles.open : ''}`}>
+      <aside className={`${styles.sidebar} ${sidebarOpen ? styles.open : ''} ${wideMode && sidebarOpen ? styles.wide : ''}`}>
         <div className={styles.brand}>
           <div className={styles.logoContainer}>
             <img
@@ -73,6 +74,16 @@ const Sidebar = () => {
             />
           </div>
           <h2 className={styles.brandTitle}>SYSTEM</h2>
+          {/* Expand toggle — shown only when sidebar is open */}
+          {sidebarOpen && (
+            <button
+              className={styles.expandBtn}
+              onClick={() => setWideMode(w => !w)}
+              title={wideMode ? 'Collapse sidebar' : 'Expand sidebar to see full labels'}
+            >
+              {wideMode ? '◀ Compact' : '▶ Expand'}
+            </button>
+          )}
         </div>
 
         <nav className={styles.nav} onClick={handleNavClick}>
