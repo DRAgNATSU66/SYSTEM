@@ -269,7 +269,7 @@ const DuelPage = () => {
 
       {/* ── Ranked Matchmaking ── */}
       <section className={styles.challengeSection} style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-        <h2 style={{ fontSize: '0.72rem', fontWeight: 900, letterSpacing: '0.2em', color: 'var(--rank-sigma)', marginBottom: '0.5rem' }}>RANKED MATCHMAKING</h2>
+        <h2 style={{ fontSize: '0.72rem', fontWeight: 900, letterSpacing: '0.2em', color: 'var(--rank-alpha)', marginBottom: '0.5rem' }}>RANKED MATCHMAKING</h2>
         <p style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', letterSpacing: '0.06em' }}>
           Matched by AP bracket (±25%). First available opponent is auto-challenged.
         </p>
@@ -278,12 +278,11 @@ const DuelPage = () => {
           <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
             <input type="number" value={stakeInput} onChange={e => setStakeInput(e.target.value)}
               placeholder="STAKE AP" min="100" max={totalAuraPoints}
-              className={styles.stakeInput} style={{ textAlign: 'center' }} />
+              className={styles.stakeInput} style={{ textAlign: 'center', color: '#fff' }} />
             <button
               onClick={handleFindOpponent}
               disabled={queueSearching || !user?.id || !supabase}
               className={styles.btnNewDuel}
-              style={{ background: 'rgba(255,230,0,0.15)', borderColor: 'rgba(255,230,0,0.40)', color: 'var(--rank-sigma)' }}
             >
               {queueSearching ? 'SCANNING...' : 'FIND OPPONENT'}
             </button>
@@ -291,8 +290,8 @@ const DuelPage = () => {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <span style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--rank-sigma)', boxShadow: '0 0 8px var(--rank-sigma)', display: 'inline-block', animation: 'pulse 1.4s ease-in-out infinite' }} />
-              <span style={{ fontSize: '0.78rem', fontWeight: 800, letterSpacing: '0.12em', color: 'var(--rank-sigma)' }}>
+              <span style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--rank-alpha)', boxShadow: '0 0 8px var(--rank-alpha)', display: 'inline-block' }} />
+              <span style={{ fontSize: '0.78rem', fontWeight: 800, letterSpacing: '0.12em', color: 'var(--rank-alpha)' }}>
                 IN QUEUE — SEARCHING FOR OPPONENT...
               </span>
             </div>
@@ -301,10 +300,11 @@ const DuelPage = () => {
             </p>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <button onClick={handleFindOpponent} disabled={queueSearching} className={styles.btnNewDuel}
-                style={{ padding: '0.55rem 1.25rem', fontSize: '0.68rem', background: 'rgba(255,230,0,0.12)', borderColor: 'rgba(255,230,0,0.35)', color: 'var(--rank-sigma)' }}>
+                style={{ padding: '0.55rem 1.25rem', fontSize: '0.68rem' }}>
                 {queueSearching ? 'CHECKING...' : 'CHECK AGAIN'}
               </button>
-              <button onClick={handleCancelQueue} className={styles.btnReject} style={{ padding: '0.55rem 1.25rem', fontSize: '0.68rem' }}>
+              <button onClick={handleCancelQueue} className={styles.btnNewDuel}
+                style={{ padding: '0.55rem 1.25rem', fontSize: '0.68rem', background: 'rgba(0,191,255,0.08)', borderColor: 'rgba(0,191,255,0.25)' }}>
                 LEAVE QUEUE
               </button>
             </div>
