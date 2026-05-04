@@ -1,60 +1,95 @@
 # SYSTEM OS — Master Audit & Execution Plan
-
-**Date:** 2026-05-04  
-**Scope:** Full codebase — frontend, backend SQL, sync engine, auth flows, client-side logic  
-**Status:** PRE-EXECUTION — nothing has been changed yet
-
-> **Note:** The mentor's plan said 3 files were "already edited" (index.html, supabaseClient.js, userStore.js).  
-> After reading the actual files, **none of those 3 patches have been applied**. All 3 are still in their original broken state.
+**Last updated:** 2026-05-04 | **Status:** All decisions locked — ready to execute
 
 ---
 
-## Severity Summary
+## Master Checklist — All Phases
 
-| Layer | CRITICAL | HIGH | MEDIUM | LOW |
-|---|---|---|---|---|
-| Database / SQL | 4 | 2 | 1 | 2 |
-| Auth & Session | 1 | 3 | 1 | 2 |
-| Sync Engine | 1 | 3 | 2 | 0 |
-| Frontend Security | 2 | 4 | 4 | 3 |
-| Mock Data / Broken Features | 2 | 5 | 6 | 3 |
-| Architecture / Design | 0 | 2 | 4 | 3 |
-| **Total** | **10** | **19** | **18** | **13** |
+### Phase 1 — Critical Security
+- [ ] Remove HMR preamble from `index.html`
+- [ ] Guard `supabaseClient.js` against `undefined` args (null export)
+- [ ] Replace `Math.random()` with `crypto.getRandomValues()` in `userStore.js`
+- [ ] Add `import.meta.env.DEV` guard to mock data injection in `main.jsx`
+- [ ] Create `security_patch_3.sql` — fix double penalty, add 7 indexes, SECURITY INVOKER on vo2max
+- [ ] Restrict `daily_scores` leaderboard policy to `date = CURRENT_DATE` only
+- [ ] Fix `localStorage.clear()` in Settings to preserve `sb-*` auth keys
+- [ ] Clear `useSocialStore`, `useCommandStore`, `useSyncQueue` on `SIGNED_OUT`
+- [ ] Add auth guard to `seedServerFromLocal` (verify userId matches session)
+- [ ] Verify `.env` never committed to git history — rotate keys if found
+
+### Phase 2 — High Severity
+- [ ] Sanitize auth error messages with `safeAuthError()` mapping
+- [ ] Wire `offlineMode` / `cloudSync` toggles into `pushChange()` and `flushQueue()`
+- [ ] Switch `pullAllData` from `Promise.all` to `Promise.allSettled`
+- [ ] Validate `payload.user_id` in `flushQueue` against current session
+- [ ] Add null guard for `supabase` in `pushChange` and `flushQueue`
+- [ ] Add password complexity hint on signup (min 1 uppercase, 1 number)
+- [ ] Add `maxLength` to all form inputs (Settings, Habits, Nutrition, Study, Mood, Tasks)
+- [ ] Cap `auraHistory` array at 180 entries across all push sites in `auraStore`
+- [ ] Replace all `Date.now()` IDs with `crypto.randomUUID()` — goals, projects, hobbies, duels, commands
+
+### Phase 3 — Broken Feature Rewrites
+- [ ] Add `cypher_id` column + index to `profiles` table (SQL patch)
+- [ ] Add `last_seen_at` column to `profiles` (online presence)
+- [ ] Rebuild `FriendsPage` — real Cipher ID lookup, online presence, mutual request system
+- [ ] Friend request notifications visible in Settings → Notifications section
+- [ ] Rebuild `DuelPage` — 1v1 direct + skill-based matchmaking, real progress bars
+- [ ] Duel AP escrow — lock on acceptance, unlock on resolution via server RPC
+- [ ] Server-side duel resolution RPC — winner determined by AP earned in window
+- [ ] Duel challenge notification in Duels page — accept ✅ / reject ❌ UI
+- [ ] Shop — replace fake `alert()` with "COMING SOON — redemption backend pending"
+- [ ] AI Agent — audit + confirm with user via MD before implementation (see Phase 3 notes)
+- [ ] HF Spaces FastAPI endpoint — set up + audit before implementation
+- [ ] Workout — LOG ALL uses `lastLoggedValues` instead of hardcoded 3/10/20
+- [ ] Hobby sessions — timer per hobby, session records stored (new `hobby_sessions` table)
+- [ ] Mobility — dual-mode cards (duration input + completion tick)
+- [ ] Leaderboard — top-5 exclusive mutual profile viewer (dropdown card on click)
+- [ ] Leaderboard — 90-day top-5 streak tracking (`leaderboard_streak_days` on profiles)
+
+### Phase 4 — Medium Severity
+- [ ] Avatar upload — client-side MIME type check + Supabase Storage policy
+- [ ] Service worker — tighter cache (NetworkOnly for REST writes, 5-min TTL on reads)
+- [ ] CSP `report-uri` directive in `vercel.json`
+- [ ] Add `autocomplete` attributes to auth form inputs
+
+### Phase 5 — Architecture & New Features
+- [ ] `aura_history_detail` table — store per-activity AP entries server-side (see schema below)
+- [ ] Delete dead `LoginPage.jsx`
+- [ ] Remove unused `Placeholder` component from `routes.jsx`
+- [ ] Add root `<ErrorBoundary>` in `main.jsx`
+- [ ] Add sync loading indicator during `pullAllData`
+- [ ] Workout split — user-configurable 7-day schedule in Settings
+- [ ] Goals — overdue detection + AP penalty + retry with decaying bounty
+- [ ] Goals — add `retry_count` column to DB
+- [ ] Nutrition — auto-save baseline on each successful log
+- [ ] Study — replace "LOG 60M" with manual minutes input (max 480/day per subject)
+- [ ] Command terminal — fix `timer`, `complete`, `reward` to use real store data
+- [ ] Leaderboard — 90-day bonus: grant $10 store credit on milestone (ties into Shop backend)
+
+### Phase 6 — Final / Future
+- [ ] Sleep — Google Fit / Samsung Health auto-sync via Capacitor plugin
+- [ ] Shop — real redemption backend (after company tie-ups + funding)
+- [ ] Capacitor mobile build — iOS + Android
+- [ ] Push notifications via Capacitor (built on top of Phase 3 notifications table)
+
+---
+---
+
+# Phase 1 — Critical Security
+
+## C1: React HMR Preamble in `index.html`
+**File:** `frontend/index.html` lines 18–24
+
+The `<script>` block that imports `/@react-refresh` is hardcoded in `index.html`. In production, this file doesn't exist → 404 on every page load. Vite injects this block automatically in dev; it must not be in the file.
+
+**Fix:** Remove the entire `<script type="module">` block containing `RefreshRuntime`.
 
 ---
 
----
+## C2: `supabaseClient.js` crashes app on missing env vars
+**File:** `frontend/src/services/supabaseClient.js` line 10
 
-# PHASE 1 — CRITICAL SECURITY FIXES (Before any deploy)
-
-These can cause data loss, double-charges, or complete app failure in production.
-
----
-
-## P1-C1: React HMR Preamble in production `index.html` [NOT FIXED]
-
-**File:** [frontend/index.html](frontend/index.html) lines 18–24  
-**Risk:** On every production page load, the browser attempts to import `/@react-refresh` which does not exist in production. This causes a 404 network error on every page load. It also leaks internal framework info.
-
-**Fix:** Remove the entire `<script type="module">` block that imports `RefreshRuntime`. Vite injects this automatically in dev mode — it must not be hardcoded in `index.html`.
-
-```html
-<!-- REMOVE THIS ENTIRE BLOCK from index.html -->
-<script type="module">
-  import RefreshRuntime from '/@react-refresh'
-  RefreshRuntime.injectIntoGlobalHook(window)
-  window.$RefreshReg$ = () => {}
-  window.$RefreshSig$ = () => (type) => type
-  window.__vite_plugin_react_preamble_installed__ = true
-</script>
-```
-
----
-
-## P1-C2: `supabaseClient.js` calls `createClient(undefined, undefined)` on missing env vars [NOT FIXED]
-
-**File:** [frontend/src/services/supabaseClient.js](frontend/src/services/supabaseClient.js) line 10  
-**Risk:** If Vercel env vars are missing or misconfigured, `createClient(undefined, undefined)` throws an unrecoverable crash. Every file that imports `supabase` fails. The app white-screens for all users.
+`createClient(undefined, undefined)` throws and crashes every file that imports `supabase`. If Vercel env vars are missing or misconfigured, the entire app white-screens.
 
 **Fix:**
 ```js
@@ -62,14 +97,12 @@ export const supabase = (supabaseUrl && supabaseKey)
   ? createClient(supabaseUrl, supabaseKey)
   : null;
 ```
-Most callers already guard `if (!supabase) return` — but `pushChange` and `flushQueue` in syncEngine do not. Add guards there too.
+Also add `if (!supabase) return;` guards in `pushChange` and `flushQueue` in `syncEngine.js`.
 
 ---
 
-## P1-C3: `Math.random()` used for Cypher ID generation [NOT FIXED]
-
-**File:** [frontend/src/store/userStore.js](frontend/src/store/userStore.js) lines 6–13  
-**Risk:** `Math.random()` is not cryptographically secure. Cypher IDs can be predicted or brute-forced.
+## C3: `Math.random()` for Cypher ID — not cryptographically secure
+**File:** `frontend/src/store/userStore.js` lines 6–13
 
 **Fix:**
 ```js
@@ -83,90 +116,58 @@ const generateCypherId = () => {
 
 ---
 
-## P1-C4: `compute_midnight_penalties()` applies AP penalty TWICE
+## C4: `compute_midnight_penalties()` applies AP penalty twice
+**File:** `backend/supabase/init.sql` + `security_patch.sql`
 
-**File:** [backend/supabase/init.sql](backend/supabase/init.sql) and [backend/supabase/security_patch.sql](backend/supabase/security_patch.sql)  
-**Risk:** For users with `escalation >= 7`, the function has a conditional UPDATE (lines ~420–427) AND an unconditional second UPDATE (lines ~435–437) to `total_aura_points`. Users get double-penalised — AP is subtracted twice. This silently corrupts every power user's AP balance during nightly cron.
-
-**Fix:** Remove the second unconditional UPDATE. The conditional block already handles all cases. See `security_patch_3.sql` in Phase 2 SQL block.
+The function has a conditional UPDATE for `escalation >= 7` AND a second unconditional UPDATE to `total_aura_points`. Users with 7+ day gaps get double-penalised. Fixed in `security_patch_3.sql`.
 
 ---
 
-## P1-C5: Missing DB indexes cause full table scans (DoS under load)
+## C5: Missing DB indexes — full table scans under load
+**File:** `backend/supabase/init.sql`
 
-**File:** [backend/supabase/init.sql](backend/supabase/init.sql)  
-**Risk:** The `compute_midnight_penalties()` cron runs `FOR rec IN SELECT ... FROM profiles` with nested queries against `task_completions` — O(users × 7) sequential full-table scans with no indexes. Under real user load this will time-out or kill DB performance.
-
-**Missing indexes:**
-- `friends(friend_id)` — reverse friend lookups
+The midnight cron runs `O(users × 7)` sequential scans with no indexes. Added in `security_patch_3.sql`:
+- `friends(friend_id)`
 - `duels(challenger_id)`, `duels(opponent_id)`, `duels(state)`
 - `study_subjects(user_id)`
-- `aura_logs(date)` — penalty cron does date-range scans
-- `task_completions(task_id)` — completion lookups by task
-
-**Fix:** Create `security_patch_3.sql` with all indexes (see Phase 2).
+- `aura_logs(date)`
+- `task_completions(task_id)`
 
 ---
 
-## P1-C6: `calculate_vo2max()` is `SECURITY DEFINER` — runs as postgres superuser
+## C6: `calculate_vo2max()` is `SECURITY DEFINER` — runs as postgres superuser
+**File:** `backend/supabase/prd_v2_migration.sql`
 
-**File:** [backend/supabase/prd_v2_migration.sql](backend/supabase/prd_v2_migration.sql)  
-**Risk:** `security_patch_2.sql` revoked `compute_midnight_penalties` and `reset_weekly_progress` from users, but `calculate_vo2max()` is still `SECURITY DEFINER`. It's pure math (no writes), but running math as superuser is unnecessary. A crafted call with extreme values could cause numeric overflow.
-
-**Fix:** Change to `SECURITY INVOKER` — it doesn't need elevated privileges for math.
+Pure math function with no DB writes has no need for superuser. Changed to `SECURITY INVOKER` in `security_patch_3.sql`.
 
 ---
 
-## P1-C7: `.env` file with live Supabase credentials — verify not in git history
-
-**File:** `.env` (root) and `frontend/.env`  
-**Risk:** If either file was ever committed to git history, the Supabase URL + anon key are permanently leaked. `.gitignore` lists `.env` but that only prevents future commits — it doesn't remove past ones.
-
-**Action:**
+## C7: `.env` credentials — verify not in git history
 ```bash
 git log --all --diff-filter=A -- .env frontend/.env
 ```
-If any results appear: **rotate the anon key immediately** in Supabase Dashboard → Settings → API.
+If any output: rotate anon key immediately in Supabase Dashboard → Settings → API.
 
 ---
 
-## P1-C8: `daily_scores` leaderboard policy exposes ALL users' score history
+## C8: `daily_scores` policy exposes all users' full score history
+**File:** `backend/supabase/security_patch_2.sql`
 
-**File:** [backend/supabase/security_patch_2.sql](backend/supabase/security_patch_2.sql)  
-**Risk:** The current policy `USING (auth.uid() IS NOT NULL)` allows any logged-in user to call `supabase.from('daily_scores').select('*')` and get every user's full score history for all dates — not just today. This is a data leak of all historical performance data for all users.
+`USING (auth.uid() IS NOT NULL)` lets any logged-in user dump all users' score history for all dates.
 
-**Fix:** Restrict to today only:
+**Fix** (in `security_patch_3.sql`):
 ```sql
 USING (auth.uid() IS NOT NULL AND date = CURRENT_DATE)
 ```
 
 ---
 
-## P1-C9: `profiles` leaderboard policy exposes ALL user profile data
+## C9: Mock data injected without `DEV` guard
+**File:** `frontend/src/main.jsx` lines 11–13
 
-**File:** [backend/supabase/security_patch_2.sql](backend/supabase/security_patch_2.sql)  
-**Risk:** `USING (auth.uid() IS NOT NULL)` on profiles allows any logged-in user to `SELECT *` all profiles. This exposes `preferences` (JSONB), `last_login_date`, `created_at`, `accumulated_iq`, `accumulated_knowledge`, `avatarUrl` for every user — not just leaderboard-relevant columns.
+If Vercel env vars are temporarily absent, `injectMockData()` fires for real users.
 
-**Fix:** The leaderboard query in [frontend/src/pages/Leaderboard/LeaderboardPage.jsx](frontend/src/pages/Leaderboard/LeaderboardPage.jsx) already uses explicit columns (`id, username, total_aura_points, current_streak, multiplier, rank_tier`), so the data isn't exposed on that page — but the open policy still allows any direct API call to dump everything.
-
-Best fix: Create a restricted leaderboard view with only needed columns, or use column-level security.
-
----
-
-## P1-C10: Mock data injected without `DEV` guard
-
-**File:** [frontend/src/main.jsx](frontend/src/main.jsx) lines 11–13  
-**Risk:** If Vercel env vars are temporarily missing (a real deployment scenario), `hasSupabase` becomes false and `injectMockData()` runs for real users who have no existing localStorage state. Real users see fake data.
-
-**Current code:**
-```js
-const hasSupabase = Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
-if (!hasSupabase && !localStorage.getItem('antigravity-aura-store')) {
-  injectMockData();
-}
-```
-
-**Fix:** Add `import.meta.env.DEV` guard:
+**Fix:**
 ```js
 if (import.meta.env.DEV && !hasSupabase && !localStorage.getItem('antigravity-aura-store')) {
   injectMockData();
@@ -175,323 +176,10 @@ if (import.meta.env.DEV && !hasSupabase && !localStorage.getItem('antigravity-au
 
 ---
 
----
+## C10: `localStorage.clear()` wipes Supabase auth token
+**File:** `frontend/src/pages/Settings/SettingsPage.jsx` line 401
 
-# PHASE 2 — HIGH SEVERITY (First week of production)
-
----
-
-## P2-H1: Raw Supabase error messages exposed to users (email enumeration)
-
-**File:** [frontend/src/pages/Auth/AuthPage.jsx](frontend/src/pages/Auth/AuthPage.jsx) lines 29, 49, 179, 199  
-**Risk:** `setError(authErr.message)` renders raw Supabase errors like `"User already registered"` directly in the UI. An attacker can enumerate which emails are registered by trying signups and reading the error messages.
-
-**Fix:** Map errors to generic messages:
-```js
-const safeAuthError = (msg) => {
-  if (!msg) return 'Something went wrong. Please try again.';
-  if (msg.includes('Invalid login')) return 'Incorrect email or password.';
-  if (msg.includes('already registered')) return 'An account with this email exists.';
-  if (msg.includes('rate limit') || msg.includes('429')) return 'Too many attempts. Try again later.';
-  if (msg.includes('Email not confirmed')) return 'Please verify your email before logging in.';
-  return 'Authentication failed. Please try again.';
-};
-```
-Replace all `setError(authErr.message)` calls with `setError(safeAuthError(authErr.message))`.
-
----
-
-## P2-H2: `seedServerFromLocal` has no auth guard — accepts spoofed userId
-
-**File:** [frontend/src/services/syncEngine.js](frontend/src/services/syncEngine.js) line 416  
-**Risk:** `seedServerFromLocal(userId)` takes a userId parameter and uses it to write to Supabase. A developer calling `seedServerFromLocal('another-users-id')` from the console will generate write requests (RLS blocks them, but the function still fires and produces error noise).
-
-**Fix:** Add auth session guard at the top:
-```js
-export async function seedServerFromLocal(userId) {
-  if (!userId || !supabase) return;
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.id !== userId) return;
-  // ... rest of function
-}
-```
-
----
-
-## P2-H3: Offline Mode / Cloud Sync toggles are cosmetic — never checked during sync
-
-**File:** [frontend/src/store/uiStore.js](frontend/src/store/uiStore.js), [frontend/src/services/syncEngine.js](frontend/src/services/syncEngine.js)  
-**Risk:** `offlineMode` and `cloudSync` are stored in `uiStore` but `pushChange()`, `flushQueue()`, and `useCloudSync` never read them. The Settings toggles are UI-only decorations — data always syncs to Supabase regardless of what the user toggles.
-
-**Fix:** Add guards in `pushChange()`:
-```js
-import { useUiStore } from '../store/uiStore';
-
-export async function pushChange(table, op, payload) {
-  if (!supabase) return;
-  const { offlineMode, cloudSync } = useUiStore.getState();
-  if (offlineMode || !cloudSync || !navigator.onLine) {
-    useSyncQueue.getState().enqueue(table, op, payload);
-    return;
-  }
-  // ... rest
-}
-```
-
----
-
-## P2-H4: `pullAllData` uses `Promise.all` — one failed query crashes all 17
-
-**File:** [frontend/src/services/syncEngine.js](frontend/src/services/syncEngine.js) line 161  
-**Risk:** `Promise.all()` with 17 queries means if any single table query fails (network blip, missing table from schema, rate limit), the entire hydration silently fails. The outer `catch` swallows everything — user sees stale localStorage data with no indication.
-
-**Fix:** Use `Promise.allSettled()` and process each result individually, skipping failed ones.
-
----
-
-## P2-H5: `flushQueue` doesn't validate `user_id` — cross-session queue replay
-
-**File:** [frontend/src/services/syncEngine.js](frontend/src/services/syncEngine.js) lines 98–129  
-**Risk:** If user A goes offline, queues mutations, logs out and user B logs in, stale queue items from user A are flushed under user B's session. RLS blocks the writes, but they generate network errors and noise.
-
-**Fix:** Before flushing each item, verify `payload.user_id` matches `supabase.auth.getUser()`. Drop items that don't match.
-
----
-
-## P2-H6: `clearAllStores()` on sign-out misses 3 stores — cross-account data leak
-
-**File:** [frontend/src/components/auth/AuthProvider.jsx](frontend/src/components/auth/AuthProvider.jsx) lines 109–122  
-**Risk:** On `SIGNED_OUT`, `clearAllStores()` resets aura, task, score, goal, project, hobby, metrics, workout, and study stores — but misses:
-- `useSocialStore` → friends list and duel history **persists across accounts**
-- `useCommandStore` → command history persists
-- `useSyncQueue` → offline queue persists
-
-If user A logs out and user B logs in on the same device, user B sees user A's friends and duels until `pullAllData` overwrites them.
-
-**Fix:** Add to `clearAllStores()`:
-```js
-useSocialStore.setState({ friends: [], duels: [], lastSyncedAt: null });
-useCommandStore.setState({ history: [/* boot messages */], timerStart: null });
-useSyncQueue.getState().clearQueue();
-```
-
----
-
-## P2-H7: Duel resolution is fully client-controlled — winner self-declaration exploit
-
-**File:** [frontend/src/store/socialStore.js](frontend/src/store/socialStore.js) line 26  
-**Risk:** `resolveDuel(duelId, winnerId, currentUserId)` accepts the winner as a client-provided parameter and writes it directly. Any user can call `socialStore.resolveDuel('duel-id', myUserId, myUserId)` from console to declare themselves winner and get the multiplier bonus. RLS only checks `challenger_id OR opponent_id`, so the write succeeds.
-
-**Fix:** Duel resolution needs a server-side Supabase RPC that compares actual score values for both players and determines the winner. The client should not pass a `winnerId`.
-
-**Question for you:** Do you want me to build the duel RPC now, or gate duels as "coming soon" until the backend is ready?
-
----
-
-## P2-H8: Shop redemption is client-side only — infinite AP loop exploit
-
-**File:** [frontend/src/pages/Shop/ShopPage.jsx](frontend/src/pages/Shop/ShopPage.jsx)  
-**Risk:**
-1. `redeemPoints()` deducts AP from local Zustand store
-2. `alert()` says "VOUCHER SENT" — but no actual voucher is sent
-3. User clears localStorage → AP restored from Supabase server → can "redeem" again
-4. No server-side transaction log, no actual voucher delivery
-5. The shop shows real brand names (Amazon, Netflix, Spotify, GPay) with a "REDEEM" button that does nothing — this is misleading and potentially a consumer protection issue
-
-**Options:**
-- **A:** Gate the entire shop page behind a "Coming Soon" screen until you have a real backend
-- **B:** Build a server-side redemption flow (requires an external voucher API or manual fulfillment)
-
-**Question for you:** What's the intended redemption backend? HF Spaces + a webhook? Manual fulfillment? Or hide the shop for now?
-
----
-
-## P2-H9: `auraHistory` array grows unbounded — localStorage overflow
-
-**File:** [frontend/src/store/auraStore.js](frontend/src/store/auraStore.js)  
-**Risk:** `auraHistory` is appended to on every AP earn/loss event and persisted to localStorage. After months of daily use, this array becomes enormous. localStorage has a ~5-10MB limit. When exceeded, the app **silently loses all persisted state** — the user's entire local store is wiped.
-
-**Fix:** Cap `auraHistory` at 180 entries (sliding window, oldest first):
-```js
-auraHistory: [...state.auraHistory, { date: today, net: actual, reason }].slice(-180)
-```
-Apply this cap in every place that pushes to `auraHistory`: `addCategoryAP`, `computeTodayAura`, `addAuraPoints`, `redeemPoints`, `applyPenalties`.
-
----
-
-## P2-H10: `Date.now()` as entity IDs — collision risk + timestamp leak
-
-**Files:**
-- [frontend/src/store/assetStores.js](frontend/src/store/assetStores.js) lines 14, 69, 130 (goals, projects, hobbies)
-- [frontend/src/store/socialStore.js](frontend/src/store/socialStore.js) line 17 (duels)
-- [frontend/src/store/commandStore.js](frontend/src/store/commandStore.js) line 17 (command entries)
-
-**Risk:** `Date.now().toString()` as IDs causes collisions if two items are created within the same millisecond. Also leaks creation timestamps to anyone who sees the ID.
-
-**Fix:** Replace all with `crypto.randomUUID()`:
-```js
-id: crypto.randomUUID(),
-```
-
----
-
-## P2-H11: Password complexity — only `minLength={8}` enforced
-
-**File:** [frontend/src/pages/Auth/AuthPage.jsx](frontend/src/pages/Auth/AuthPage.jsx) line 314  
-**Risk:** Signup only requires 8 characters. No uppercase, number, or special character requirements. This allows trivially weak passwords like `aaaaaaaa`.
-
-**Fix:** Add a complexity check on the signup form (at minimum: 1 uppercase, 1 number). Also add a visible strength indicator.
-
----
-
-## P2-H12: No `maxLength` on multiple form inputs
-
-**Files and inputs:**
-- [frontend/src/pages/Settings/SettingsPage.jsx](frontend/src/pages/Settings/SettingsPage.jsx) line 187 — player name input (no `maxLength`)
-- [frontend/src/pages/Habits/HobbyForm.jsx](frontend/src/pages/Habits/HobbyForm.jsx) — hobby name input
-- [frontend/src/pages/Nutrition/NutritionPage.jsx](frontend/src/pages/Nutrition/NutritionPage.jsx) line 199 — macro name input
-- [frontend/src/pages/Study/StudyPage.jsx](frontend/src/pages/StudyPage.jsx) — subject name input
-- [frontend/src/pages/Mood/MoodPage.jsx](frontend/src/pages/MoodPage.jsx) — mood note textarea
-- [frontend/src/components/tasks/TaskForm/TaskForm.jsx](frontend/src/components/tasks/TaskForm/TaskForm.jsx) — task title
-
-**Risk:** Users can submit arbitrarily long strings that get stored in Supabase, consuming storage and potentially breaking UI layouts.
-
-**Fix per input:**
-- Player name: `maxLength={24}`
-- Hobby/subject name: `maxLength={50}`
-- Macro/micro name: `maxLength={30}`
-- Mood note: `maxLength={500}`
-- Task title: `maxLength={100}`
-
----
-
----
-
-# PHASE 3 — MOCK DATA REMOVAL & BROKEN FEATURE REWRITES
-
-The following features are either displaying hardcoded/fake data or are entirely non-functional. These need real logic built.
-
----
-
-## P3-M1: `FriendsPage` — entirely fake, no real DB lookup
-
-**File:** [frontend/src/pages/Social/FriendsPage.jsx](frontend/src/pages/Social/FriendsPage.jsx)  
-**Current broken behaviour:**
-- User enters a Cipher ID in the input
-- `addFriend()` ignores the input entirely
-- Creates a fake friend with `Math.random() * 1000` as the name
-- `[CIPHER_ID]` placeholder shown as avatar
-- "PING" button does nothing
-
-**Decision: Mutual friend requests with online presence display. ✅ CONFIRMED**
-
-**What needs to be built:**
-1. Add `last_seen_at` timestamp to `profiles` — updated on each `pullAllData` call; users active in last 5 min = "online"
-2. FriendsPage shows a live "ONLINE NOW" section — users whose `last_seen_at` is recent
-3. User sends a challenge/friend request → inserts a `friends` row with `status: 'pending'`
-4. Target user sees incoming request, accepts → `status` updates to `accepted`; both users now see each other
-5. `friends` table needs: `user_id`, `friend_id`, `status` (`pending` | `accepted`), `requested_by`, `created_at`
-6. Display real username and avatar from matched profiles
-7. DB: add `cypher_id` column to profiles, index it — used for friend lookup
-
----
-
-## P3-M2: `DuelPage` — entirely hardcoded, non-functional
-
-**File:** [frontend/src/pages/Duels/DuelPage.jsx](frontend/src/pages/Duels/DuelPage.jsx)  
-**Current broken behaviour:**
-- "SEARCH FOR OPPONENT" button hardcodes `initiateDuel('001', 'GOGGINS CLONE')` — fake opponent
-- Progress bars hardcoded at 45% and 32%
-- `duel.opponent_name.replace(/_/g, ' ')` — fragile string manipulation on DB data
-
-**Decision: Both modes — direct 1v1 by Cipher ID + default skill-based matchmaking queue. ✅ CONFIRMED**
-
-**What needs to be built:**
-1. **Direct 1v1:** User enters opponent's Cipher ID → sends duel challenge → opponent accepts/declines
-2. **Matchmaking:** "FIND OPPONENT" puts user in a queue; matched by closest `total_aura_points` bracket (within ±20% of user's AP); first match in queue auto-challenged
-3. `duels` table needs: `challenger_id`, `opponent_id`, `state` (`pending`|`active`|`resolved`), `stake_ap`, `start_at`, `end_at` (24h window), `winner_id`, `match_type` (`direct`|`ranked`)
-4. Progress bars show AP earned by each player **within the 24h duel window** (compare `aura_logs.earned` for both users since `start_at`)
-5. Server-side RPC resolves winner by comparing actual AP earned in window (see P2-H7)
-
----
-
-## P3-M3: `ShopPage` — client-side redemption loop (no backend)
-
-**Decision: Keep shop UI as-is. Final phase — needs funding + company tie-ups first. ✅ CONFIRMED**
-
-No code changes to ShopPage until the redemption backend is ready. The only fix needed now is removing the `alert()` fake success message so users aren't misled. Replace with a "COMING SOON — redemption backend in progress" message.
-
----
-
-## P3-M4: `commandStore.js` — hardcoded AI responses, fake reward data
-
-**File:** [frontend/src/store/commandStore.js](frontend/src/store/commandStore.js)  
-**Current broken behaviour:**
-- `critique/status` — generates static "AI" critique from a hardcoded array
-- `commend` — picks from 4 hardcoded strength strings
-- `reward` — shows `500 AP -> NEXT_RANK_UP`, `1000 AP -> REDEEMABLE_CREDIT_VOUCHER` — these thresholds are completely wrong vs actual system
-- `complete <task>` — awards 50 AP without verifying task exists or hasn't been completed already
-- `timer` — awards `minutes × 2` AP uncapped up to 200, bypassing STUDY category caps
-
-**What needs to be built:**
-1. `critique/status` — should derive critique from actual store state (AP today, streak, tasks done)
-2. `reward` — show the user's real current AP and what the next reward milestone is
-3. `complete <task>` — should match task titles from taskStore, not award free AP for any string
-4. `timer` — should go through `addCategoryAP('STUDY', ...)` with proper daily cap enforcement
-5. (Optional) Route `critique` through a real AI endpoint on HF Spaces for dynamic responses
-
----
-
-## P3-M5: `WorkoutPage` — LOG ALL hardcodes fake values
-
-**File:** [frontend/src/pages/Workout/WorkoutPage.jsx](frontend/src/pages/Workout/WorkoutPage.jsx) lines 239, 261  
-**Current broken behaviour:**
-- "LOG ALL" button for a muscle group calls `logVolume(group, sub, 3, 10, 20)` — **hardcoded 3 sets, 10 reps, 20kg** for every exercise regardless of what the user has been training
-- This awards AP as if the user trained, with fake numbers in their logs
-
-**Fix:** "LOG ALL" should either:
-- Use the last logged values for each sub-group (already tracked in `lastLoggedValues`)
-- Or be removed and replaced with a "quick log same as last time" that shows the user what it'll log before confirming
-
----
-
-## P3-M6: Weekly schedule hardcoded (Mon–Wed cardio, Thu–Sun hypertrophy)
-
-**File:** [frontend/src/pages/Workout/WorkoutPage.jsx](frontend/src/pages/Workout/WorkoutPage.jsx) lines 14–17  
-**Current:** Day-of-week split is hardcoded. No user customization.
-
-**Question for you:** Should users be able to set their own workout split? Or keep the fixed Mon–Wed / Thu–Sun split but just don't show it as "today's schedule" if they want to do something different?
-
----
-
-## P3-M7: Duel progress bars hardcoded at 45% and 32%
-
-**File:** [frontend/src/pages/Duels/DuelPage.jsx](frontend/src/pages/Duels/DuelPage.jsx) lines 26–31  
-Already covered in P3-M2. Progress needs to be computed from actual AP earned by each participant within the duel window.
-
----
-
-## P3-M8: `StudyPage` — "LOG 60M" hardcodes 60 minutes
-
-**File:** [frontend/src/pages/Study/StudyPage.jsx](frontend/src/pages/Study/StudyPage.jsx) line 118  
-**Risk:** Every "LOG 60M" click bypasses the timer completely and logs 60 minutes with no verification. Users can spam AP by clicking this button repeatedly (though daily caps prevent infinite AP, it still pollutes study session data).
-
-**Fix:** Either remove the quick-log button and require timer use, or add a number input for manual logging with a reasonable max (e.g., max 480 minutes/day per subject).
-
----
-
----
-
-# PHASE 4 — MEDIUM SEVERITY (Post-launch Polish)
-
----
-
-## P4-M1: `localStorage.clear()` in "PURGE LOCAL CACHE" wipes Supabase auth token
-
-**File:** [frontend/src/pages/Settings/SettingsPage.jsx](frontend/src/pages/Settings/SettingsPage.jsx) line 401  
-**Risk:** `localStorage.clear()` removes everything including the `sb-*` Supabase auth token. The user is silently logged out with no warning. Any offline-queued mutations are also lost.
-
-**Fix:**
+**Fix:** Only clear app-specific keys:
 ```js
 Object.keys(localStorage)
   .filter(k => k.startsWith('antigravity-') || k === 'system-sync-queue')
@@ -500,277 +188,17 @@ Object.keys(localStorage)
 
 ---
 
-## P4-M2: Avatar upload — no server-side MIME type validation
-
-**File:** [frontend/src/pages/Settings/SettingsPage.jsx](frontend/src/pages/Settings/SettingsPage.jsx) lines 73–101  
-**Risk:** `accept="image/*"` on the file input is a client-side hint only — easily bypassed. If a user uploads a `.html` file renamed to `.png`, Supabase Storage serves it at a public URL. If another user visits the direct URL, it executes XSS.
-
-**Fix:**
-1. Add client-side `file.type` validation: reject if not in `['image/jpeg', 'image/png', 'image/webp']`
-2. Add Supabase Storage policy restricting MIME types (via Supabase Dashboard → Storage → Policies)
-
----
-
-## P4-M3: Service worker caches Supabase REST responses — stale data served after 3s
-
-**File:** [frontend/vite.config.js](frontend/vite.config.js) lines 31–39  
-**Risk:** `NetworkFirst` with `networkTimeoutSeconds: 3` means on a slow connection (>3s response time), the service worker serves yesterday's cached leaderboard data, stale task completions, etc. User acts on stale data and creates sync conflicts.
-
-**Fix:** Either:
-- Use `NetworkOnly` for all Supabase REST (data is always fresh, falls back to empty on offline)
-- Or reduce timeout to 1s and add strict `maxAgeSeconds: 300` (5 min) cache expiration
-
----
-
-## P4-M4: `hydrateFromServer` blindly merges state — no schema validation
-
-**Files:** Every store with `hydrateFromServer: (serverData) => set(serverData)`  
-**Risk:** Server response replaces store state wholesale. If Supabase returns unexpected keys (schema migration, compromised response), they pollute the store. This is low-risk for a real Supabase backend but worth noting for future hardening.
-
-**Fix (post-launch):** Add a Zod schema layer to validate server responses before hydrating stores.
-
----
-
-## P4-M5: CSP header missing `report-uri` directive
-
-**File:** [frontend/vercel.json](frontend/vercel.json) line 23  
-**Risk:** CSP violations are silently dropped — you never know if someone is probing for XSS vectors.
-
-**Fix:** Add a reporting endpoint:
-```json
-"Content-Security-Policy": "... ; report-uri /api/csp-report"
-```
-Or use a free service like `report-uri.com` for CSP violation reports.
-
----
-
-## P4-M6: Auth inputs missing `autocomplete` attributes
-
-**File:** [frontend/src/pages/Auth/AuthPage.jsx](frontend/src/pages/Auth/AuthPage.jsx) lines 299–315  
-**Risk:** Missing `autocomplete="email"` and `autocomplete="current-password"` / `autocomplete="new-password"` breaks password manager integration (1Password, Bitwarden, Chrome autofill).
-
-**Fix:**
-```jsx
-<input type="email" autocomplete="email" ... />
-<input type="password" autocomplete={isLogin ? "current-password" : "new-password"} ... />
-```
-
----
-
-## P4-M7: No `select()` column limits — full schema exposure via API
-
-**Files:** All service files — every Supabase query uses `select('*')`  
-**Risk:** Fetches every column including `created_at`, `updated_at`, and internal fields never used client-side. Wastes bandwidth and exposes unnecessary schema information in network responses.
-
-**Fix (non-urgent, batch later):** Replace `select('*')` with explicit column lists in all 17 `pullAllData` queries and service files.
-
----
-
-## P4-M8: No rate limiting on `addFriend` / `initiateDuel`
-
-**File:** [frontend/src/services/socialService.js](frontend/src/services/socialService.js)  
-**Risk:** A user can spam `addFriend()` or `initiateDuel()` from console with no throttling. Each call creates a DB row. No max active duels constraint.
-
-**Fix:** Add a DB constraint: `CONSTRAINT max_active_duels CHECK (...)` or a server-side RPC that checks count before inserting.
-
----
-
----
-
-# PHASE 5 — DEAD CODE & ARCHITECTURE
-
----
-
-## P5-L1: `LoginPage.jsx` — 215-line dead code file, imported nowhere
-
-**File:** [frontend/src/components/auth/LoginPage.jsx](frontend/src/components/auth/LoginPage.jsx)  
-**Action:** Delete this file. `AuthPage.jsx` is the actual auth page used in routes.
-
----
-
-## P5-L2: `Placeholder` component defined but never used in routes
-
-**File:** [frontend/src/router/routes.jsx](frontend/src/router/routes.jsx) lines 35–40  
-**Action:** Remove the `Placeholder` component definition. No route uses it.
-
----
-
-## P5-L3: No React Error Boundary — app white-screens on any component throw
-
-**Risk:** If any component throws during render, the entire app shows a blank white screen. There's no fallback UI.
-
-**Fix:** Add a root `<ErrorBoundary>` component wrapping `<RouterProvider>` in `main.jsx`.
-
----
-
-## P5-L4: No loading/skeleton states during `pullAllData`
-
-**Risk:** The 17-query hydration takes 2–5 seconds on a real connection. During this time the user sees stale localStorage data that then "jumps" when server data arrives. No visual feedback that a sync is happening.
-
-**Fix:** Show a sync indicator in the header/sidebar during `pullAllData`. The `lastSyncedAt` in stores can drive this.
-
----
-
-## P5-L5: `NUMERIC(3,1)` multiplier column — fragile type definition
-
-**File:** [backend/supabase/multiplier_neural_migration.sql](backend/supabase/multiplier_neural_migration.sql)  
-**Risk:** `NUMERIC(3,1)` allows values from -9.9 to 9.9. The `enforce_multiplier_cap` trigger clamps to [-5, 5], but if someone changes the cap without changing the column type, silent truncation occurs.
-
-**Fix:** Change to `NUMERIC(5,2)` for safety headroom, or document the dependency explicitly.
-
----
-
-## P5-L6: Dynamic SQL uses `%s` instead of `%I` for identifiers
-
-**File:** [backend/supabase/init.sql](backend/supabase/init.sql) — trigger creation EXECUTE block  
-**Risk:** `format('... ON %s ...', tbl)` uses string substitution instead of identifier quoting. Currently safe because `tbl` comes from a hardcoded array, but violates SQL hygiene. Any future code that passes user input here would be injectable.
-
-**Fix:** Change all `%s` used for table/column identifiers to `%I`.
-
----
-
----
-
-# PHASE 6 — LOGIC QUESTIONS (Need Your Input Before Building)
-
-These features are either missing or need your design decisions before I can implement them correctly. Nothing will be built for these until you answer.
-
----
-
-## Q1: Social / Friends system — mutual or one-way?
-
-Current: broken (fake random names).  
-Do you want:
-- **A) Follow system** — one-way, like Twitter (you follow them, they see you in their followers)
-- **B) Friend request** — mutual, both must accept before appearing in each other's friends list
-
----
-
-## Q2: Duels — matchmaking or direct challenge?
-
-- **A) Direct by Cipher ID** — user enters opponent's Cipher ID to challenge them
-- **B) Matchmaking pool** — users opt into a queue and get auto-matched by rank tier
-- **C) Both** — Cipher ID for specific challenges + a queue for random matches
-
----
-
-## Q3: Shop / Redemption backend — what's the plan?
-
-- **A) Hide shop** — "Coming Soon" overlay until you have a real backend
-- **B) Manual fulfillment** — redemption sends you (the admin) a notification, you manually send the voucher
-- **C) External API** — integrate with a voucher API (Reloadly, etc.)
-- **D) HF Spaces webhook** — you want to route redemptions through a Spaces endpoint
-
----
-
-## Q4: Workout split — fixed or user-customizable?
-
-**Decision: User-configurable. User sets their own split in Settings. ✅ CONFIRMED**
-
-What needs to be built:
-- In Settings, add a "WORKOUT SCHEDULE" section — 7 day toggles (Mon–Sun), each day assignable to `cardio` | `hypertrophy` | `mobility` | `rest`
-- Default preset: Mon/Tue/Wed = cardio, Thu/Fri/Sat/Sun = hypertrophy (current hardcode becomes the default)
-- Stored in `preferences.workoutSplit` in userStore and synced to `profiles.preferences` in Supabase
-- WorkoutPage reads from user's configured split to show "TODAY: CARDIO" etc.
-
----
-
-## Q5: Command terminal — AI agent (heart of SYSTEM)
-
-**Decision: Build as a full LLM chatbot agent — the brain of SYSTEM OS. Backend: Qwen3-32B via OpenRouter free tier. ✅ CONFIRMED**
-
-Architecture:
-- The Command page becomes a true AI agent chat interface, not just a command parser
-- Model: `qwen/qwen3-32b:free` on OpenRouter (free, strong reasoning, better than Gemini free)
-- Fallback: `google/gemma-3-27b-it:free` if Qwen quota exceeded
-- The agent receives a **system prompt** containing the user's live stats: current AP, streak, rank, today's completions, weekly progress per category, active goals, multiplier
-- User can chat freely — ask for critique, motivation, task suggestions, goal planning, study tips
-- Keep the existing slash commands (`critique`, `status`, `timer`, `complete`) as shortcuts that pre-fill the chat
-- Host the OpenRouter API call on **HF Spaces** (a tiny FastAPI endpoint) so the API key never touches the client
-- HF Spaces endpoint: `POST /chat` → `{ messages, user_context }` → streams LLM response back
-- Frontend streams the response token by token into the command terminal UI
-
----
-
-## Q6: Hobbies / Passion tab — what logging do you want?
-
-**Decision: Per-session store: hobby name, time logged, points scored, type + category classes. ✅ CONFIRMED**
-
-What needs to be built:
-- Timer on each hobby card (like Study) — start/stop logs duration
-- Each session record: `{ hobby_id, hobby_name, type, categories[], duration_minutes, ap_earned, date }`
-- Session history per hobby (last N sessions visible on the card)
-- AP scales with duration: e.g. first 30min = 150 AP, each additional 30min = +50 AP up to daily MISC cap
-- Store in `hobby_sessions` table in Supabase (new table needed)
-
----
-
-## Q7: Nutrition — preset or user-defined?
-
-**Decision: Fully user-defined. After first log, current values auto-save as the new baseline. ✅ CONFIRMED**
-
-What needs to be built:
-- No preset template on new account — user adds their own macros/micros
-- "ONE-CLICK LOG BASELINE" already exists — extend so that **every time the user logs a value and saves**, those values silently overwrite the stored baseline
-- Baseline stored in `macro_configs` table (already exists) — update on each successful log
-- This means the baseline always reflects the last real values the user entered, not a static snapshot
-
----
-
-## Q8: Goals — target date logic?
-
-**Decision: Overdue = AP penalty. Retry gives half AP. Each subsequent retry halves again (decaying bounty). ✅ CONFIRMED**
-
-What needs to be built:
-- When `CURRENT_DATE > target_date` and goal is not completed: flag card red, show "OVERDUE" badge
-- Apply AP penalty on the day it goes overdue: deduct from `total_aura_points` (suggest -10% of `bounty_ap`, capped at 500 AP)
-- "RETRY" button on overdue goals: resets `target_date`, but sets `bounty_ap = Math.floor(bounty_ap / 2)`
-- Store `retry_count` on the goal — each retry increments it and further halves remaining bounty
-- Minimum bounty floor: 50 AP (can't go below)
-- DB: add `retry_count INTEGER DEFAULT 0` and update penalty logic in `compute_midnight_penalties()` or a new `check_overdue_goals()` function
-
----
-
-## Q9: Mobility — same logging model as Hypertrophy or different?
-
-**Decision: Both — duration-based (hold time) AND completion-based (tick done). ✅ CONFIRMED**
-
-What needs to be built:
-- Replace the `MuscleGroupCard` sets/reps/weight inputs on the Mobility tab with a dual-mode card:
-  - **Duration mode:** input for hold duration in seconds (e.g., hip flexor hold: 90s)
-  - **Completion mode:** single checkbox/button — "DONE" tick for routine exercises where duration doesn't matter
-- Each mobility sub-group card shows both options; user picks which is relevant per exercise
-- AP awarded based on: completion tick = flat points, duration = scales with seconds held (cap at reasonable max)
-
----
-
-## Q10: Sleep — source of sleep data?
-
-**Decision: Manual now (hours + quality /10). Google Fit / Samsung Health integration in final phase. ✅ CONFIRMED**
-
-Phases:
-- **Now:** Manual input — total hours + quality rating out of 10 (keep current UI, quality replaces "deep sleep rating" label)
-- **Final phase:** If device connected → auto-pull from Google Fit or Samsung Health API; if not connected → fall back to manual
-- Architecture for later: Capacitor plugin (`@capacitor-community/health`) reads from both Google Fit and Samsung Health on Android; Apple HealthKit on iOS
-- The SleepPage will detect whether a health integration is active and show "AUTO-SYNCED FROM DEVICE" vs the manual inputs
-
----
-
----
-
-# PHASE 2 SQL: `security_patch_3.sql` — New file to create
-
-Run in Supabase SQL Editor after all previous patches.
+## security_patch_3.sql — Full SQL
 
 ```sql
 -- ============================================================
 -- SECURITY PATCH 3
--- Run AFTER: init.sql, prd_v2_migration.sql, 
+-- Run AFTER: init.sql, prd_v2_migration.sql,
 --            multiplier_neural_migration.sql,
 --            security_patch.sql, security_patch_2.sql
 -- ============================================================
 
--- C3: Fix double penalty in compute_midnight_penalties
+-- C4: Fix double penalty in compute_midnight_penalties
 CREATE OR REPLACE FUNCTION public.compute_midnight_penalties() RETURNS void AS $$
 DECLARE
   rec RECORD;
@@ -799,9 +227,8 @@ BEGIN
       VALUES (rec.id, yesterday, 0, ABS(penalty), 'Inactivity Penalty')
       ON CONFLICT (user_id, date) DO UPDATE
         SET lost = public.aura_logs.lost + ABS(penalty),
-            reason = 'Inactivity Penalty',
-            updated_at = NOW();
-      -- Single UPDATE only (was incorrectly doubled before)
+            reason = 'Inactivity Penalty', updated_at = NOW();
+      -- Single UPDATE (was incorrectly doubled before this patch)
       UPDATE public.profiles
       SET
         total_aura_points = GREATEST(0, rec.total_aura_points + penalty),
@@ -814,16 +241,16 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
 
--- C4: Missing indexes
-CREATE INDEX IF NOT EXISTS idx_friends_friend_id ON public.friends(friend_id);
-CREATE INDEX IF NOT EXISTS idx_duels_challenger_id ON public.duels(challenger_id);
-CREATE INDEX IF NOT EXISTS idx_duels_opponent_id ON public.duels(opponent_id);
-CREATE INDEX IF NOT EXISTS idx_duels_state ON public.duels(state);
-CREATE INDEX IF NOT EXISTS idx_study_subjects_user_id ON public.study_subjects(user_id);
-CREATE INDEX IF NOT EXISTS idx_aura_logs_date ON public.aura_logs(date);
+-- C5: Missing indexes
+CREATE INDEX IF NOT EXISTS idx_friends_friend_id        ON public.friends(friend_id);
+CREATE INDEX IF NOT EXISTS idx_duels_challenger_id      ON public.duels(challenger_id);
+CREATE INDEX IF NOT EXISTS idx_duels_opponent_id        ON public.duels(opponent_id);
+CREATE INDEX IF NOT EXISTS idx_duels_state              ON public.duels(state);
+CREATE INDEX IF NOT EXISTS idx_study_subjects_user_id  ON public.study_subjects(user_id);
+CREATE INDEX IF NOT EXISTS idx_aura_logs_date           ON public.aura_logs(date);
 CREATE INDEX IF NOT EXISTS idx_task_completions_task_id ON public.task_completions(task_id);
 
--- C6: change calculate_vo2max to SECURITY INVOKER
+-- C6: calculate_vo2max → SECURITY INVOKER
 CREATE OR REPLACE FUNCTION public.calculate_vo2max(
   p_bpm INTEGER, p_dist_km NUMERIC, p_time_min NUMERIC, p_age INTEGER
 ) RETURNS JSONB LANGUAGE plpgsql SECURITY INVOKER SET search_path = '' AS $$
@@ -843,75 +270,534 @@ BEGIN
 END;
 $$;
 
--- C8+C9: Restrict leaderboard policies
+-- C8: Restrict daily_scores leaderboard policy to today only
 DROP POLICY IF EXISTS "daily_scores_leaderboard_select" ON public.daily_scores;
 CREATE POLICY "daily_scores_leaderboard_select" ON public.daily_scores
   FOR SELECT USING (auth.uid() IS NOT NULL AND date = CURRENT_DATE);
 
--- (profiles policy already restricts to explicit columns in the app query,
---  but ideally create a leaderboard view with only needed columns)
+-- Phase 3 prep: cypher_id + last_seen_at on profiles
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS cypher_id TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS leaderboard_streak_days INTEGER DEFAULT 0;
+CREATE INDEX IF NOT EXISTS idx_profiles_cypher_id ON public.profiles(cypher_id);
+
+-- Phase 3 prep: friends table — mutual request system
+ALTER TABLE public.friends ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'accepted';
+ALTER TABLE public.friends ADD COLUMN IF NOT EXISTS requested_by UUID;
+
+-- Phase 3 prep: hobby_sessions table
+CREATE TABLE IF NOT EXISTS public.hobby_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  hobby_id TEXT NOT NULL,
+  hobby_name TEXT NOT NULL,
+  type TEXT,
+  categories TEXT[],
+  duration_minutes INTEGER DEFAULT 0,
+  ap_earned INTEGER DEFAULT 0,
+  date DATE NOT NULL DEFAULT CURRENT_DATE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE public.hobby_sessions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "hobby_sessions_user_policy" ON public.hobby_sessions
+  FOR ALL USING (auth.uid() = user_id);
+CREATE INDEX IF NOT EXISTS idx_hobby_sessions_user_id ON public.hobby_sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_hobby_sessions_date ON public.hobby_sessions(date);
+
+-- Phase 5 prep: goal retry tracking
+ALTER TABLE public.goals ADD COLUMN IF NOT EXISTS retry_count INTEGER DEFAULT 0;
+ALTER TABLE public.goals ADD COLUMN IF NOT EXISTS overdue_penalty_applied BOOLEAN DEFAULT FALSE;
+```
+
+---
+---
+
+# Phase 2 — High Severity
+
+## H1: Raw Supabase error messages enable email enumeration
+**File:** `frontend/src/pages/Auth/AuthPage.jsx` lines 29, 49, 179, 199
+
+**Fix:** Replace all `setError(err.message)` in auth flows with:
+```js
+const safeAuthError = (msg) => {
+  if (!msg) return 'Something went wrong. Please try again.';
+  if (msg.includes('Invalid login')) return 'Incorrect email or password.';
+  if (msg.includes('already registered')) return 'An account with this email exists.';
+  if (msg.includes('rate limit') || msg.includes('429')) return 'Too many attempts. Try again later.';
+  if (msg.includes('Email not confirmed')) return 'Please verify your email before logging in.';
+  return 'Authentication failed. Please try again.';
+};
 ```
 
 ---
 
+## H2: `seedServerFromLocal` accepts spoofed userId
+**File:** `frontend/src/services/syncEngine.js` line 416
+
+**Fix:** Add session check at top of function:
+```js
+const { data: { user } } = await supabase.auth.getUser();
+if (!user || user.id !== userId) return;
+```
+
 ---
 
-# Execution File Map
+## H3: Offline / Cloud Sync toggles never checked during actual sync
+**Files:** `frontend/src/store/uiStore.js`, `frontend/src/services/syncEngine.js`
 
-| File | Phase | Issues Fixed |
+`offlineMode` and `cloudSync` are stored but `pushChange()` and `flushQueue()` never read them. Toggles are cosmetic.
+
+**Fix:** Add at top of `pushChange()`:
+```js
+const { offlineMode, cloudSync } = useUiStore.getState();
+if (offlineMode || !cloudSync || !navigator.onLine) {
+  useSyncQueue.getState().enqueue(table, op, payload);
+  return;
+}
+```
+
+---
+
+## H4: `pullAllData` uses `Promise.all` — one failure aborts all 17 queries
+**File:** `frontend/src/services/syncEngine.js` line 161
+
+**Fix:** Switch to `Promise.allSettled()`. Process only fulfilled results; log rejected ones individually.
+
+---
+
+## H5: `flushQueue` replays stale user's mutations on new session
+**File:** `frontend/src/services/syncEngine.js` lines 98–129
+
+**Fix:** Before processing each queue item, verify `item.payload.user_id` matches `supabase.auth.getUser()`. Drop non-matching items.
+
+---
+
+## H6: `clearAllStores()` misses social, command, and sync queue stores
+**File:** `frontend/src/components/auth/AuthProvider.jsx` lines 109–122
+
+On sign-out, `useSocialStore`, `useCommandStore`, and `useSyncQueue` are not cleared. User B sees User A's friends and duel history.
+
+**Fix:** Add to `clearAllStores()`:
+```js
+useSocialStore.setState({ friends: [], duels: [], lastSyncedAt: null });
+useCommandStore.setState({ history: [
+  { id: 'boot-1', type: 'system', text: 'SYSTEM_BOOT . . . [V9.0.1 ALPHA]' },
+  { id: 'boot-2', type: 'system', text: 'SCANNING_ENVIRONMENT . . . [SECURE_ENCLAVE]' },
+  { id: 'boot-3', type: 'update', text: 'SYNCING_USER_BIOMETRICS . . . [SUCCESS]' }
+], timerStart: null });
+useSyncQueue.getState().clearQueue();
+```
+
+---
+
+## H7: Duel winner self-declared client-side
+**File:** `frontend/src/store/socialStore.js` line 26
+
+Any user can call `resolveDuel(id, myId, myId)` from console and win. RLS allows it since they are a participant.
+
+**Fix:** Server-side resolution RPC only (built in Phase 3). Client sends `resolveDuel(duelId)` — no `winnerId` param. Server compares AP earned by both players in the duel window.
+
+---
+
+## H8: `auraHistory` grows unbounded — localStorage overflow risk
+**File:** `frontend/src/store/auraStore.js`
+
+**Fix:** Cap at 180 entries everywhere `auraHistory` is pushed to:
+```js
+auraHistory: [...state.auraHistory, entry].slice(-180)
+```
+Apply in: `addCategoryAP`, `computeTodayAura`, `addAuraPoints`, `redeemPoints`, `applyPenalties`.
+
+---
+
+## H9: `Date.now()` as entity IDs — collision risk
+**Files:** `assetStores.js` (goals L14, projects L69, hobbies L130), `socialStore.js` (duels L17), `commandStore.js` (entries L17)
+
+**Fix:** `id: crypto.randomUUID()` everywhere.
+
+---
+
+## H10: No `maxLength` on multiple form inputs
+| Input | File | Max |
 |---|---|---|
-| `backend/supabase/security_patch_3.sql` | Create in P1+P2 | C3, C4, C6, C8 |
-| `frontend/index.html` | P1 | C1 |
-| `frontend/src/services/supabaseClient.js` | P1 | C2 |
-| `frontend/src/store/userStore.js` | P1 | C3 |
-| `frontend/src/main.jsx` | P1 | C10 |
-| `frontend/src/pages/Auth/AuthPage.jsx` | P2 | H1, H11, H12 |
-| `frontend/src/services/syncEngine.js` | P2 | H2, H3, H4, H5 |
-| `frontend/src/components/auth/AuthProvider.jsx` | P2 | H6 |
-| `frontend/src/store/auraStore.js` | P2 | H9 |
-| `frontend/src/store/assetStores.js` | P2 | H10 |
-| `frontend/src/store/socialStore.js` | P2 | H10 |
-| `frontend/src/store/commandStore.js` | P2 | H10 |
-| `frontend/src/pages/Settings/SettingsPage.jsx` | P2+P4 | H12, M1 |
-| `frontend/src/pages/Habits/HobbyForm.jsx` | P2 | H12 |
-| `frontend/src/pages/Nutrition/NutritionPage.jsx` | P2 | H12 |
-| `frontend/src/pages/Study/StudyPage.jsx` | P2 | H12, M8 |
-| `frontend/src/pages/Mood/MoodPage.jsx` | P2 | H12 |
-| `frontend/src/pages/Duels/DuelPage.jsx` | P3 | M2, M7 |
-| `frontend/src/pages/Social/FriendsPage.jsx` | P3 | M1 |
-| `frontend/src/pages/Shop/ShopPage.jsx` | P3 | H8 |
-| `frontend/src/store/commandStore.js` | P3 | M4 |
-| `frontend/src/pages/Workout/WorkoutPage.jsx` | P3 | M5, M6 |
-| `frontend/vite.config.js` | P4 | M3 |
-| `frontend/vercel.json` | P4 | M5 |
-| `frontend/src/components/auth/LoginPage.jsx` | P5 | L1 (delete) |
-| `frontend/src/router/routes.jsx` | P5 | L2 |
+| Player name | `SettingsPage.jsx` L187 | 24 |
+| Task title | `TaskForm.jsx` | 100 |
+| Hobby name | `HobbyForm.jsx` | 50 |
+| Subject name | `StudyPage.jsx` | 50 |
+| Macro/micro name | `NutritionPage.jsx` | 30 |
+| Mood note | `MoodPage.jsx` textarea | 500 |
+| Task add input | `SettingsPage.jsx` | 100 |
 
 ---
 
-# Verification Checklist (after each phase)
+## H11: Password complexity — only `minLength={8}` on signup
+**File:** `frontend/src/pages/Auth/AuthPage.jsx` line 314
 
-**Phase 1:**
-- [ ] `npm run build` succeeds with no errors
-- [ ] Open prod URL — browser console shows no `/@react-refresh` 404 error
-- [ ] Remove env vars temporarily → app shows error page, not white screen crash
-- [ ] Cypher ID is alphanumeric and not predictable
-- [ ] Delete localStorage + refresh with env vars present → no mock data injected
+**Fix:** Client-side validation before submit: require at least 1 uppercase letter and 1 number. Show a simple strength indicator line under the password field.
 
-**Phase 2:**
-- [ ] Login with wrong password → generic error shown, not "Invalid login credentials"
-- [ ] `seedServerFromLocal('fake-uuid')` from console → silent return, no DB writes
+---
+---
+
+# Phase 3 — Broken Feature Rewrites
+
+## M1: Friends / Social Hub — entirely fake
+**File:** `frontend/src/pages/Social/FriendsPage.jsx`
+
+Current: ignores Cipher ID input, generates fake random names, "PING" does nothing.
+
+**What to build:**
+- Online presence: `pullAllData` updates `profiles.last_seen_at` on every call. Users active within 5 minutes = online. Show "ONLINE NOW" section at top of Friends page.
+- Friend request flow: user enters Cipher ID → look up `profiles` where `cypher_id = input` → if found, insert `friends` row with `status: 'pending'`, `requested_by: currentUserId`
+- Incoming requests show in Settings → Notifications section with accept/reject
+- Accepted: both users see each other in friends list with real username + avatar
+- Friends table needs: `user_id`, `friend_id`, `status` (`pending` | `accepted`), `requested_by`, `created_at`
+- DB: `cypher_id` column + index already added in `security_patch_3.sql`
+
+---
+
+## M2: Duels — entirely hardcoded and non-functional
+**File:** `frontend/src/pages/Duels/DuelPage.jsx`
+
+Current: hardcoded `initiateDuel('001', 'GOGGINS CLONE')`, progress bars at 45%/32%, no real data.
+
+**What to build:**
+
+**Direct 1v1:** User enters opponent's Cipher ID → look up profile → send challenge. Opponent sees it in Duels page under "INCOMING CHALLENGES" with ✅ / ❌ buttons.
+
+**Skill-based matchmaking (default):** "FIND OPPONENT" button puts user in a matchmaking pool (new `matchmaking_queue` table: `user_id`, `ap_bracket`, `joined_at`). Server matches by closest `total_aura_points` (±20% bracket). First match auto-challenges.
+
+**AP escrow:** On acceptance, deduct `stake_ap` from both players' `total_aura_points` immediately. On resolution, winner's balance is credited `stake_ap * 2`.
+
+**Progress bars:** Show AP earned by each player in `aura_logs` since `duels.start_at`. Fetched when duel card is opened.
+
+**Resolution:** Server-side RPC `resolve_duel(duel_id)` — compares `SUM(earned)` from `aura_logs` for both players between `start_at` and `end_at`. Winner gets escrow back × 2. Multiplier bonus applied server-side.
+
+**Duels table additions:** `start_at TIMESTAMPTZ`, `end_at TIMESTAMPTZ`, `match_type TEXT` (`direct` | `ranked`), `challenger_escrowed BOOLEAN`, `opponent_escrowed BOOLEAN`.
+
+---
+
+## M3: Shop — fake `alert()` misleads users
+**File:** `frontend/src/pages/Shop/ShopPage.jsx`
+
+Remove the `alert('SUCCESS: ... VOUCHER SENT...')`. Replace with a disabled button state showing "REDEMPTION BACKEND PENDING". Keep all UI. No other changes until backend funding is secured.
+
+---
+
+## M4: AI Agent — Command Terminal (HF Spaces + OpenRouter)
+
+**Decision:** Full LLM chatbot agent — the brain of SYSTEM OS. Model: `qwen/qwen3-32b:free` on OpenRouter. Fallback: `google/gemma-3-27b-it:free`.
+
+**Pre-implementation audit required.** Before this is built, the following will be confirmed via an updated MD note:
+- HF Spaces account name + Space URL
+- OpenRouter API key stored as HF Space secret (never in frontend)
+- Exact system prompt template (includes: AP, streak, rank, today completions, weekly category progress, active goals, multiplier, recent aura history)
+- Which existing slash commands to keep as shortcuts vs deprecate
+- Rate limiting: max 20 requests/user/day (tracked server-side on HF Spaces)
+- CORS: only allow requests from production domain
+
+**Architecture once confirmed:**
+- Frontend streams from `POST https://<hf-space>/chat` with `{ messages, user_context }`
+- HF Space (FastAPI) proxies to OpenRouter, streams SSE back to client
+- Command page becomes a full chat interface with persistent message history (capped at 50 messages in `commandStore`)
+- Existing commands (`critique`, `status`, `timer`, `complete`) become preset prompts that pre-fill the chat input
+
+---
+
+## M5: Workout — LOG ALL uses hardcoded fake values
+**File:** `frontend/src/pages/Workout/WorkoutPage.jsx` lines 239, 261
+
+`handleLogAllGroup` hardcodes `3 sets, 10 reps, 20kg`. Awards AP for fake training data.
+
+**Fix:** Use `lastLoggedValues[group][sub]` for each sub-group. If no history exists for a sub-group, show a confirmation dialog before logging defaults.
+
+---
+
+## M6: Hobby sessions — no data stored, timer missing
+**File:** `frontend/src/pages/Habits/HabitsPage.jsx`
+
+Current: "LOG SESSION" awards 150 AP flat with no duration, no record stored.
+
+**What to build:**
+- Each hobby card gets a START / STOP timer (same pattern as Study page)
+- On STOP: record saved to `hobby_sessions` table: `{ hobby_id, hobby_name, type, categories[], duration_minutes, ap_earned, date }`
+- AP formula: first 30 min = 150 AP, each additional 30 min = +50 AP, capped at daily MISC limit
+- Session history visible per hobby card (last 5 sessions: date, duration, AP)
+- `hobby_sessions` table already created in `security_patch_3.sql`
+
+---
+
+## M7: Mobility — sets/reps/weight inputs make no sense
+**File:** `frontend/src/pages/Workout/WorkoutPage.jsx` (Mobility tab uses `MuscleGroupCard`)
+
+**What to build:** Replace the Mobility tab's `MuscleGroupCard` with a `MobilityCard` component:
+- **Duration mode:** number input for hold time in seconds (e.g., hip flexor: 90s)
+- **Completion mode:** single "DONE" button to tick the exercise as complete
+- Each mobility sub-group card shows both — user picks which applies per exercise
+- AP: completion tick = 5 AP flat; duration = `Math.round(seconds / 30) * 5` AP, capped at 30 AP per exercise
+
+---
+
+## M8: Leaderboard — top-5 exclusive mutual profile viewer
+
+**What to build:**
+
+**Access rule:** Only users ranked #1–5 can click to expand another #1–5 player's card. For all other users, leaderboard rows are non-interactive (no expand).
+
+**Profile card content (dropdown on click):**
+- Avatar / profile picture
+- Username + Rank badge
+- Total Aura Points
+- Current streak
+- Multiplier
+- Last active (formatted: "2h ago", "Online now", etc.)
+- Net negative AP experienced (total lifetime lost AP)
+- Today's score
+- Recent activity — AP breakdown for today (categories: WORKOUT, STUDY, SLEEP, MOOD, NUTRITION, MISC)
+- Mini neural pentagram (same axes as dashboard: Workout, Study, Sleep, Mood, Nutrition — sized ~120px)
+
+**Security:** Fetching this data uses a Supabase RPC `get_top5_profile(target_user_id)` that:
+1. Checks if `auth.uid()` is in the top 5 (via `profiles` ordered by `total_aura_points DESC LIMIT 5`)
+2. Checks if `target_user_id` is also in top 5
+3. Only returns expanded data if both conditions pass
+4. Returns: profile fields + today's `aura_logs` breakdown + today's `daily_scores` + today's `daily_metrics` (for pentagram)
+
+**90-day top-5 streak bonus:**
+- Daily cron (alongside `compute_midnight_penalties`) checks who is in top 5
+- Increments `leaderboard_streak_days` for each qualifying user
+- Resets to 0 if user drops out of top 5
+- At exactly 90 days: set a `leaderboard_bonus_earned` flag and grant equivalent of $10 store credit (implemented when Shop backend is live — Phase 6)
+- `leaderboard_streak_days` column already added in `security_patch_3.sql`
+
+---
+
+## M9: Study — "LOG 60M" bypasses timer, AP farming vector
+**File:** `frontend/src/pages/Study/StudyPage.jsx` line 118
+
+**Fix:** Replace "LOG 60M" button with a manual input: number field (min 1, max 480) + "LOG MANUAL" button. Show a note: "Use the timer for accuracy." The manual log goes through the same `addCategoryAP('STUDY', ...)` path with proper daily cap enforcement.
+
+---
+---
+
+# Phase 4 — Medium Severity
+
+## P4-1: Avatar upload — no MIME type validation
+**File:** `frontend/src/pages/Settings/SettingsPage.jsx` lines 73–101
+
+`accept="image/*"` is bypassable. A `.html` file renamed `.png` could be uploaded and served as XSS from Supabase's public URL.
+
+**Fix:**
+- Client: `if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) return setAvatarMsg('Invalid file type.');`
+- Supabase Storage: add MIME type restriction policy in Dashboard → Storage → Policies
+
+---
+
+## P4-2: Service worker caches stale Supabase REST responses
+**File:** `frontend/vite.config.js` lines 31–39
+
+`NetworkFirst` with `networkTimeoutSeconds: 3` serves cached data after 3s lag. User acts on yesterday's leaderboard or stale task completions.
+
+**Fix:** Split the cache rule:
+- Supabase REST GET requests: `NetworkFirst`, timeout 1s, `maxAgeSeconds: 300`
+- Supabase REST POST/PATCH/DELETE: `NetworkOnly`
+- Auth: already `NetworkOnly` — keep
+
+---
+
+## P4-3: CSP missing `report-uri` — violations silently dropped
+**File:** `frontend/vercel.json` line 23
+
+Add `report-uri https://your-report-endpoint.com/csp` to the CSP header value. Use a free service (report-uri.com) or a simple HF Spaces logging endpoint.
+
+---
+
+## P4-4: Auth inputs missing `autocomplete` attributes
+**File:** `frontend/src/pages/Auth/AuthPage.jsx`
+
+**Fix:**
+```jsx
+<input type="email" autoComplete="email" ... />
+<input type="password" autoComplete={isLogin ? "current-password" : "new-password"} ... />
+```
+
+---
+---
+
+# Phase 5 — Architecture & New Features
+
+## A0: `aura_history_detail` — Per-Activity AP Server Storage
+
+**Why:** Currently individual AP events (reason strings like "SLEEP LOGGED: 8h") exist only in `localStorage.auraHistory`. After logout they're gone. `aura_logs` only stores daily totals (earned/lost). This table stores every individual activity entry permanently.
+
+**Retention:** Same Wrapped Recap policy — full detail kept for current year, pruned to daily totals after user downloads Wrapped.
+
+**SQL (run in Supabase SQL Editor when ready to implement):**
+
+```sql
+CREATE TABLE IF NOT EXISTS public.aura_history_detail (
+  id           UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id      UUID         NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  date         DATE         NOT NULL DEFAULT CURRENT_DATE,
+  category     TEXT         NOT NULL,  -- 'WORKOUT' | 'SLEEP' | 'NUTRITION' | 'MOOD' | 'STUDY' | 'MISC'
+  reason       TEXT         NOT NULL,  -- e.g. 'SLEEP LOGGED: 8h, Deep 9/10'
+  net          INTEGER      NOT NULL,  -- positive = earned, negative = lost
+  created_at   TIMESTAMPTZ  DEFAULT NOW()
+);
+
+ALTER TABLE public.aura_history_detail ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "aura_history_detail_user_policy"
+  ON public.aura_history_detail
+  FOR ALL
+  USING (auth.uid() = user_id);
+
+CREATE INDEX IF NOT EXISTS idx_aura_history_detail_user_date
+  ON public.aura_history_detail(user_id, date DESC);
+
+CREATE INDEX IF NOT EXISTS idx_aura_history_detail_date
+  ON public.aura_history_detail(date);
+```
+
+**Frontend changes when implementing:**
+
+- In `auraStore.addCategoryAP`: after local state update, call `pushChange('aura_history_detail', 'INSERT', { user_id, date, category, reason, net: actual })`
+- In `syncEngine.pullAllData`: fetch last 30 days of detail rows; replace `auraHistory` in store with real per-entry data (preserving reason strings across devices)
+- In `AuraHistoryPage`: remove the 10-day expandable limit — all days expandable since data is server-side
+- Wrapped prune: `DELETE FROM aura_history_detail WHERE user_id = $1 AND date < $year_start` after download
+
+---
+
+## A1: Delete dead `LoginPage.jsx`
+**File:** `frontend/src/components/auth/LoginPage.jsx` — 215 lines, imported nowhere. Delete.
+
+## A2: Remove unused `Placeholder` component
+**File:** `frontend/src/router/routes.jsx` lines 35–40. Remove the component definition; no route uses it.
+
+## A3: React Error Boundary
+Wrap `<RouterProvider>` in `main.jsx` with a root `<ErrorBoundary>`. Any component throw currently white-screens the entire app.
+
+## A4: Loading indicator during `pullAllData`
+Add a `syncing` boolean to `useUserStore`. Set true at start of `pullAllData`, false at end. Header shows a subtle "SYNCING..." indicator while true.
+
+## A5: Workout split — user-configurable
+**Decision:** User sets their own split in Settings.
+
+Add a "WORKOUT SCHEDULE" section to Settings: 7 toggles (Mon–Sun), each day = `cardio` | `hypertrophy` | `mobility` | `rest`. Default preset: Mon/Tue/Wed = cardio, Thu/Fri/Sat/Sun = hypertrophy. Stored in `preferences.workoutSplit` in userStore, synced to `profiles.preferences` JSONB. WorkoutPage reads this to show "TODAY: CARDIO".
+
+## A6: Goals — overdue detection + decaying bounty on retry
+**Decision:** Overdue = AP penalty. Each retry halves bounty. Floor: 50 AP.
+
+- When `CURRENT_DATE > target_date` and not completed: card flagged red with "OVERDUE" badge
+- AP penalty on day it goes overdue: `-Math.min(Math.floor(bounty_ap * 0.10), 500)` — applied once (`overdue_penalty_applied` flag prevents repeat)
+- "RETRY" button: new `target_date` picker + `bounty_ap = Math.max(50, Math.floor(bounty_ap / 2))` + `retry_count++`
+- DB columns added in `security_patch_3.sql`: `retry_count`, `overdue_penalty_applied`
+
+## A7: Nutrition — auto-save baseline on each log
+**Decision:** After first log, logged values become the new baseline automatically.
+
+Every time a user logs a macro/micro value and it's saved to Supabase, silently update `macro_configs` with the new value as the baseline. No manual "save baseline" step needed after the first setup. The existing "ONE-CLICK LOG BASELINE" button then reflects the last real values entered.
+
+## A8: Command terminal — fix real-data commands (pre-AI)
+Until the AI agent (Phase 3 M4) is live, fix existing commands to use real store data:
+- `timer stop`: route AP through `addCategoryAP('STUDY', ...)` with proper daily cap
+- `complete <task>`: match against `useTaskStore` task titles; reject unknown task names
+- `reward`: query real `totalAuraPoints` and show distance to next actual reward milestone
+- `critique/status`: derive from live store state (today AP, streak, tasks completed vs total)
+
+---
+---
+
+# Phase 6 — Final / Future
+
+## F1: Sleep — wearable integration
+**Decision:** Manual now. Google Fit / Samsung Health via Capacitor plugin in final phase.
+
+When implemented: `@capacitor-community/health` plugin reads from Google Fit (Android) and Apple HealthKit (iOS). SleepPage detects connection and shows "AUTO-SYNCED FROM DEVICE" vs manual inputs. Both modes coexist — manual if no device connected.
+
+## F2: Shop — real redemption backend
+Needs external funding + company tie-ups (Amazon, Netflix, Spotify, GPay). Architecture TBD when partnerships are confirmed. The `redeemPoints()` AP deduction already exists — just needs a real fulfillment hook and transaction log table.
+
+## F3: Capacitor mobile build
+```bash
+npm install @capacitor/core @capacitor/cli
+npx cap init SYSTEM com.dragnatsu66.system
+npx cap add ios && npx cap add android
+npm run build && npx cap sync
+```
+Zero UI rewrites — existing React + CSS works as-is in the WebView.
+
+## F4: Push notifications
+Built on top of Phase 3 `notifications` table. Capacitor `@capacitor/push-notifications` plugin routes friend requests and duel challenges to OS-level notifications when app is backgrounded.
+
+---
+---
+
+# File Change Map
+
+| File | Phase | What changes |
+|---|---|---|
+| `backend/supabase/security_patch_3.sql` | P1 | Create — double penalty fix, indexes, INVOKER, schema additions |
+| `frontend/index.html` | P1 | Remove HMR preamble block |
+| `frontend/src/services/supabaseClient.js` | P1 | Null guard on createClient |
+| `frontend/src/store/userStore.js` | P1 | crypto.getRandomValues for CypherId |
+| `frontend/src/main.jsx` | P1 | DEV guard on mock inject |
+| `frontend/src/pages/Settings/SettingsPage.jsx` | P1 + P5 | localStorage fix, workout split UI |
+| `frontend/src/services/syncEngine.js` | P2 | Auth guard, allSettled, queue validation, offline toggle |
+| `frontend/src/pages/Auth/AuthPage.jsx` | P2 | safeAuthError, autocomplete, complexity hint |
+| `frontend/src/components/auth/AuthProvider.jsx` | P2 | Clear social/command/sync on sign-out |
+| `frontend/src/store/auraStore.js` | P2 | auraHistory cap at 180 |
+| `frontend/src/store/assetStores.js` | P2 | crypto.randomUUID for IDs |
+| `frontend/src/store/socialStore.js` | P2 + P3 | UUID IDs, duel escrow logic |
+| `frontend/src/store/commandStore.js` | P2 + P5 | UUID IDs, real-data commands |
+| `frontend/src/pages/Habits/HabitsPage.jsx` | P3 | Hobby timer + session storage |
+| `frontend/src/pages/Habits/HobbyForm.jsx` | P2 | maxLength |
+| `frontend/src/pages/Social/FriendsPage.jsx` | P3 | Full rebuild — real lookup, online presence |
+| `frontend/src/pages/Duels/DuelPage.jsx` | P3 | Full rebuild — 1v1, matchmaking, escrow, real progress |
+| `frontend/src/pages/Shop/ShopPage.jsx` | P3 | Remove fake alert |
+| `frontend/src/pages/Command/CommandPage.jsx` | P3 + P5 | AI agent (Phase 3), real commands (Phase 5) |
+| `frontend/src/pages/Leaderboard/LeaderboardPage.jsx` | P3 | Top-5 profile viewer |
+| `frontend/src/pages/Workout/WorkoutPage.jsx` | P3 + P5 | LOG ALL fix, mobility cards, configurable split |
+| `frontend/src/pages/Study/StudyPage.jsx` | P3 | LOG 60M → manual input |
+| `frontend/src/pages/Goals/GoalsPage.jsx` | P5 | Overdue detection, retry/decay bounty |
+| `frontend/src/pages/Nutrition/NutritionPage.jsx` | P2 + P5 | maxLength, auto-baseline |
+| `frontend/src/pages/Mood/MoodPage.jsx` | P2 | maxLength on note |
+| `frontend/vite.config.js` | P4 | Service worker cache rules |
+| `frontend/vercel.json` | P4 | CSP report-uri |
+| `frontend/src/components/auth/LoginPage.jsx` | P5 | DELETE |
+| `frontend/src/router/routes.jsx` | P5 | Remove Placeholder |
+| `frontend/src/main.jsx` | P5 | Add ErrorBoundary |
+
+---
+
+# Verification Checklist
+
+**After Phase 1:**
+- [ ] `npm run build` — no errors
+- [ ] Production URL — no `/@react-refresh` 404 in browser console
+- [ ] Remove Vercel env vars temporarily → error page shown, not white screen
+- [ ] New user CypherId is 10-char alphanumeric, visually random
+- [ ] Delete localStorage + refresh with env vars set → no mock data
+- [ ] `git log --all --diff-filter=A -- .env` → no output
+
+**After Phase 2:**
+- [ ] Login with wrong password → generic message shown
+- [ ] `seedServerFromLocal('fake-uuid')` from console → silent no-op
 - [ ] Toggle Offline Mode → task completion generates no Supabase network request
-- [ ] Log out user A, log in user B → friends/duels list is empty, not user A's data
-- [ ] `PURGE LOCAL CACHE` → user stays logged in, only app data is cleared
-- [ ] `supabase.from('daily_scores').select('*')` → returns only today's rows
-- [ ] `auraHistory.length` stays ≤ 180 after many AP events
+- [ ] Sign out as User A, sign in as User B → friends list empty
+- [ ] PURGE LOCAL CACHE → user stays logged in
+- [ ] `supabase.from('daily_scores').select('*')` → only today's rows returned
+- [ ] Log AP 200+ times → `auraHistory.length` stays ≤ 180
 
-**Phase 3:**
-- [ ] FriendsPage — entering a real Cipher ID finds the correct user
-- [ ] Duels — challenge/accept flow works end-to-end
-- [ ] Shop — either hidden "coming soon" or real redemption flow
+**After Phase 3:**
+- [ ] Enter real Cipher ID in Friends → correct user found and challenged
+- [ ] Duel challenge sent → AP deducted from challenger on accept, not on send
+- [ ] Progress bars on active duel show real AP numbers
+- [ ] Shop REDEEM → "coming soon" message, no AP deducted
+- [ ] Hobby LOG SESSION → session record visible in history with duration
+- [ ] Mobility tab shows duration/completion inputs, not sets/reps/weight
+- [ ] Click rank #1 card as rank #3 → expanded card shows. Click as rank #6 → no expand
 
----
-
-**Answer the Phase 6 questions and Phase 1–2 can start executing immediately.**
+**After Phase 5:**
+- [ ] Goals past target date → red badge + penalty applied once
+- [ ] RETRY goal → bounty halved, shown on card
+- [ ] Log a nutrition value → macro_configs updated silently as new baseline
+- [ ] Workout schedule settings → WorkoutPage reflects chosen split

@@ -107,11 +107,21 @@ export function AuthProvider({ children }) {
 }
 
 function clearAllStores() {
+  const today = new Date().toISOString().split('T')[0];
+  const existingCategoryAP = useAuraStore.getState().dailyCategoryAP || {};
+
+  // Preserve today's per-category AP tracking across same-day logout→login.
+  // The daily counter resets naturally at midnight (new date key), so there
+  // is no security risk in keeping today's entry across a same-device re-login.
+  const preservedToday = existingCategoryAP[today]
+    ? { [today]: existingCategoryAP[today] }
+    : {};
+
   useAuraStore.setState({
     totalAuraPoints: 0, todayEarned: 0, todayLost: 0, todayNet: 0,
     multiplier: 1.0, streakDays: 0, maxStreak: 0,
     penaltyLog: [], auraHistory: [],
-    dailyCategoryAP: {},  // clear per-category tracking on logout
+    dailyCategoryAP: preservedToday,
   });
   useTaskStore.setState({ tasks: [], completions: {} });
   useScoreStore.setState({ dailyScores: {}, todayScore: 0, weeklyScores: [] });
