@@ -252,6 +252,8 @@ const CommandPage = () => {
       });
 
       if (!res.ok) {
+        isTyping.current = false;
+        clearInterval(typeInterval.current); typeInterval.current = null;
         const err = await res.json().catch(() => ({}));
         useCommandStore.getState().updateEntry(entryId, `ERROR: ${err.detail || 'REQUEST_FAILED'}`);
         setStreaming(false);
@@ -272,6 +274,8 @@ const CommandPage = () => {
           try {
             const chunk = JSON.parse(raw);
             if (chunk.error) {
+              isTyping.current = false;
+              clearInterval(typeInterval.current); typeInterval.current = null;
               useCommandStore.getState().updateEntry(entryId, `ERROR: ${chunk.error}`);
               setStreaming(false);
               return;
@@ -291,6 +295,8 @@ const CommandPage = () => {
         drainAndStop(full);
       }
     } catch (err) {
+      isTyping.current = false;
+      clearInterval(typeInterval.current); typeInterval.current = null;
       useCommandStore.getState().updateEntry(entryId, `CONNECTION_ERROR: ${err.message}`);
       setStreaming(false);
     }
