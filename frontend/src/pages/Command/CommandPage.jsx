@@ -87,14 +87,20 @@ const CommandPage = () => {
     addEntry({ type: 'ai', text: 'CORE . . . ▋', id: entryId });
     startTyper(entryId);
 
+    const now = new Date();
     const userContext = {
+      ai_name: 'CORE',
+      today_date: now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+      current_time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      player_name: profile.name || profile.username || 'NATSU',
       total_ap: totalAuraPoints,
-      streak: streakDays,
+      streak_days: streakDays,
       multiplier,
-      rank: rankTitle || profile.rank_tier,
-      todayEarned,
-      todayLost,
+      rank: rankTitle || profile.rank_tier || 'Normie',
+      today_earned: todayEarned,
+      today_lost: todayLost,
       lifetime_earned: auraHistory.reduce((a, h) => a + (h.net > 0 ? h.net : 0), 0),
+      recent_history: auraHistory.slice(-5).map(h => ({ date: h.date, net: h.net, reason: h.reason })),
     };
 
     let authToken = '';
