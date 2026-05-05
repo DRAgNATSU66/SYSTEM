@@ -199,6 +199,7 @@ useAuraStore.subscribe((state) => {
   clearTimeout(_pendingProfileSync);
   _pendingProfileSync = setTimeout(() => {
     const aura = useAuraStore.getState();
+    if (aura.totalAuraPoints <= 0) return; // never push 0 — preserve real data on server
     pushChange('profiles', 'UPSERT', {
       id: userId,
       total_aura_points: aura.totalAuraPoints,
@@ -206,7 +207,7 @@ useAuraStore.subscribe((state) => {
       max_streak:        aura.maxStreak,
       multiplier:        aura.multiplier,
     });
-  }, 2000);
+  }, 300); // 300ms — fast enough to sync before logout
 });
 
 // ─────────────────────────────────────────────
@@ -288,18 +289,39 @@ export async function pullAllData(userId) {
          p.total_aura_points >= localAura.totalAuraPoints);
 
       if (serverNewer) {
-        // If per-entry detail rows exist, use them as auraHistory (richer data than daily totals)
+        // Reconstruct total AP from aura_history_detail if profiles shows 0
+        // (covers case where AP was earned but profiles.total_aura_points was never updated)
+        let serverTotalAP = p.total_aura_points || 0;
+        if (serverTotalAP <= 0 && auraDetailRes.data?.length) {
+          const fromDetail = auraDetailRes.data.reduce((s, r) => s + Math.max(0, r.net || 0), 0);
+          if (fromDetail > 0) serverTotalAP = fromDetail;
+        }
+        if (serverTotalAP <= 0 && auraLogsRes.data?.length) {
+          const fromLogs = auraLogsRes.data.reduce((s, r) => s + (r.earned || 0) - (r.lost || 0), 0);
+          if (fromLogs > 0) serverTotalAP = Math.max(0, fromLogs);
+        }
+
         const detailHistory = auraDetailRes.data?.length
           ? auraDetailRes.data.map(r => ({ date: r.date, net: r.net, reason: r.reason }))
           : auraHistory;
         useAuraStore.getState().hydrateFromServer({
-          totalAuraPoints: p.total_aura_points,
+          totalAuraPoints: serverTotalAP,
           streakDays: p.current_streak,
           maxStreak: p.max_streak,
           multiplier: p.multiplier,
           auraHistory: detailHistory,
           lastSyncedAt: now,
         });
+
+        // If we reconstructed a higher AP than what profiles has, push it back immediately
+        if (serverTotalAP > (p.total_aura_points || 0)) {
+          pushChange('profiles', 'UPSERT', {
+            id: userId,
+            total_aura_points: serverTotalAP,
+            current_streak: p.current_streak,
+            multiplier: p.multiplier,
+          });
+        }
       }
 
       // Hydrate accumulated IQ/Knowledge from profile if available
