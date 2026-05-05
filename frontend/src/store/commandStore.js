@@ -15,7 +15,7 @@ export const useCommandStore = create(
       timerStart: null,
       
       addEntry: (entry) => set((state) => ({
-        history: [...state.history, { ...entry, id: crypto.randomUUID() }]
+        history: [...state.history, { ...entry, id: entry.id || crypto.randomUUID() }]
       })),
 
       updateEntry: (id, text) => set((state) => ({
