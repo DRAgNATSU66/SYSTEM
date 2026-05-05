@@ -68,3 +68,23 @@
   .terminal { height: 60vh; padding: 1rem; }
   .numInput { font-size: 0.9rem; }
 }
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.cursor {
+  display: inline-block;
+  width: 0.52em;
+  height: 0.88em;
+  background: var(--color-green);
+  vertical-align: -0.1em;
+  border-radius: 1px;
+  animation: cursorBlink 0.65s step-end infinite;
+}
+
+.statusGenerating {
+  color: var(--color-green) !important;
+  animation: cursorBlink 0.65s step-end infinite;
+}

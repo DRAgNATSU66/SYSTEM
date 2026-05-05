@@ -314,7 +314,9 @@ const CommandPage = () => {
     <PageWrapper className={styles.container}>
       <div className={styles.visualStack}>
         <PulseCore />
-        <div className={styles.status}>{streaming ? 'CORE ACTIVE' : 'CORE ACTIVE'}</div>
+        <div className={`${styles.status} ${streaming ? styles.statusGenerating : ''}`}>
+          CORE ACTIVE
+        </div>
       </div>
 
       <div className={styles.terminal}>
@@ -326,6 +328,8 @@ const CommandPage = () => {
                   <span className={styles.label}>{log.label}</span>
                   <span style={{ color: log.valColor, marginLeft: '0.5rem' }}>{log.value}</span>
                 </>
+              ) : log.text?.endsWith('█') ? (
+                <>{log.text.slice(0, -1)}<span className={styles.cursor} /></>
               ) : (
                 log.text
               )}
