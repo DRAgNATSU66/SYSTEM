@@ -18,7 +18,40 @@ const CommandPage = () => {
   const { profile, user } = useUserStore();
   const [input, setInput]       = useState('');
   const [streaming, setStreaming] = useState(false);
-  const logEndRef = useRef(null);
+  const logEndRef       = useRef(null);
+  const typeQueue       = useRef([]);
+  const typedSoFar      = useRef('');
+  const typeInterval    = useRef(null);
+  const activeEntryId   = useRef(null);
+
+  // Typewriter engine — 20ms per character
+  const startTyper = (entryId) => {
+    activeEntryId.current = entryId;
+    if (typeInterval.current) return;
+    typeInterval.current = setInterval(() => {
+      const char = typeQueue.current.shift();
+      if (char === undefined) return;
+      typedSoFar.current += char;
+      useCommandStore.getState().updateEntry(
+        activeEntryId.current,
+        typedSoFar.current + (typeQueue.current.length > 0 ? '▋' : '')
+      );
+    }, 20);
+  };
+
+  const drainAndStop = () => {
+    const drain = setInterval(() => {
+      if (typeQueue.current.length === 0) {
+        clearInterval(drain);
+        clearInterval(typeInterval.current);
+        typeInterval.current = null;
+        useCommandStore.getState().updateEntry(activeEntryId.current, typedSoFar.current);
+        setStreaming(false);
+      }
+    }, 20);
+  };
+
+  useEffect(() => () => { clearInterval(typeInterval.current); }, []);
 
   useEffect(() => {
     if (history.length <= 3) {
@@ -47,7 +80,12 @@ const CommandPage = () => {
 
     setStreaming(true);
     const entryId = crypto.randomUUID();
+    typeQueue.current   = [];
+    typedSoFar.current  = '';
+    typeInterval.current && clearInterval(typeInterval.current);
+    typeInterval.current = null;
     addEntry({ type: 'ai', text: 'CORE . . . ▋', id: entryId });
+    startTyper(entryId);
 
     const userContext = {
       total_ap: totalAuraPoints,
@@ -75,6 +113,7 @@ const CommandPage = () => {
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         useCommandStore.getState().updateEntry(entryId, `ERROR: ${err.detail || 'REQUEST_FAILED'}`);
+        setStreaming(false);
         return;
       }
 
@@ -93,15 +132,15 @@ const CommandPage = () => {
           try {
             const chunk = JSON.parse(raw);
             if (chunk.error) { useCommandStore.getState().updateEntry(entryId, `ERROR: ${chunk.error}`); return; }
-            if (chunk.content) { full += chunk.content; useCommandStore.getState().updateEntry(entryId, full + ' ▋'); }
+            if (chunk.content) { full += chunk.content; for (const c of chunk.content) typeQueue.current.push(c); }
           } catch {}
         }
       }
 
-      useCommandStore.getState().updateEntry(entryId, full || 'NO_RESPONSE.');
+      if (!full) { useCommandStore.getState().updateEntry(entryId, 'NO_RESPONSE.'); setStreaming(false); }
+      else drainAndStop();
     } catch (err) {
       useCommandStore.getState().updateEntry(entryId, `CONNECTION_ERROR: ${err.message}`);
-    } finally {
       setStreaming(false);
     }
   };
