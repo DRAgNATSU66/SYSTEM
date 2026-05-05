@@ -86,5 +86,4 @@
 
 .statusGenerating {
   color: var(--color-green) !important;
-  animation: cursorBlink 0.65s step-end infinite;
 }
