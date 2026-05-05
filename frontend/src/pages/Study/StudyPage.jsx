@@ -42,11 +42,8 @@ const StudyPage = () => {
     if (!activeTimer || activeTimer.subjectId !== subject.id) return;
     const minutes = Math.max(1, Math.round(elapsed / 60));
     resetDailyIfNeeded();
-    if (user?.id) {
-      studyService.logSession(user.id, subject.id, minutes, today);
-    } else {
-      logSession(subject.id, minutes);
-    }
+    logSession(subject.id, minutes); // always update local store (IQ/Knowledge/progress)
+    if (user?.id) studyService.logSession(user.id, subject.id, minutes, today);
     const ap = Math.min(Math.round((minutes / 120) * 200), 200);
     addCategoryAP('STUDY', ap, `STUDY TIMED: ${subject.name} ${minutes}m`);
     checkAndUpdateStreak();
@@ -127,8 +124,8 @@ const StudyPage = () => {
                     const mins = Math.min(480, Math.max(1, parseInt(manualMins[s.id]) || 0));
                     if (!mins) return;
                     resetDailyIfNeeded();
+                    logSession(s.id, mins); // always update local store
                     if (user?.id) studyService.logSession(user.id, s.id, mins, today);
-                    else logSession(s.id, mins);
                     const ap = Math.min(200, Math.round((mins / 120) * 200));
                     addCategoryAP('STUDY', ap, `STUDY MANUAL: ${s.name} ${mins}m`);
                     checkAndUpdateStreak();

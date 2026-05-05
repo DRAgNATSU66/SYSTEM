@@ -224,7 +224,7 @@ const VO2MaxCard = ({ onLog, lastVO2 }) => {
 
 // ─── Main WorkoutPage ─────────────────────────────────────────────────────────
 const WorkoutPage = () => {
-  const { muscles, logVolume, logCardio, logs, personalBests, lastLoggedValues, lastLoggedCardio } = useWorkoutStore();
+  const { muscles, logVolume, logCardio, logs, personalBests, lastLoggedValues, lastLoggedCardio, bodyweight, setBodyweight } = useWorkoutStore();
   const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded } = useAuraStore();
   const { user, preferences } = useUserStore();
   const today     = getTodayStr();
@@ -269,11 +269,8 @@ const WorkoutPage = () => {
   const handleLogVolume = (g, s, sets, reps, weight) => {
     resetDailyIfNeeded();
     const oldPB  = personalBests?.[g]?.[s] || 0;
-    if (user?.id) {
-      workoutService.logVolume(user.id, g, s, sets, reps, weight, today);
-    } else {
-      logVolume(g, s, sets, reps, weight);
-    }
+    logVolume(g, s, sets, reps, weight); // always update local store
+    if (user?.id) workoutService.logVolume(user.id, g, s, sets, reps, weight, today);
     const new1RM = weight * (1 + reps / 30);
     if (new1RM > oldPB && oldPB > 0) {
       addCategoryAP('WORKOUT', 50, `NEW PERSONAL BEST: ${s} (${Math.floor(new1RM)}kg 1RM)`);
@@ -290,8 +287,8 @@ const WorkoutPage = () => {
     resetDailyIfNeeded();
     subGroups.forEach(sub => {
       const { sets, reps, weight } = groupLast[sub] || { sets: 3, reps: 10, weight: 20 };
+      logVolume(group, sub, sets, reps, weight);
       if (user?.id) workoutService.logVolume(user.id, group, sub, sets, reps, weight, today);
-      else logVolume(group, sub, sets, reps, weight);
       addCategoryAP('WORKOUT', 10, `VOLUME LOGGED: ${sub}`);
     });
     checkAndUpdateStreak();
@@ -309,8 +306,8 @@ const WorkoutPage = () => {
       const groupLast = lastLoggedValues[group] || {};
       subs.forEach(sub => {
         const { sets, reps, weight } = groupLast[sub] || { sets: 3, reps: 10, weight: 20 };
+        logVolume(group, sub, sets, reps, weight);
         if (user?.id) workoutService.logVolume(user.id, group, sub, sets, reps, weight, today);
-        else logVolume(group, sub, sets, reps, weight);
         addCategoryAP('WORKOUT', 10, `VOLUME LOGGED: ${sub}`);
       });
     });
@@ -320,12 +317,12 @@ const WorkoutPage = () => {
   const handleMobilityLog = (group, sub, seconds, ap) => {
     resetDailyIfNeeded();
     if (seconds > 0) {
+      logVolume(group, sub, 1, seconds, 0);
       if (user?.id) workoutService.logVolume(user.id, group, sub, 1, seconds, 0, today);
-      else logVolume(group, sub, 1, seconds, 0);
       addCategoryAP('WORKOUT', ap, `MOBILITY: ${sub} ${seconds}s hold`);
     } else {
+      logVolume(group, sub, 1, 1, 0);
       if (user?.id) workoutService.logVolume(user.id, group, sub, 1, 1, 0, today);
-      else logVolume(group, sub, 1, 1, 0);
       addCategoryAP('WORKOUT', 5, `MOBILITY: ${sub} completed`);
     }
     checkAndUpdateStreak();
@@ -335,22 +332,15 @@ const WorkoutPage = () => {
   const handleLogAllCardio = () => {
     resetDailyIfNeeded();
     const lssData = { minutes: parseInt(lss.minutes) || 30, bpm: parseInt(lss.bpm) || 135 };
-    if (user?.id) {
-      workoutService.logCardio(user.id, 'lss', lssData, today);
-    } else {
-      logCardio('lss', lssData);
-    }
+    logCardio('lss', lssData);
+    if (user?.id) workoutService.logCardio(user.id, 'lss', lssData, today);
     addCategoryAP('WORKOUT', 15, `LSS CARDIO LOGGED: ${lssData.minutes}min @ ${lssData.bpm}bpm`);
 
-    // Also log VO2Max with last stored values if available
     const lastVO2 = lastLoggedCardio?.vo2max;
     if (lastVO2) {
       const vo2data = { value: lastVO2.value || lastVO2.rawVO2 || 0, score: lastVO2.score || 0, date: today };
-      if (user?.id) {
-        workoutService.logCardio(user.id, 'vo2max', vo2data, today);
-      } else {
-        logCardio('vo2max', vo2data);
-      }
+      logCardio('vo2max', vo2data);
+      if (user?.id) workoutService.logCardio(user.id, 'vo2max', vo2data, today);
       addCategoryAP('WORKOUT', 20, `VO2 MAX LOGGED: ${vo2data.value} ml/kg/min`);
     }
     checkAndUpdateStreak();
@@ -358,11 +348,8 @@ const WorkoutPage = () => {
 
   const handleVO2Log = (res) => {
     resetDailyIfNeeded();
-    if (user?.id) {
-      workoutService.logCardio(user.id, 'vo2max', { value: res.rawVO2, score: res.score, date: today }, today);
-    } else {
-      logCardio('vo2max', { value: res.rawVO2, score: res.score, date: today });
-    }
+    logCardio('vo2max', { value: res.rawVO2, score: res.score, date: today });
+    if (user?.id) workoutService.logCardio(user.id, 'vo2max', { value: res.rawVO2, score: res.score, date: today }, today);
     addCategoryAP('WORKOUT', 20, `VO2 MAX LOGGED: ${res.rawVO2} ml/kg/min (Score ${res.score}/100)`);
     checkAndUpdateStreak();
   };
@@ -421,7 +408,20 @@ const WorkoutPage = () => {
       {/* ── Hypertrophy Tab ──────────────────────────────────────── */}
       {activeTab === 'hypertrophy' && (
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>MUSCLE MATRIX — VOLUME PENTAGRAM</h2>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '0.25rem' }}>
+            <h2 className={styles.sectionTitle} style={{ margin: 0 }}>MUSCLE MATRIX — VOLUME PENTAGRAM</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '0.1em' }}>BODYWEIGHT</span>
+              <input
+                type="number" min="30" max="250" step="0.5"
+                value={bodyweight || ''}
+                onChange={e => setBodyweight(e.target.value)}
+                placeholder="kg"
+                style={{ width: 68, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, color: '#fff', fontSize: '0.8rem', fontWeight: 700, padding: '0.4rem 0.6rem', textAlign: 'center', fontFamily: 'inherit', transition: 'border-color 0.2s' }}
+              />
+              <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 700 }}>KG</span>
+            </div>
+          </div>
           <p className={styles.sectionSubtitle}>Radar shows total volume (Sets × Reps × Weight) per sub-group today</p>
           <div className={styles.muscleGrid}>
             {hypertrophyGroups.map(([group, subs]) => (
@@ -488,11 +488,8 @@ const WorkoutPage = () => {
                 <button className={styles.btnPrimary} onClick={() => {
                   resetDailyIfNeeded();
                   const lssData = { minutes: parseInt(lss.minutes) || 0, bpm: parseInt(lss.bpm) || 0 };
-                  if (user?.id) {
-                    workoutService.logCardio(user.id, 'lss', lssData, today);
-                  } else {
-                    logCardio('lss', lssData);
-                  }
+                  logCardio('lss', lssData);
+                  if (user?.id) workoutService.logCardio(user.id, 'lss', lssData, today);
                   addCategoryAP('WORKOUT', 15, `LSS CARDIO LOGGED: ${lssData.minutes}min @ ${lssData.bpm}bpm`);
                   checkAndUpdateStreak();
                 }}>SYNC DATA</button>

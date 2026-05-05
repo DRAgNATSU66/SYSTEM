@@ -5,8 +5,8 @@ import { useMetricsStore } from '../../../store/metricsStore';
 import { useStudyStore } from '../../../store/studyStore';
 import { useWorkoutStore } from '../../../store/workoutStore';
 import { useAuraStore } from '../../../store/auraStore';
-import { getTodayStr } from '../../../utils/dateUtils';
 import { NEURAL_PENTAGRAM_CAPS } from '../../../constants/neuralStats';
+import { getTodayStr } from '../../../utils/dateUtils';
 import styles from './RadarChart.module.css';
 
 const CustomTooltip = ({ active, payload }) => {
@@ -15,7 +15,13 @@ const CustomTooltip = ({ active, payload }) => {
 
     const formatValue = (val, sub) => {
       if (sub === 'IQ') return Math.floor(70 + (val * 0.9)) + ' IQ';
-      if (sub === 'MUSCLE') return (70 + (val * 0.15)).toFixed(1) + ' KG';
+      if (sub === 'MUSCLE') {
+      if (bodyweight > 0) {
+        const leanMass = (bodyweight * 0.40 + (val / 100) * bodyweight * 0.12).toFixed(1);
+        return leanMass + ' KG LEAN';
+      }
+      return val + '% VOL';
+    }
       if (sub === 'MOOD') return ((val / 5) - 10).toFixed(1) + ' PT';
       return val + '%';
     };
@@ -38,7 +44,7 @@ const RadarChart = () => {
   const { tasks, completions } = useTaskStore();
   const { dailyMetrics } = useMetricsStore();
   const { accumulatedIQ, accumulatedKnowledge } = useStudyStore();
-  const { logs: workoutLogs } = useWorkoutStore();
+  const { logs: workoutLogs, bodyweight } = useWorkoutStore();
   const { streakDays, dailyCategoryAP } = useAuraStore();
   const today = getTodayStr();
 
@@ -94,7 +100,7 @@ const RadarChart = () => {
   const metrics = dailyMetrics[today] || {};
 
   const data = [
-    { subject: 'MUSCLE', A: getWorkoutProgress(), unit: 'KG', fullMark: 100, desc: 'Hypertrophy volume and lean mass index.' },
+    { subject: 'MUSCLE', A: getWorkoutProgress(), unit: 'KG', fullMark: 100, desc: bodyweight > 0 ? `BW: ${bodyweight}kg — estimated lean mass shown on hover.` : 'Set your bodyweight in Workout tab for lean mass estimate.' },
     { subject: 'IQ', A: getIQProgress(), unit: 'IQ', fullMark: 100, desc: `Accumulated: ${accumulatedIQ.toFixed(1)} IQ pts. HIGH tier: 1/hr, MED: 0.5/hr, LOW: 0.1/hr.` },
     { subject: 'MOBILITY', A: getMobilityProgress(), unit: '%', fullMark: 100, desc: 'Log mobility subgroups in Workout → Mobility tab.' },
     { subject: 'MOOD', A: Math.min(100, ((metrics.mood || 5) * 10)), unit: 'PT', fullMark: 100, desc: 'Emotional equilibrium.' },
