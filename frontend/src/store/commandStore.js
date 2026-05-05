@@ -17,6 +17,10 @@ export const useCommandStore = create(
       addEntry: (entry) => set((state) => ({
         history: [...state.history, { ...entry, id: crypto.randomUUID() }]
       })),
+
+      updateEntry: (id, text) => set((state) => ({
+        history: state.history.map(e => e.id === id ? { ...e, text } : e)
+      })),
       
       processCommand: (command, dailyScore, rankTitle) => {
         const { addEntry } = get();
