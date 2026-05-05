@@ -10,7 +10,7 @@ from fastapi.responses import StreamingResponse
 from supabase import create_client, Client
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("cipher-agent")
+logger = logging.getLogger("core-agent")
 
 app = FastAPI(title="SYSTEM OS — CIPHER AI Backend")
 
@@ -26,15 +26,15 @@ SUPABASE_URL:       str = os.environ.get("SUPABASE_URL", "")
 SUPABASE_KEY:       str = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-PRIMARY_MODEL  = "qwen/qwen3-32b:free"
-FALLBACK_MODEL = "google/gemma-3-27b-it:free"
+PRIMARY_MODEL  = "nvidia/nemotron-3-super-120b-a12b:free"
+FALLBACK_MODEL = "liquid/lfm-2.5-1.2b-instruct:free"
 DAILY_LIMIT    = 20
 
 supabase_client: Client | None = (
     create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_URL and SUPABASE_KEY else None
 )
 
-SYSTEM_PROMPT = """You are CIPHER, the AI core of SYSTEM OS — a gamified life-tracking OS.
+SYSTEM_PROMPT = """You are CORE, the AI intelligence of SYSTEM OS — a gamified life-tracking OS.
 The user's current state: {user_context}
 Rules: be direct, motivational, brutally honest. Max 200 words unless asked for a detailed plan.
 Never fabricate numbers — only reference data from the user context above.

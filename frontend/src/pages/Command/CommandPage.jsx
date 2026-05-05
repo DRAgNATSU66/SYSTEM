@@ -39,15 +39,15 @@ const CommandPage = () => {
     logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [history]);
 
-  const callCipher = async (message) => {
+  const callCore = async (message) => {
     if (!user?.id) {
-      addEntry({ type: 'ai', text: 'ERROR: NOT_AUTHENTICATED. SIGN IN TO USE CIPHER AI.' });
+      addEntry({ type: 'ai', text: 'ERROR: NOT_AUTHENTICATED. SIGN IN TO USE CORE AI.' });
       return;
     }
 
     setStreaming(true);
     const entryId = crypto.randomUUID();
-    addEntry({ type: 'ai', text: 'CIPHER . . . ▋', id: entryId });
+    addEntry({ type: 'ai', text: 'CORE . . . ▋', id: entryId });
 
     const userContext = {
       total_ap: totalAuraPoints,
@@ -115,7 +115,7 @@ const CommandPage = () => {
       processCommand(input, dailyScore, rankTitle);
     } else {
       addEntry({ type: 'user', text: '> ' + input.toUpperCase() });
-      callCipher(input);
+      callCore(input);
     }
     setInput('');
   };
@@ -124,7 +124,7 @@ const CommandPage = () => {
     <PageWrapper className={styles.container}>
       <div className={styles.visualStack}>
         <PulseCore />
-        <div className={styles.status}>{streaming ? 'CIPHER ACTIVE' : 'CORE ACTIVE'}</div>
+        <div className={styles.status}>{streaming ? 'CORE ACTIVE' : 'CORE ACTIVE'}</div>
       </div>
 
       <div className={styles.terminal}>
@@ -148,7 +148,7 @@ const CommandPage = () => {
           <input
             type="text" value={input}
             onChange={e => setInput(e.target.value)}
-            placeholder={streaming ? 'CIPHER RESPONDING...' : 'EXECUTE COMMAND OR ASK CIPHER...'}
+            placeholder={streaming ? 'CORE RESPONDING...' : 'EXECUTE COMMAND OR ASK CORE...'}
             className={styles.numInput}
             disabled={streaming}
             autoFocus
