@@ -19,22 +19,16 @@ const ProjectsPage = () => {
   const handleAddProject = (e) => {
     e.preventDefault();
     if(!newProjectName) return;
-    if (user?.id) {
-      projectService.addProject(user.id, newProjectName, type, '#00BFFF', 'UPCOMING');
-    } else {
-      addProject(newProjectName, type, '#00BFFF', 'UPCOMING');
-    }
+    addProject(newProjectName, type, '#00BFFF', 'UPCOMING');
+    if (user?.id) projectService.addProject(user.id, newProjectName, type, '#00BFFF', 'UPCOMING');
     setNewProjectName('');
   };
 
   const handleLogFocus = (projectId, title) => {
     const rating = Math.min(10, Math.max(1, parseInt(focusRatings[projectId] ?? 8, 10) || 8));
     resetDailyIfNeeded();
-    if (user?.id) {
-      projectService.logSession(user.id, projectId, 1, rating, title);
-    } else {
-      logSession(projectId, 1, rating, title);
-    }
+    logSession(projectId, 1, rating, title);
+    if (user?.id) projectService.logSession(user.id, projectId, 1, rating, title);
     // AP scales with focus rating: 10/10 = 100 AP, 1/10 = 10 AP
     const apAmount = Math.round(rating * 10);
     addCategoryAP('MISC', apAmount, `Deep Work: ${title} (${rating}/10 focus)`);
@@ -88,8 +82,8 @@ const ProjectsPage = () => {
               </button>
               <button
                 onClick={() => {
+                  updateProjectStatus(project.id, 'ARCHIVED');
                   if (user?.id) projectService.updateStatus(user.id, project.id, 'ARCHIVED');
-                  else updateProjectStatus(project.id, 'ARCHIVED');
                 }}
                 className={styles.btnArchive}
               >
@@ -97,8 +91,8 @@ const ProjectsPage = () => {
               </button>
               <button
                 onClick={() => {
+                  deleteProject(project.id);
                   if (user?.id) projectService.deleteProject(user.id, project.id);
-                  else deleteProject(project.id);
                 }}
                 className={styles.btnPurge}
               >

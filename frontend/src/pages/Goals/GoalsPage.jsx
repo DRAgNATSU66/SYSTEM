@@ -43,19 +43,16 @@ const GoalsPage = () => {
   const handleAdd = (e) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
-    if (user?.id) {
-      goalService.addGoal(user.id, newTitle.trim(), targetDate, 5000, true);
-    } else {
-      addGoal(newTitle.trim(), targetDate, 5000, true);
-    }
+    addGoal(newTitle.trim(), targetDate, 5000, true); // always update local store
+    if (user?.id) goalService.addGoal(user.id, newTitle.trim(), targetDate, 5000, true);
     setNewTitle('');
     setTargetDate(defaultTarget);
   };
 
   const handleComplete = (id, title, bounty_ap) => {
     resetDailyIfNeeded();
+    completeGoal(id); // always update local store
     if (user?.id) goalService.completeGoal(user.id, id);
-    else completeGoal(id);
     addCategoryAP('MISC', bounty_ap, `ACHIEVEMENT: ${title}`);
     checkAndUpdateStreak();
   };
@@ -144,8 +141,8 @@ const GoalsPage = () => {
                 </div>
               )}
               <button onClick={() => {
+                purgeGoal(goal.id);
                 if (user?.id) goalService.deleteGoal(user.id, goal.id);
-                else purgeGoal(goal.id);
               }} className={styles.btnDelete}>PURGE</button>
             </div>
           );

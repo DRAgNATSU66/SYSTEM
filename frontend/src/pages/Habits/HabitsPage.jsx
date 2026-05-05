@@ -166,12 +166,12 @@ const HabitsPage = () => {
                     </>
                   )}
                   <button className={styles.btnArchive} onClick={() => {
+                    archiveHobby(h.id);
                     if (user?.id) hobbyService.archiveHobby(user.id, h.id);
-                    else archiveHobby(h.id);
                   }}>ARCHIVE</button>
                   <button className={styles.btnDelete} onClick={() => {
+                    deleteHobby(h.id);
                     if (user?.id) hobbyService.deleteHobby(user.id, h.id);
-                    else deleteHobby(h.id);
                   }}>×</button>
                 </div>
               </div>

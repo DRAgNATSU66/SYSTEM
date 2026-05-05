@@ -10,18 +10,19 @@ import { getTodayStr } from '../../../utils/dateUtils';
 import styles from './RadarChart.module.css';
 
 const CustomTooltip = ({ active, payload }) => {
+  const { bodyweight } = useWorkoutStore();
   if (active && payload && payload.length) {
     const data = payload[0].payload;
 
     const formatValue = (val, sub) => {
       if (sub === 'IQ') return Math.floor(70 + (val * 0.9)) + ' IQ';
       if (sub === 'MUSCLE') {
-      if (bodyweight > 0) {
-        const leanMass = (bodyweight * 0.40 + (val / 100) * bodyweight * 0.12).toFixed(1);
-        return leanMass + ' KG LEAN';
+        if (bodyweight > 0) {
+          const leanMass = (bodyweight * 0.40 + (val / 100) * bodyweight * 0.12).toFixed(1);
+          return leanMass + ' KG LEAN';
+        }
+        return val + '% VOL';
       }
-      return val + '% VOL';
-    }
       if (sub === 'MOOD') return ((val / 5) - 10).toFixed(1) + ' PT';
       return val + '%';
     };
