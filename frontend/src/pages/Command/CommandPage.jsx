@@ -30,19 +30,25 @@ const CommandPage = () => {
   const typeInterval  = useRef(null);
   const activeEntryId = useRef(null);
   const chatHistory   = useRef([]); // multi-turn memory
+  const isTyping      = useRef(false); // true while typewriter is active
 
   // Typewriter engine — 20ms per character
   const startTyper = (entryId) => {
     activeEntryId.current = entryId;
+    isTyping.current = true;
     if (typeInterval.current) return;
     typeInterval.current = setInterval(() => {
       const char = typeQueue.current.shift();
-      if (char === undefined) return;
-      typedSoFar.current += char;
-      useCommandStore.getState().updateEntry(
-        activeEntryId.current,
-        typedSoFar.current + (typeQueue.current.length > 0 ? '▋' : '')
-      );
+      if (char !== undefined) {
+        typedSoFar.current += char;
+      }
+      // Cursor always visible while typing — solid block on the right of last char
+      if (isTyping.current) {
+        useCommandStore.getState().updateEntry(
+          activeEntryId.current,
+          typedSoFar.current + '█'
+        );
+      }
     }, 20);
   };
 
@@ -52,8 +58,9 @@ const CommandPage = () => {
         clearInterval(drain);
         clearInterval(typeInterval.current);
         typeInterval.current = null;
+        isTyping.current = false;
+        // Remove cursor from final text
         useCommandStore.getState().updateEntry(activeEntryId.current, typedSoFar.current);
-        // Save to conversation history for multi-turn context
         chatHistory.current.push({ role: 'assistant', content: finalText });
         if (chatHistory.current.length > 12) chatHistory.current = chatHistory.current.slice(-12);
         setStreaming(false);
