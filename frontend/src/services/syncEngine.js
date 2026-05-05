@@ -183,6 +183,33 @@ useAuraStore.subscribe((state, prevState) => {
 });
 
 // ─────────────────────────────────────────────
+// Profile AP sync — push total_aura_points to Supabase when AP changes locally
+// This keeps the leaderboard and rank resolver accurate in real time.
+// Debounced 2s so rapid consecutive logs don't hammer Supabase.
+// ─────────────────────────────────────────────
+let _pendingProfileSync = null;
+let _prevTotalAP = 0;
+
+useAuraStore.subscribe((state) => {
+  if (_isSyncing || !supabase) return;
+  const userId = useUserStore.getState().user?.id;
+  if (!userId || state.totalAuraPoints === _prevTotalAP) return;
+  _prevTotalAP = state.totalAuraPoints;
+
+  clearTimeout(_pendingProfileSync);
+  _pendingProfileSync = setTimeout(() => {
+    const aura = useAuraStore.getState();
+    pushChange('profiles', 'UPSERT', {
+      id: userId,
+      total_aura_points: aura.totalAuraPoints,
+      current_streak:    aura.streakDays,
+      max_streak:        aura.maxStreak,
+      multiplier:        aura.multiplier,
+    });
+  }, 2000);
+});
+
+// ─────────────────────────────────────────────
 // pullAllData — hydrate all stores from Supabase
 // ─────────────────────────────────────────────
 export async function pullAllData(userId) {
@@ -255,7 +282,10 @@ export async function pullAllData(userId) {
       }));
 
       const localAura = useAuraStore.getState();
-      const serverNewer = !localAura.lastSyncedAt || new Date(p.updated_at) > new Date(localAura.lastSyncedAt);
+      // Prefer server only if it has MORE AP than local (prevents stale DB overwriting earned AP)
+      const serverNewer = !localAura.lastSyncedAt ||
+        (new Date(p.updated_at) > new Date(localAura.lastSyncedAt) &&
+         p.total_aura_points >= localAura.totalAuraPoints);
 
       if (serverNewer) {
         // If per-entry detail rows exist, use them as auraHistory (richer data than daily totals)
