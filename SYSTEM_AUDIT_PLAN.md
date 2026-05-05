@@ -89,6 +89,7 @@
 
 ### Phase 6 — Final / Future
 - [ ] Sleep — Google Fit / Samsung Health auto-sync via Capacitor plugin
+- [ ] Command center ai chatbot build using AI Agent — Command Terminal (HF Spaces Backend + OpenRouter)(more details given in #M4 in this md file)
 - [ ] Shop — real redemption backend (after company tie-ups + funding)
 - [ ] Capacitor mobile build — iOS + Android
 - [ ] Push notifications via Capacitor (built on top of Phase 3 notifications table)
