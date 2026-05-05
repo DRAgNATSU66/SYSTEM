@@ -67,10 +67,9 @@ const Sidebar = () => {
         <div className={styles.brand}>
           <div className={styles.logoContainer}>
             <img
-              src={profile?.avatarUrl || systemIcon}
-              alt="Player"
+              src={systemIcon}
+              alt="SYSTEM"
               className={styles.logo}
-              onError={e => { e.target.src = systemIcon; }}
             />
           </div>
           <h2 className={styles.brandTitle}>SYSTEM</h2>
