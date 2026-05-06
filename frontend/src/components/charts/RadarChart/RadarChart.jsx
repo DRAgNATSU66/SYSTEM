@@ -10,17 +10,18 @@ import { getTodayStr } from '../../../utils/dateUtils';
 import styles from './RadarChart.module.css';
 
 const CustomTooltip = ({ active, payload }) => {
-  const { bodyweight } = useWorkoutStore();
+  const { bodyweight, bodyFat } = useWorkoutStore();
   if (active && payload && payload.length) {
     const data = payload[0].payload;
 
     const formatValue = (val, sub) => {
       if (sub === 'IQ') return Math.floor(70 + (val * 0.9)) + ' IQ';
       if (sub === 'MUSCLE') {
-        if (bodyweight > 0) {
-          const leanMass = (bodyweight * 0.40 + (val / 100) * bodyweight * 0.12).toFixed(1);
+        if (bodyweight > 0 && bodyFat > 0) {
+          const leanMass = (bodyweight * (1 - bodyFat / 100)).toFixed(1);
           return leanMass + ' KG LEAN';
         }
+        if (bodyweight > 0) return (bodyweight * 0.40 + (val / 100) * bodyweight * 0.12).toFixed(1) + ' KG';
         return val + '% VOL';
       }
       if (sub === 'MOOD') return ((val / 5) - 10).toFixed(1) + ' PT';
@@ -45,7 +46,7 @@ const RadarChart = () => {
   const { tasks, completions } = useTaskStore();
   const { dailyMetrics } = useMetricsStore();
   const { accumulatedIQ, accumulatedKnowledge } = useStudyStore();
-  const { logs: workoutLogs, bodyweight } = useWorkoutStore();
+  const { logs: workoutLogs, bodyweight, bodyFat } = useWorkoutStore();
   const { streakDays, dailyCategoryAP } = useAuraStore();
   const today = getTodayStr();
 
@@ -101,7 +102,7 @@ const RadarChart = () => {
   const metrics = dailyMetrics[today] || {};
 
   const data = [
-    { subject: 'MUSCLE', A: getWorkoutProgress(), unit: 'KG', fullMark: 100, desc: bodyweight > 0 ? `BW: ${bodyweight}kg — estimated lean mass shown on hover.` : 'Set your bodyweight in Workout tab for lean mass estimate.' },
+    { subject: 'MUSCLE', A: getWorkoutProgress(), unit: 'KG', fullMark: 100, desc: bodyweight > 0 && bodyFat > 0 ? `Lean mass: ${(bodyweight*(1-bodyFat/100)).toFixed(1)}kg (BW ${bodyweight}kg @ ${bodyFat}% BF)` : bodyweight > 0 ? `BW: ${bodyweight}kg — add body fat % for lean mass.` : 'Set bodyweight + body fat % in Workout tab.' },
     { subject: 'IQ', A: getIQProgress(), unit: 'IQ', fullMark: 100, desc: `Accumulated: ${accumulatedIQ.toFixed(1)} IQ pts. HIGH tier: 1/hr, MED: 0.5/hr, LOW: 0.1/hr.` },
     { subject: 'MOBILITY', A: getMobilityProgress(), unit: '%', fullMark: 100, desc: 'Log mobility subgroups in Workout → Mobility tab.' },
     { subject: 'MOOD', A: Math.min(100, ((metrics.mood || 5) * 10)), unit: 'PT', fullMark: 100, desc: 'Emotional equilibrium.' },

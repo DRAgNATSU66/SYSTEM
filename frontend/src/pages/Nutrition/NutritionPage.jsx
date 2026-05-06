@@ -115,11 +115,11 @@ const NutritionPage = () => {
 
     const valueToLog = parseFloat(rawValue) || 0;
     if (tab === 'macros') {
+      logMacroValue(macro.id, valueToLog);
       if (user?.id) metricsService.logMacroValue(user.id, macro.id, valueToLog, today);
-      else logMacroValue(macro.id, valueToLog);
     } else {
+      logMicroValue(macro.id, valueToLog);
       if (user?.id) metricsService.logMicroValue(user.id, macro.id, valueToLog, today);
-      else logMicroValue(macro.id, valueToLog);
     }
 
     if (valueToLog <= 0) {

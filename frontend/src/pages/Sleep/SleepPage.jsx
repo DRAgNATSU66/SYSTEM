@@ -53,11 +53,8 @@ const SleepPage = () => {
   const handleSync = () => {
     resetDailyIfNeeded();
     const metricsData = { sleep: numHours, deepSleep: numDeep };
-    if (user?.id) {
-      metricsService.logMetrics(user.id, metricsData, today);
-    } else {
-      logMetrics(metricsData);
-    }
+    logMetrics(metricsData);
+    if (user?.id) metricsService.logMetrics(user.id, metricsData, today);
     // Only award AP once per day — prevent double-logging AP on update
     const alreadyAwarded = (dailyCategoryAP[today]?.SLEEP || 0) > 0;
     if (!alreadyAwarded) {

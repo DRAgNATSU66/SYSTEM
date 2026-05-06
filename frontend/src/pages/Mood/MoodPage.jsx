@@ -35,11 +35,8 @@ const MoodPage = () => {
     const face = faces.find(f => f.val === pendingMood);
     resetDailyIfNeeded();
     const metricsData = { mood: pendingMood, moodNote: noteText };
-    if (user?.id) {
-      metricsService.logMetrics(user.id, metricsData, today);
-    } else {
-      logMetrics(metricsData);
-    }
+    logMetrics(metricsData);
+    if (user?.id) metricsService.logMetrics(user.id, metricsData, today);
     const moodAP = Math.round(Math.min(1, pendingMood / 5) * 100);
     addCategoryAP('MOOD', moodAP, `MOOD LOGGED: ${face.label}`);
     checkAndUpdateStreak();

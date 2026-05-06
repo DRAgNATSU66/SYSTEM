@@ -29,8 +29,10 @@ export const useWorkoutStore = create(persist((set) => ({
   // Last logged values for each exercise — persisted across sessions
   lastLoggedValues: {}, // { muscleGroupId: { subGroupId: { sets, reps, weight } } }
   lastLoggedCardio: { lss: { minutes: 30, bpm: 135 }, vo2max: { bpm: 160, distKm: 3.5, timeMins: 10, age: 22 } },
-  bodyweight: 0, // kg — user's current bodyweight, used for MUSCLE axis lean mass estimate
+  bodyweight: 0, // kg
+  bodyFat: 0,    // % body fat
   setBodyweight: (kg) => set({ bodyweight: Math.max(0, parseFloat(kg) || 0) }),
+  setBodyFat: (pct) => set({ bodyFat: Math.min(60, Math.max(0, parseFloat(pct) || 0)) }),
 
   logCardio: (type, data, date = new Date().toISOString().split('T')[0]) => set((state) => ({
     cardio: {

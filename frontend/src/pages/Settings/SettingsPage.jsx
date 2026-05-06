@@ -6,6 +6,7 @@ import { useTaskStore } from '../../store/taskStore';
 import { useAuraStore } from '../../store/auraStore';
 import { userService } from '../../services/userService';
 import { supabase } from '../../services/supabaseClient';
+import { pushChange } from '../../services/syncEngine';
 import { generateWrapped, downloadWrapped, isWrappedAvailable } from '../../utils/wrappedRecap';
 import PulseCore from '../../components/ui/PulseCore/PulseCore';
 import PlayerLogo from '../../assets/player-logo.png';
@@ -120,12 +121,23 @@ const SettingsPage = () => {
     e.preventDefault();
     if (!newTaskTitle.trim()) return;
     addTask({ title: newTaskTitle.trim(), type: 'permanent' });
+    // push to Supabase — get the task that was just added (last in array)
+    if (user?.id) {
+      setTimeout(() => {
+        const latest = useTaskStore.getState().tasks.at(-1);
+        if (latest) pushChange('tasks', 'UPSERT', { ...latest, user_id: user.id });
+      }, 0);
+    }
     setNewTaskTitle('');
   };
 
   const handleEditSave = (id) => {
     if (!editTitle.trim()) return;
     updateTask(id, { title: editTitle.trim() });
+    if (user?.id) {
+      const t = useTaskStore.getState().tasks.find(x => x.id === id);
+      if (t) pushChange('tasks', 'UPSERT', { ...t, user_id: user.id });
+    }
     setEditingId(null);
     setEditTitle('');
   };

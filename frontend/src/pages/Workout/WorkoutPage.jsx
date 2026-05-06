@@ -224,7 +224,7 @@ const VO2MaxCard = ({ onLog, lastVO2 }) => {
 
 // ─── Main WorkoutPage ─────────────────────────────────────────────────────────
 const WorkoutPage = () => {
-  const { muscles, logVolume, logCardio, logs, personalBests, lastLoggedValues, lastLoggedCardio, bodyweight, setBodyweight } = useWorkoutStore();
+  const { muscles, logVolume, logCardio, logs, personalBests, lastLoggedValues, lastLoggedCardio, bodyweight, setBodyweight, bodyFat, setBodyFat } = useWorkoutStore();
   const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded } = useAuraStore();
   const { user, preferences } = useUserStore();
   const today     = getTodayStr();
@@ -411,15 +411,24 @@ const WorkoutPage = () => {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '0.25rem' }}>
             <h2 className={styles.sectionTitle} style={{ margin: 0 }}>MUSCLE MATRIX — VOLUME PENTAGRAM</h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '0.1em' }}>BODYWEIGHT</span>
+              <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '0.1em' }}>BW</span>
               <input
                 type="number" min="30" max="250" step="0.5"
                 value={bodyweight || ''}
                 onChange={e => setBodyweight(e.target.value)}
                 placeholder="kg"
-                style={{ width: 68, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, color: '#fff', fontSize: '0.8rem', fontWeight: 700, padding: '0.4rem 0.6rem', textAlign: 'center', fontFamily: 'inherit', transition: 'border-color 0.2s' }}
+                style={{ width: 60, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, color: '#fff', fontSize: '0.8rem', fontWeight: 700, padding: '0.4rem 0.5rem', textAlign: 'center', fontFamily: 'inherit' }}
               />
               <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 700 }}>KG</span>
+              <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '0.1em', marginLeft: '0.5rem' }}>BF%</span>
+              <input
+                type="number" min="0" max="60" step="0.5"
+                value={bodyFat || ''}
+                onChange={e => setBodyFat(e.target.value)}
+                placeholder="%"
+                style={{ width: 52, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, color: 'var(--rank-sigma)', fontSize: '0.8rem', fontWeight: 700, padding: '0.4rem 0.5rem', textAlign: 'center', fontFamily: 'inherit' }}
+              />
+              <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 700 }}>%</span>
             </div>
           </div>
           <p className={styles.sectionSubtitle}>Radar shows total volume (Sets × Reps × Weight) per sub-group today</p>
