@@ -15,6 +15,7 @@ import { useStudyStore } from '../store/studyStore';
 import { useSocialStore } from '../store/socialStore';
 import { useGoalStore, useProjectStore, useHobbyStore } from '../store/assetStores';
 import { useUiStore } from '../store/uiStore';
+import { taskToRow, goalToRow, projectToRow, projectSessionToRow, hobbyToRow, rowToHobby } from './dbSerializers';
 
 // ─────────────────────────────────────────────
 // Offline Queue Store (persisted to localStorage)
@@ -65,12 +66,14 @@ export async function pushChange(table, op, payload) {
 
   try {
     if (op === 'DELETE') {
-      await supabase.from(table).delete().eq('id', payload.id);
+      const { error } = await supabase.from(table).delete().eq('id', payload.id);
+      if (error) throw error;
     } else {
-      await supabase.from(table).upsert(payload, { onConflict: getConflictKey(table) });
+      const { error } = await supabase.from(table).upsert(payload, { onConflict: getConflictKey(table) });
+      if (error) throw error;
     }
   } catch (err) {
-    console.warn(`[syncEngine] pushChange failed for ${table}, queuing.`, err);
+    console.warn(`[syncEngine] pushChange failed for ${table}:`, err?.message || err);
     useSyncQueue.getState().enqueue(table, op, payload);
   }
 }
@@ -102,6 +105,8 @@ function getConflictKey(table) {
 // ─────────────────────────────────────────────
 export async function flushQueue() {
   if (!supabase) return;
+  const { offlineMode, cloudSync } = useUiStore.getState();
+  if (offlineMode || !cloudSync) return;
   const { queue, dequeue } = useSyncQueue.getState();
   if (!queue.length || !navigator.onLine) return;
   const { data: { user: currentUser } } = await supabase.auth.getUser().catch(() => ({ data: { user: null } }));
@@ -124,15 +129,17 @@ export async function flushQueue() {
     }
     try {
       if (item.op === 'DELETE') {
-        await supabase.from(item.table).delete().eq('id', item.payload.id);
+        const { error } = await supabase.from(item.table).delete().eq('id', item.payload.id);
+        if (error) throw error;
       } else {
-        await supabase.from(item.table).upsert(item.payload, {
+        const { error } = await supabase.from(item.table).upsert(item.payload, {
           onConflict: getConflictKey(item.table),
         });
+        if (error) throw error;
       }
       dequeue(item.id);
     } catch (err) {
-      console.warn(`[syncEngine] flush failed for item ${item.id}`, err);
+      console.warn(`[syncEngine] flush failed for ${item.table} (${item.id}):`, err?.message || err);
     }
   }
 
@@ -199,15 +206,15 @@ useAuraStore.subscribe((state) => {
   clearTimeout(_pendingProfileSync);
   _pendingProfileSync = setTimeout(() => {
     const aura = useAuraStore.getState();
-    if (aura.totalAuraPoints <= 0) return; // never push 0 — preserve real data on server
+    // Only push streak + multiplier — total_aura_points is computed server-side
+    // from aura_logs via trigger, so clients cannot inflate it directly.
     pushChange('profiles', 'UPSERT', {
       id: userId,
-      total_aura_points: aura.totalAuraPoints,
-      current_streak:    aura.streakDays,
-      max_streak:        aura.maxStreak,
-      multiplier:        aura.multiplier,
+      current_streak: aura.streakDays,
+      max_streak:     aura.maxStreak,
+      multiplier:     aura.multiplier,
     });
-  }, 300); // 300ms — fast enough to sync before logout
+  }, 300);
 });
 
 // ─────────────────────────────────────────────
@@ -223,24 +230,25 @@ export async function pullAllData(userId) {
 
   try {
     const settled = await Promise.allSettled([
-      supabase.from('profiles').select('*').eq('id', userId).single(),
-      supabase.from('tasks').select('*').eq('user_id', userId),
-      supabase.from('task_completions').select('*').eq('user_id', userId),
-      supabase.from('daily_scores').select('*').eq('user_id', userId),
-      supabase.from('aura_logs').select('*').eq('user_id', userId).order('date', { ascending: false }).limit(30),
-      supabase.from('workout_logs').select('*').eq('user_id', userId).order('date', { ascending: false }).limit(30),
-      supabase.from('personal_bests').select('*').eq('user_id', userId).single(),
-      supabase.from('study_subjects').select('*').eq('user_id', userId),
-      supabase.from('study_sessions').select('*').eq('user_id', userId).order('date', { ascending: false }).limit(30),
-      supabase.from('daily_metrics').select('*').eq('user_id', userId).order('date', { ascending: false }).limit(30),
-      supabase.from('macro_configs').select('*').eq('user_id', userId).single(),
-      supabase.from('goals').select('*').eq('user_id', userId),
-      supabase.from('projects').select('*').eq('user_id', userId),
-      supabase.from('project_sessions').select('*').eq('user_id', userId),
-      supabase.from('hobbies').select('*').eq('user_id', userId),
-      supabase.from('friends').select('*').eq('user_id', userId),
+      supabase.from('profiles').select('id,username,rank_tier,avatar_url,cypher_id,total_aura_points,current_streak,max_streak,multiplier,accumulated_iq,accumulated_knowledge,updated_at').eq('id', userId).single(),
+      supabase.from('tasks').select('id,user_id,title,type,base_weight,method,target,subcategory,created_at').eq('user_id', userId),
+      supabase.from('task_completions').select('task_id,date,value').eq('user_id', userId),
+      supabase.from('daily_scores').select('date,score').eq('user_id', userId),
+      supabase.from('aura_logs').select('date,earned,lost,multiplier').eq('user_id', userId).order('date', { ascending: false }).limit(30),
+      supabase.from('workout_logs').select('date,cardio,volume').eq('user_id', userId).order('date', { ascending: false }).limit(30),
+      supabase.from('personal_bests').select('data').eq('user_id', userId).single(),
+      supabase.from('study_subjects').select('id,name,color').eq('user_id', userId),
+      supabase.from('study_sessions').select('date,data,accumulated_iq,accumulated_knowledge').eq('user_id', userId).order('date', { ascending: false }).limit(30),
+      supabase.from('daily_metrics').select('date,sleep,deep_sleep,mood,mood_note,macros,micros').eq('user_id', userId).order('date', { ascending: false }).limit(30),
+      supabase.from('macro_configs').select('macros').eq('user_id', userId).single(),
+      supabase.from('goals').select('id,user_id,title,target_date,completed,bounty_ap,archived,completed_at,retry_count').eq('user_id', userId),
+      supabase.from('projects').select('id,user_id,title,type,status,color,total_hours,archived').eq('user_id', userId),
+      supabase.from('project_sessions').select('id,user_id,project_id,date,hours,efficiency').eq('user_id', userId),
+      supabase.from('hobbies').select('id,user_id,name,data,archived').eq('user_id', userId),
+      supabase.from('friends').select('id,user_id,friend_id,status').eq('user_id', userId),
       supabase.from('duels').select('*').or(`challenger_id.eq.${userId},opponent_id.eq.${userId}`),
       supabase.from('aura_history_detail').select('date,net,reason').eq('user_id', userId).order('created_at', { ascending: false }).limit(500),
+      supabase.from('body_metrics').select('date,bodyweight,body_fat').eq('user_id', userId).order('date', { ascending: false }).limit(7),
     ]);
 
     const unwrap = (r) => r.status === 'fulfilled' ? r.value : { data: null, error: r.reason };
@@ -248,11 +256,26 @@ export async function pullAllData(userId) {
       profileRes, tasksRes, completionsRes, scoresRes, auraLogsRes,
       workoutRes, pbRes, studySubjectsRes, studySessionsRes, metricsRes,
       macroConfigRes, goalsRes, projectsRes, projectSessionsRes, hobbiesRes,
-      friendsRes, duelsRes, auraDetailRes,
+      friendsRes, duelsRes, auraDetailRes, bodyMetricsRes,
     ] = settled.map(unwrap);
 
+    // Log both rejected promises AND fulfilled responses with a Supabase { error }
+    const queryNames = [
+      'profiles','tasks','task_completions','daily_scores','aura_logs',
+      'workout_logs','personal_bests','study_subjects','study_sessions','daily_metrics',
+      'macro_configs','goals','projects','project_sessions','hobbies',
+      'friends','duels','aura_history_detail','body_metrics',
+    ];
     settled.forEach((r, i) => {
-      if (r.status === 'rejected') console.warn(`[syncEngine] pullAllData query ${i} failed:`, r.reason);
+      if (r.status === 'rejected') {
+        console.warn(`[syncEngine] pullAllData ${queryNames[i]} rejected:`, r.reason);
+      } else if (r.value?.error) {
+        const { code, message } = r.value.error;
+        // PGRST116 = "no rows" for .single() — expected, not an error
+        if (code !== 'PGRST116') {
+          console.warn(`[syncEngine] pullAllData ${queryNames[i]} error:`, code, message);
+        }
+      }
     });
 
     const now = new Date().toISOString();
@@ -380,6 +403,16 @@ export async function pullAllData(userId) {
       });
     }
 
+    // — Hydrate body_metrics (most recent entry wins)
+    if (bodyMetricsRes.data?.length) {
+      const latest = bodyMetricsRes.data[0];
+      const current = useWorkoutStore.getState();
+      useWorkoutStore.setState({
+        bodyweight: latest.bodyweight || current.bodyweight || 0,
+        bodyFat: latest.body_fat || current.bodyFat || 0,
+      });
+    }
+
     // — Hydrate studyStore
     // Only hydrate if server actually has data (empty array is NOT enough to trigger a wipe)
     if (studySubjectsRes.data?.length || studySessionsRes.data?.length) {
@@ -489,7 +522,8 @@ export async function pullAllData(userId) {
     }
 
     {
-      const serverHobbies = hobbiesRes.data || [];
+      // DB rows have name/data shape — convert to UI shape (title/type/categories)
+      const serverHobbies = (hobbiesRes.data || []).map(rowToHobby);
       const localHobbyState = useHobbyStore.getState();
       const serverActive = serverHobbies.filter(h => !h.archived);
       const serverHistory = serverHobbies.filter(h => h.archived);
@@ -537,10 +571,9 @@ export async function seedServerFromLocal(userId) {
 
   const ops = [];
 
-  // Push profile with multiplier, streak, and neural stats
+  // Push safe profile fields — total_aura_points computed server-side
   ops.push(supabase.from('profiles').upsert({
     id: userId,
-    total_aura_points: auraState.totalAuraPoints,
     current_streak: auraState.streakDays,
     max_streak: auraState.maxStreak,
     multiplier: auraState.multiplier,
@@ -550,7 +583,7 @@ export async function seedServerFromLocal(userId) {
 
   // Push tasks
   taskState.tasks.forEach(task => {
-    ops.push(supabase.from('tasks').upsert({ ...task, user_id: userId }, { onConflict: 'id' }));
+    ops.push(supabase.from('tasks').upsert(taskToRow(task, userId), { onConflict: 'id' }));
   });
 
   // Push completions
@@ -581,18 +614,30 @@ export async function seedServerFromLocal(userId) {
 
   // Push goals
   goalState.goals.forEach(g => {
-    ops.push(supabase.from('goals').upsert({ ...g, user_id: userId }, { onConflict: 'user_id,id' }));
+    ops.push(supabase.from('goals').upsert(goalToRow(g, userId), { onConflict: 'user_id,id' }));
   });
 
   // Push projects
   projectState.projects.forEach(p => {
-    ops.push(supabase.from('projects').upsert({ ...p, user_id: userId }, { onConflict: 'user_id,id' }));
+    ops.push(supabase.from('projects').upsert(projectToRow(p, userId), { onConflict: 'user_id,id' }));
+  });
+
+  // Push project sessions
+  projectState.sessions.forEach(s => {
+    ops.push(supabase.from('project_sessions').upsert(projectSessionToRow(s, userId), { onConflict: 'user_id,id' }));
   });
 
   // Push hobbies
   hobbyState.hobbies.forEach(h => {
-    ops.push(supabase.from('hobbies').upsert({ ...h, user_id: userId }, { onConflict: 'user_id,id' }));
+    ops.push(supabase.from('hobbies').upsert(hobbyToRow(h, userId), { onConflict: 'user_id,id' }));
   });
 
-  await Promise.allSettled(ops);
+  const seedResults = await Promise.allSettled(ops);
+  seedResults.forEach((r, i) => {
+    if (r.status === 'rejected') {
+      console.warn(`[syncEngine] seedServerFromLocal op ${i} rejected:`, r.reason);
+    } else if (r.value?.error) {
+      console.warn(`[syncEngine] seedServerFromLocal op ${i} error:`, r.value.error.message);
+    }
+  });
 }

@@ -14,7 +14,7 @@ import { useSocialStore } from '../../store/socialStore';
 import { supabase } from '../../services/supabaseClient';
 import styles from './Command.module.css';
 
-const HF_AGENT = 'https://DRAgNATSU66-system-agent.hf.space';
+const HF_AGENT = import.meta.env.VITE_CORE_AGENT_URL || 'https://DRAgNATSU66-system-agent.hf.space';
 const KNOWN_CMDS = ['critique','status','commend','reward','redeem','complete','timer','help','clear'];
 
 const CommandPage = () => {

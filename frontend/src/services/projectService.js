@@ -1,12 +1,13 @@
 import { supabase } from './supabaseClient';
 import { pushChange } from './syncEngine';
 import { useProjectStore } from '../store/assetStores';
+import { projectToRow, projectSessionToRow } from './dbSerializers';
 
 export const projectService = {
   async getProjects(userId) {
     const { data, error } = await supabase
       .from('projects')
-      .select('*')
+      .select('id,user_id,title,type,status,color,total_hours,archived,created_at')
       .eq('user_id', userId);
     if (error) throw error;
     return data || [];
@@ -15,7 +16,7 @@ export const projectService = {
   async getProjectSessions(userId) {
     const { data, error } = await supabase
       .from('project_sessions')
-      .select('*')
+      .select('id,user_id,project_id,date,hours,efficiency,created_at')
       .eq('user_id', userId)
       .order('date', { ascending: false });
     if (error) throw error;
@@ -26,7 +27,7 @@ export const projectService = {
     useProjectStore.getState().addProject(title, type, color, status);
     const projects = useProjectStore.getState().projects;
     const newProject = projects[projects.length - 1];
-    pushChange('projects', 'UPSERT', { ...newProject, user_id: userId });
+    pushChange('projects', 'UPSERT', projectToRow(newProject, userId));
   },
 
   updateStatus(userId, id, status) {
@@ -43,6 +44,6 @@ export const projectService = {
     useProjectStore.getState().logSession(projectId, duration, efficiency, project_title);
     const sessions = useProjectStore.getState().sessions;
     const newSession = sessions[sessions.length - 1];
-    pushChange('project_sessions', 'UPSERT', { ...newSession, user_id: userId, hours: duration });
+    pushChange('project_sessions', 'UPSERT', projectSessionToRow({ ...newSession, user_id: userId }));
   },
 };

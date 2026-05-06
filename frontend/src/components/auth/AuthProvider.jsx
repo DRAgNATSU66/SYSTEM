@@ -28,7 +28,12 @@ export function AuthProvider({ children }) {
   useEffect(() => { ensureCypherId(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!supabase) return; // Supabase not configured — skip auth setup
+    if (!supabase) {
+      // Supabase not configured — clear any stale persisted user and unblock routing
+      clearUser();
+      setAuthLoading(false);
+      return;
+    }
     let cancelled = false;
 
     // Restore session on mount — setAuthLoading(false) always fires so
@@ -38,6 +43,9 @@ export function AuthProvider({ children }) {
       if (session?.user) {
         setUser(session.user);
         handleUserLogin(session.user);
+      } else {
+        // No active session — clear any stale persisted user
+        clearUser();
       }
       setAuthLoading(false);
     });
@@ -90,16 +98,23 @@ export function AuthProvider({ children }) {
         .single();
 
       if (!data) {
-        // First login — create profile
+        // First login — create profile then hydrate
         const username = user.email?.split('@')[0] || 'Grinder';
         try {
           await userService.upsertProfileOnSignUp(user.id, username);
         } catch (e) {
           console.warn('[AuthProvider] First login seed failed:', e);
         }
+        await pullAllData(user.id);
       } else {
         // Returning user — pull all data from server
         await pullAllData(user.id);
+      }
+
+      // Push local cypher_id to DB so friend/duel lookup works on any device
+      const { cypherId } = useUserStore.getState();
+      if (cypherId) {
+        supabase.from('profiles').update({ cypher_id: cypherId }).eq('id', user.id).then(() => {});
       }
     } finally {
       processingRef.current = false;

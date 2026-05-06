@@ -131,10 +131,20 @@ async def check_and_increment_rate_limit(user_id: str) -> bool:
 
 
 async def verify_user(user_id: str, auth_token: str) -> bool:
-    # Accept any request with a non-empty user_id.
-    # JWT verification via service-role client is unreliable across supabase-py versions.
-    # Rate limiting (ai_usage table) handles abuse.
-    return bool(user_id)
+    if not user_id:
+        return False
+    if not supabase_client or not auth_token:
+        # Supabase not configured (local dev) — fall back to user_id presence check
+        logger.warning("verify_user: Supabase not configured, skipping JWT check")
+        return bool(user_id)
+    try:
+        resp = supabase_client.auth.get_user(auth_token)
+        if not resp or not resp.user:
+            return False
+        return resp.user.id == user_id
+    except Exception as e:
+        logger.warning(f"verify_user JWT check failed: {e}")
+        return False
 
 
 async def stream_openrouter(messages: list, model: str = PRIMARY_MODEL) -> AsyncGenerator[str, None]:

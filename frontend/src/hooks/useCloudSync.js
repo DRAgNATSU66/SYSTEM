@@ -39,10 +39,10 @@ export const useCloudSync = () => {
     auraDebounceRef.current = setTimeout(() => {
       const today = new Date().toISOString().split('T')[0];
 
-      // Push profile state (including neural stats)
+      // Push safe profile fields only — total_aura_points is computed server-side
+      // from aura_logs, so clients cannot inflate it directly.
       pushChange('profiles', 'UPSERT', {
         id: user.id,
-        total_aura_points: totalAuraPoints,
         current_streak: streakDays,
         max_streak: maxStreak,
         multiplier,

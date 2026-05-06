@@ -30,16 +30,8 @@ export default defineConfig({
         navigateFallbackDenylist: [/^\/offline\.html$/, /\/api\//, /\.[a-z]+$/i],
         runtimeCaching: [
           {
-            urlPattern: /supabase.*rest/i,
-            handler: 'NetworkFirst',
-            options: {
-              networkTimeoutSeconds: 1,
-              cacheName: 'supabase-api',
-              expiration: { maxAgeSeconds: 300, maxEntries: 50 },
-            },
-          },
-          {
-            urlPattern: /supabase.*auth/i,
+            // Never cache Supabase REST or auth — private data must not persist in Cache Storage
+            urlPattern: /supabase/i,
             handler: 'NetworkOnly',
           },
         ],

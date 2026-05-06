@@ -7,8 +7,8 @@ export const useTaskStore = create(
       tasks: [],
       completions: {}, // { taskId: { "YYYY-MM-DD": boolean/numeric } }
       
-      addTask: (task) => set((state) => ({ 
-        tasks: [...state.tasks, { ...task, id: Date.now().toString(), createdAt: new Date().toISOString() }] 
+      addTask: (task) => set((state) => ({
+        tasks: [...state.tasks, { ...task, id: crypto.randomUUID(), createdAt: new Date().toISOString() }]
       })),
       
       removeTask: (taskId) => set((state) => ({

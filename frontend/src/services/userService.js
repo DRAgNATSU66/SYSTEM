@@ -1,12 +1,13 @@
 import { supabase } from './supabaseClient';
 import { pushChange } from './syncEngine';
 import { useUserStore } from '../store/userStore';
+import { profileToRow } from './dbSerializers';
 
 export const userService = {
   async getProfile(userId) {
     const { data, error } = await supabase
       .from('profiles')
-      .select('*')
+      .select('id,username,rank_tier,avatar_url,cypher_id,total_aura_points,current_streak,max_streak,multiplier,accumulated_iq,accumulated_knowledge,updated_at')
       .eq('id', userId)
       .single();
     if (error) throw error;
@@ -15,7 +16,7 @@ export const userService = {
 
   async updateProfile(userId, data) {
     useUserStore.getState().updateProfile(data);
-    pushChange('profiles', 'UPSERT', { id: userId, ...data });
+    pushChange('profiles', 'UPSERT', profileToRow(userId, data));
   },
 
   async upsertProfileOnSignUp(userId, username) {

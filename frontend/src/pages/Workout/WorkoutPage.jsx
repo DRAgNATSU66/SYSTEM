@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import PageWrapper from '../../components/layout/PageWrapper/PageWrapper';
 import ProgressBar from '../../components/ui/ProgressBar/ProgressBar';
 import SubRadar from '../../components/charts/SubRadar/SubRadar';
@@ -6,6 +6,7 @@ import { useWorkoutStore } from '../../store/workoutStore';
 import { useAuraStore } from '../../store/auraStore';
 import { useUserStore } from '../../store/userStore';
 import { workoutService } from '../../services/workoutService';
+import { pushChange } from '../../services/syncEngine';
 import { getTodayStr } from '../../utils/dateUtils';
 import { calculateVO2Max } from '../../utils/vo2MaxCalculator';
 import styles from './Workout.module.css';
@@ -265,6 +266,22 @@ const WorkoutPage = () => {
     return Math.min(100, Math.round((total / max) * 100));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [logs, weekDates]);
+
+  // Debounced push of body composition to DB
+  const bodyMetricTimer = useRef(null);
+  useEffect(() => {
+    if (!user?.id || (bodyweight <= 0 && bodyFat <= 0)) return;
+    clearTimeout(bodyMetricTimer.current);
+    bodyMetricTimer.current = setTimeout(() => {
+      pushChange('body_metrics', 'UPSERT', {
+        user_id: user.id,
+        date: today,
+        bodyweight: bodyweight || null,
+        body_fat: bodyFat || null,
+      });
+    }, 1500);
+    return () => clearTimeout(bodyMetricTimer.current);
+  }, [bodyweight, bodyFat, user?.id, today]);
 
   const handleLogVolume = (g, s, sets, reps, weight) => {
     resetDailyIfNeeded();

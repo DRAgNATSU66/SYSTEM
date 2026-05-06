@@ -42,7 +42,7 @@ export const useStudyStore = create(
       accumulatedKnowledge: 0,  // Total Knowledge points gained from all study sessions
 
       addSubject: (name, color = '#FFFFFF') => set((state) => ({
-        subjects: [...state.subjects, { id: Date.now().toString(), name, color }]
+        subjects: [...state.subjects, { id: crypto.randomUUID(), name, color }]
       })),
 
       removeSubject: (id) => set((state) => ({

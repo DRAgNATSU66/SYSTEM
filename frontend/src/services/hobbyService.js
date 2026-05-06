@@ -1,12 +1,13 @@
 import { supabase } from './supabaseClient';
 import { pushChange } from './syncEngine';
 import { useHobbyStore } from '../store/assetStores';
+import { hobbyToRow } from './dbSerializers';
 
 export const hobbyService = {
   async getHobbies(userId) {
     const { data, error } = await supabase
       .from('hobbies')
-      .select('*')
+      .select('id,user_id,name,data,archived,created_at')
       .eq('user_id', userId);
     if (error) throw error;
     return data || [];
@@ -16,7 +17,7 @@ export const hobbyService = {
     useHobbyStore.getState().addHobby(hobby);
     const hobbies = useHobbyStore.getState().hobbies;
     const newHobby = hobbies[hobbies.length - 1];
-    pushChange('hobbies', 'UPSERT', { ...newHobby, user_id: userId });
+    pushChange('hobbies', 'UPSERT', hobbyToRow(newHobby, userId));
   },
 
   deleteHobby(userId, id, fromHistory = false) {
