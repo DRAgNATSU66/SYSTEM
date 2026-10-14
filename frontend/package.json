@@ -13,7 +13,6 @@
     "test": "node --test \"src/**/__tests__/*.test.js\" \"scripts/__tests__/*.test.mjs\""
   },
   "dependencies": {
-    "@react-three/fiber": "^9.5.0",
     "@supabase/supabase-js": "^2.101.0",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.38.0",
@@ -23,7 +22,6 @@
     "react-is": "^19.2.4",
     "react-router-dom": "^7.13.2",
     "recharts": "^3.8.1",
-    "three": "^0.183.2",
     "vite-plugin-pwa": "^1.2.0",
     "zustand": "^5.0.12"
   },
