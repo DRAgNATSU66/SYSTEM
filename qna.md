@@ -131,3 +131,54 @@ These are recorded as known blind spots in the Task 3 report:
 For a colour-token migration, the main risk is a wrong colour on a large surface or on text, and that is well above these limits.
 
 **Process note, recorded verbatim:** during Task 3 an implementer subagent killed two `chrome_crashpad_handler` processes that belonged to the user's own Chrome session on localhost:8765. Only Chrome's crash reporter was affected. This was disclosed to the user, and later dispatches restrict process kills to PIDs the agent started itself.
+
+---
+
+## QNA-004 — Colour and font token migration (phase 2), pixel-identical
+
+- **Date:** 2026-10-14
+- **Commits:** `b210ec9`, `b2b4fbf`, `9c9e98f`, `f1b68da`, `6297d75` and `72ee2a5` (merged as `da38fe4` and `7014f07`), `96d72c3` on `redesign/seren`
+
+**Q1. What changed, mechanically?**
+- `frontend/src/theme/tokens.css` defines a `legacy` token set as RGB channel triples, so alpha variants survive, for example `--accent-rgb: 0 191 255`. Channel tokens are also defined for the rank and AP-tier colours (`--rank-*-rgb`, `--tier-*-rgb`).
+- `frontend/scripts/tokenize-css.mjs` is a tested codemod (12 `node --test` cases). It rewrote every CSS file:
+  - Task 5 made 1,460 replacements: accent 339, accentHi 4, fg 653, shade 278, fontDisplay 180, fontBody 6.
+  - Task 6b made 87 more for rank and tier alphas.
+  - Lines that define a rank or tier token are protected, so rank colours never get coupled to the accent.
+- JS/JSX colours now go through `src/theme/palette.js`:
+  - `rgbVar()` for inline styles
+  - `useThemeColors()` for SVG and Recharts attributes, which don't reliably resolve `var()`
+- Dead `App.css` and the `components/three/*` components were deleted, and the `three` and `@react-three/fiber` dependencies uninstalled.
+
+**Q2. Measured before and after** (`git grep` over `frontend/src`, `ui-legacy` against `96d72c3`):
+
+| Literal | Before | After |
+|---|---|---|
+| `rgba(0,191,255,…)` | 356 | 1 (a test fixture string) |
+| `'Outfit'` / `"Outfit"` | 184 | 1 (the `--font-display` definition) |
+| `#00BFFF` / `#00CFFF` hex | 27 | 8 (token definitions and comments, plus 2 project colours in `ProjectsPage.jsx` deliberately kept because they are saved as user data and would leak `var()` strings into Supabase rows) |
+
+**Q3. Why channel tokens and a codemod, rather than hand edits or plain hex tokens?**
+- Plain hex tokens can't express `rgba(0,191,255,0.12)`, and the accent appears at dozens of alpha steps. `rgb(var(--accent-rgb) / 0.12)` renders the same colour and lets one variable re-theme every step.
+- A codemod under test is repeatable and reviewable. 1,547 hand edits would be neither.
+
+**Q4. How was "no visual change" verified? (numbers as measured)**
+- The Playwright gate (QNA-003) ran after every task. The final combined run on `7014f07`: 34/34 routes within 0.1%, maximum 0.005%, 0 page errors.
+- Tests: 21/21 pass.
+- Lint: `✖ 23 problems (20 errors, 3 warnings)`, the same as the pre-change baseline at every task.
+- **Flakes, recorded verbatim.** On code that was otherwise identical, two runs breached the threshold on mobile, and re-runs passed:
+  - Task 6b: mobile/mood 0.179%
+  - Task 10: mobile goals 0.131%, history 0.376%, leaderboard 0.193%
+
+  The gate's mobile captures are not fully deterministic. The policy adopted: re-run once, and treat a route that fails twice as real.
+
+**Q5. What turned out wrong?**
+- The spec called `.app-layout aside { width: 260px }` a stale rule to delete. Measurement disproved that: removing it pushed all 17 desktop routes to 0.291–1.573% changed pixels. The rule stays, and the spec now carries a correction.
+- Removing `three` did not shrink the bundle. `index-BRU7rKMb.js` was 1,226,326 bytes before and after, because the dead components were never bundled.
+
+**Q6. Defence: "How do you know a rank colour didn't silently become the accent?"**
+- The codemod's protected-line rule skips any line that defines `--rank-`, `--color-` or `--tier-`. That is tested in `scripts/__tests__/tokenize-css.test.mjs`.
+- No rule maps `rgba(0,207,255,a)` or `#9E9E9E` to a rank token. Both values are ambiguous, which is also tested.
+- `#00CFFF` in JS was classified case by case, and each decision is in the Task 6/7/8 reports:
+  - chart series and the mood wave → accent-hi
+  - the leaderboard first-place colour and the rank resolver → `--rank-alpha`

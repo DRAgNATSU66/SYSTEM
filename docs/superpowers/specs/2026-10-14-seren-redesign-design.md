@@ -40,7 +40,8 @@ Re-skin SYSTEM in the visual language of *SerenIQ* (George Railean, Dribbble sho
 - **Two token sets** on `<html data-theme>`: `legacy` (today's values, pixel-identical) and `seren` (new, the default once shipped). The choice is stored in `uiStore`; the existing unused `theme` field gets repurposed.
 - **Global-rule clean-up:**
   - Scope the forced `nowrap` + ellipsis on all `button` and `h1`–`h6` to opt-in classes, so new components don't inherit truncation.
-  - Remove dead `App.css`, the stale `260px` aside rule (`index.css:416`), and the unused `components/three/*`.
+  - Remove dead `App.css` and the unused `components/three/*`.
+  - *(Correction, 2026-10-14: the `.app-layout aside { width: 260px }` rule is not stale. Removing it broke all 17 desktop routes by 0.29–1.57%, so it stays until the phase-4 shell rebuild replaces the layout. See QNA-004.)*
 
 ### 3.3 Framed shell
 
