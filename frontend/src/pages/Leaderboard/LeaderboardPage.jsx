@@ -4,15 +4,16 @@ import { useAuraStore } from '../../store/auraStore';
 import { useUserStore } from '../../store/userStore';
 import { supabase } from '../../services/supabaseClient';
 import { getAPColor } from '../../utils/apColorLogic';
+import { rgbVar } from '../../theme/palette';
 import styles from './Leaderboard.module.css';
 
 const RANK_NAMES  = ['IM HIM', 'ALPHA & OMEGA', 'SIGMA'];
-const RANK_COLORS = ['#00CFFF', '#39FF14', '#FFE600'];
+const RANK_COLORS = ['var(--rank-alpha)', 'var(--rank-omega)', 'var(--rank-sigma)'];
 
 const getRankLabel = (position, ap = 0) => {
-  if (ap <= 0) return { label: 'BETA', color: '#FF3131' };
+  if (ap <= 0) return { label: 'BETA', color: 'var(--rank-slacking)' };
   if (position >= 1 && position <= 3) return { label: RANK_NAMES[position - 1], color: RANK_COLORS[position - 1] };
-  return { label: `#${position}`, color: '#9E9E9E' };
+  return { label: `#${position}`, color: 'var(--rank-beta)' };
 };
 
 const timeAgo = (ts) => {
@@ -50,14 +51,14 @@ const Top5ProfileCard = ({ profileId, onClose }) => {
   }, [profileId]);
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }} onClick={onClose}>
-      <div style={{ background: 'var(--glass-bg)', border: '1px solid rgba(0,191,255,0.3)', borderRadius: 24, padding: '2rem', maxWidth: 420, width: '100%', maxHeight: '90vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+    <div style={{ position: 'fixed', inset: 0, background: rgbVar('--shade-rgb', 0.65), backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }} onClick={onClose}>
+      <div style={{ background: 'var(--glass-bg)', border: `1px solid ${rgbVar('--accent-rgb', 0.3)}`, borderRadius: 24, padding: '2rem', maxWidth: 420, width: '100%', maxHeight: '90vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
         {loading && <p style={{ color: 'var(--text-secondary)', textAlign: 'center' }}>LOADING...</p>}
         {error && <p style={{ color: 'var(--color-red)', textAlign: 'center', fontSize: '0.8rem' }}>{error}</p>}
         {data && (
           <>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-              <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(0,191,255,0.1)', border: '2px solid rgba(0,191,255,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0, fontSize: '1.4rem' }}>
+              <div style={{ width: 56, height: 56, borderRadius: '50%', background: rgbVar('--accent-rgb', 0.1), border: `2px solid ${rgbVar('--accent-rgb', 0.4)}`, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0, fontSize: '1.4rem' }}>
                 {data.avatar_url
                   ? <img src={data.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display='none'; e.target.parentNode.textContent='⬡'; }} />
                   : '⬡'}
@@ -66,7 +67,7 @@ const Top5ProfileCard = ({ profileId, onClose }) => {
                 <div style={{ fontWeight: 900, fontSize: '1.1rem', letterSpacing: '0.1em' }}>{(data.username || 'UNKNOWN').toUpperCase()}</div>
                 <div style={{ fontSize: '0.65rem', color: 'var(--rank-alpha)', letterSpacing: '0.12em', marginTop: '0.2rem' }}>RANK #{data.rank_position}</div>
               </div>
-              <button onClick={onClose} style={{ marginLeft: 'auto', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: 'var(--text-secondary)', cursor: 'pointer', padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}>✕</button>
+              <button onClick={onClose} style={{ marginLeft: 'auto', background: 'transparent', border: `1px solid ${rgbVar('--fg-rgb', 0.2)}`, borderRadius: 8, color: 'var(--text-secondary)', cursor: 'pointer', padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}>✕</button>
             </div>
 
             {[
@@ -78,9 +79,9 @@ const Top5ProfileCard = ({ profileId, onClose }) => {
               { label: 'TODAY EARNED', value: `+${(data.today_earned || 0).toLocaleString()} AP`, color: 'var(--color-green)' },
               { label: 'TODAY LOST', value: `-${(data.today_lost || 0).toLocaleString()} AP`, color: 'var(--color-red)' },
             ].map(row => (
-              <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '0.75rem', letterSpacing: '0.08em' }}>
+              <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: `1px solid ${rgbVar('--fg-rgb', 0.05)}`, fontSize: '0.75rem', letterSpacing: '0.08em' }}>
                 <span style={{ color: 'var(--text-secondary)', fontWeight: 700 }}>{row.label}</span>
-                <span style={{ fontWeight: 800, color: row.color || '#fff' }}>{row.value}</span>
+                <span style={{ fontWeight: 800, color: row.color || rgbVar('--fg-rgb') }}>{row.value}</span>
               </div>
             ))}
           </>

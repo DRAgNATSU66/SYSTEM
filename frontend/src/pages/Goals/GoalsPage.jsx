@@ -6,6 +6,7 @@ import { useUserStore } from '../../store/userStore';
 import { goalService } from '../../services/goalService';
 import { pushChange } from '../../services/syncEngine';
 import HistoryModal from '../../components/ui/HistoryModal/HistoryModal';
+import { rgbVar } from '../../theme/palette';
 import styles from './Goals.module.css';
 
 const today = new Date().toISOString().split('T')[0];
@@ -104,7 +105,7 @@ const GoalsPage = () => {
           const left = goal.target_date ? daysLeft(goal.target_date) : null;
           return (
             <div key={goal.id} className={`${styles.card} ${goal.completed ? styles.completed : ''}`}
-              style={{ borderColor: overdue ? 'rgba(255,49,49,0.5)' : undefined }}>
+              style={{ borderColor: overdue ? rgbVar('--rank-slacking-rgb', 0.5) : undefined }}>
               {overdue && (
                 <div style={{ fontSize: '0.6rem', fontWeight: 900, letterSpacing: '0.15em', color: 'var(--color-red)', marginBottom: '0.5rem' }}>
                   ⚠ OVERDUE {goal.overdue_penalty_applied ? `(-${Math.min(Math.floor((goal.bounty_ap||0)*0.1),500)} AP applied)` : ''}
@@ -126,7 +127,7 @@ const GoalsPage = () => {
               )}
               {overdue && retryId !== goal.id && (
                 <button onClick={() => { setRetryId(goal.id); setRetryDate(defaultTarget); }}
-                  style={{ display:'block', width:'100%', marginTop:'0.5rem', padding:'0.45rem', background:'rgba(255,230,0,0.1)', border:'1px solid rgba(255,230,0,0.3)', borderRadius:10, color:'var(--rank-sigma)', fontWeight:800, fontSize:'0.68rem', letterSpacing:'0.1em', cursor:'pointer' }}>
+                  style={{ display:'block', width:'100%', marginTop:'0.5rem', padding:'0.45rem', background:rgbVar('--rank-sigma-rgb', 0.1), border:`1px solid ${rgbVar('--rank-sigma-rgb', 0.3)}`, borderRadius:10, color:'var(--rank-sigma)', fontWeight:800, fontSize:'0.68rem', letterSpacing:'0.1em', cursor:'pointer' }}>
                   RETRY (BOUNTY HALVED)
                 </button>
               )}
@@ -135,9 +136,9 @@ const GoalsPage = () => {
                   <input type="date" value={retryDate} onChange={e => setRetryDate(e.target.value)} min={today}
                     className={styles.dateInput} style={{ flex:1, fontSize:'0.72rem' }} />
                   <button onClick={() => handleRetry(goal.id)}
-                    style={{ padding:'0.3rem 0.75rem', background:'rgba(255,230,0,0.15)', border:'1px solid rgba(255,230,0,0.4)', color:'var(--rank-sigma)', fontWeight:800, fontSize:'0.65rem', borderRadius:8, cursor:'pointer' }}>CONFIRM</button>
+                    style={{ padding:'0.3rem 0.75rem', background:rgbVar('--rank-sigma-rgb', 0.15), border:`1px solid ${rgbVar('--rank-sigma-rgb', 0.4)}`, color:'var(--rank-sigma)', fontWeight:800, fontSize:'0.65rem', borderRadius:8, cursor:'pointer' }}>CONFIRM</button>
                   <button onClick={() => setRetryId(null)}
-                    style={{ padding:'0.3rem 0.6rem', background:'transparent', border:'1px solid rgba(255,255,255,0.15)', color:'var(--text-secondary)', fontSize:'0.65rem', borderRadius:8, cursor:'pointer' }}>✕</button>
+                    style={{ padding:'0.3rem 0.6rem', background:'transparent', border:`1px solid ${rgbVar('--fg-rgb', 0.15)}`, color:'var(--text-secondary)', fontSize:'0.65rem', borderRadius:8, cursor:'pointer' }}>✕</button>
                 </div>
               )}
               <button onClick={() => {

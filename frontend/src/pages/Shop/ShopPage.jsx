@@ -5,6 +5,7 @@ import amazonLogo from '../../assets/amazon.gif';
 import netflixLogo from '../../assets/netflix.gif';
 import spotifyLogo from '../../assets/spotify.gif';
 import gpayLogo from '../../assets/gpay.gif';
+import { rgbVar } from '../../theme/palette';
 import styles from './Shop.module.css';
 
 const ShopPage = () => {
@@ -29,7 +30,7 @@ const ShopPage = () => {
   return (
     <PageWrapper className={styles.container}>
       <div className={styles.header}>
-        {msg && <div style={{ background: 'rgba(0,191,255,0.12)', border: '1px solid rgba(0,191,255,0.3)', borderRadius: 12, padding: '0.75rem 1.25rem', marginBottom: '1rem', fontSize: '0.8rem', fontWeight: 800, letterSpacing: '0.08em', color: msg.includes('INSUFFICIENT') ? 'var(--color-red)' : 'var(--rank-alpha)' }}>{msg}</div>}
+        {msg && <div style={{ background: rgbVar('--accent-rgb', 0.12), border: `1px solid ${rgbVar('--accent-rgb', 0.3)}`, borderRadius: 12, padding: '0.75rem 1.25rem', marginBottom: '1rem', fontSize: '0.8rem', fontWeight: 800, letterSpacing: '0.08em', color: msg.includes('INSUFFICIENT') ? 'var(--color-red)' : 'var(--rank-alpha)' }}>{msg}</div>}
         <div className={styles.headerLeft}>
           <h1>AURA MARKETPLACE</h1>
           <p className={styles.subtitle}>Convert abstract merit into tangible assets.</p>
