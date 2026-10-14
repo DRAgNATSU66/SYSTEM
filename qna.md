@@ -182,3 +182,55 @@ For a colour-token migration, the main risk is a wrong colour on a large surface
 - `#00CFFF` in JS was classified case by case, and each decision is in the Task 6/7/8 reports:
   - chart series and the mood wave → accent-hi
   - the leaderboard first-place colour and the rank resolver → `--rank-alpha`
+
+---
+
+## QNA-005 — Corrections to QNA-003 and QNA-004; demo-residue purge
+
+- **Date:** 2026-10-15
+- **Commit:** `cb39776` on `redesign/seren`, plus the corrections below
+
+This entry **supersedes** parts of QNA-003 and QNA-004, as listed below. The originals stay as written. Each correction comes from the whole-branch review on 2026-10-15.
+
+**Q1. Which earlier claims were wrong or overstated?**
+
+*Supersedes the title of QNA-004 and its Q4 wording ("pixel-identical"):* the accurate claim is **value-identical CSS by codemod, and perceptually identical within the gate**.
+- The reviewer re-ran `tokenizeCss()` on every base CSS file. Every changed CSS file at head equals the codemod output byte for byte. The exceptions are the two deleted files and the added `@import` line in `index.css`.
+- The gate itself, however, allows up to 0.1% changed pixels per route. pixelmatch at `threshold: 0.1` cannot see small colour shifts: `#00BFFF` against `#00CFFF` is a YIQ delta of about 64, under its tolerance. For hand-edited JS, the protection was review, not the gate.
+- Font fallbacks also changed. `font-family: 'Outfit'` became `var(--font-display)` = `'Outfit', sans-serif`, so if Google Fonts fails to load, the fallback is now sans-serif instead of the browser default. The two are identical only when the font loads.
+
+*Supersedes QNA-004 Q2 (what the 8 remaining hex literals are):* the count of 8 is correct, but the list was incomplete. It also includes:
+- `Sidebar.jsx:43` `#00BFFF`, a live UI colour kept as hex because ProgressBar appends a hex alpha (`${color}44`)
+- `studyStore.js:35`, the default subject colour, which is persisted and synced
+
+*Supersedes QNA-004 Q6 wording:* the codemod protects lines that **start with** a `--rank-`, `--color-` or `--tier-` definition (`^\s*--(rank|color|tier)-`), not every line that defines one. In this codebase the two are equivalent, but the original wording overstated the rule.
+
+*Supersedes QNA-003 Q3 ("the only production-path changes are the IS_DEMO checks"):* that was true for those commits, but incomplete. Demo mode wrote into the **real** persisted store keys (`antigravity-*`) and the `system-sync-queue`, and nothing removed them. In a later non-demo session in the same browser, a real sign-up's `seedServerFromLocal` could have upserted about 14 days of fake aura and score rows under the real user id. Through the `trg_aura_logs_sync_total_ap` trigger, that would have meant around 60k fake AP on the shared leaderboard. A demo `profiles` UPSERT would also have sat in the queue as a poison item. This was a dev-only path, and no production user could be affected. The fix is Q2.
+
+*Supersedes the QNA-003 Q5 blind-spot list:* it also omitted:
+- `/auth`, which is not in the gate's routes even though `Auth.module.css` changed in 160 lines
+- modals and forms (HistoryModal, TaskForm, HobbyForm, Top5ProfileCard)
+- the open mobile drawer
+- empty and error states, and the ErrorBoundary screen
+
+**Q2. What does `cb39776` do?**
+- New `frontend/src/utils/demoResidue.js`:
+  - `markDemoSeeded(storage)` sets `system-demo-seeded`
+  - `purgeDemoResidue(storage)` removes the marker, `system-sync-queue` and every `antigravity-*` key when the marker is present, and returns true
+- `applyDemoState()` sets the marker.
+- `AuthProvider` runs the purge right after the `IS_DEMO` branch, before any Supabase call. When something was purged, it reloads once so the in-memory stores rehydrate empty.
+- Both storage accesses are wrapped in try/catch.
+
+**Q3. Why purge, rather than make the sync engine demo-aware?**
+- The phase-2 plan forbids changes to sync code.
+- The purge closes both leak paths (store seeding and the queue) at one choke point that runs before any sync can start.
+- `useCloudSync` cannot flush first. It lives in `App`, which renders only inside `ProtectedRoute`, which returns null while `authLoading` is true. On the purge path, `authLoading` never becomes false before the reload.
+
+**Q4. Verification (as measured)**
+- `demoResidue.test.js` (RED: module not found → GREEN). No marker means nothing is removed. With the marker, the marker, queue and `antigravity-*` keys are removed, while `sb-xyz-auth-token` and `theme` are kept.
+- Full suite 24/24. Build passes. Lint `✖ 23 problems (20 errors, 3 warnings)`, unchanged.
+- `dist` grep: `system-demo-seeded` = 1 (the purge is production code, as intended), `demo@system.local` = 0.
+- Gate: all 34 routes within threshold, max 0.005%.
+
+**Q5. What residual risk is known?**
+React StrictMode runs effects twice, and only in dev. The first run purges and calls `reload()`. The second run sees no marker, so if a real Supabase session exists it can start `getSession` → `handleUserLogin` → `pullAllData` with the still-in-memory demo stores during the sub-second window before the page unloads. This is dev-only and needs both an existing session and that race. It is parked as the first fix of phase 3: a module-level "reloading" guard of about 2 lines.
