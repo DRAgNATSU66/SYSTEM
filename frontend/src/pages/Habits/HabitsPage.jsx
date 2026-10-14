@@ -8,6 +8,7 @@ import { supabase } from '../../services/supabaseClient';
 import { pushChange } from '../../services/syncEngine';
 import HobbyForm from './HobbyForm';
 import HistoryModal from '../../components/ui/HistoryModal/HistoryModal';
+import { rgbVar } from '../../theme/palette';
 import styles from './Habits.module.css';
 
 const HabitsPage = () => {
@@ -151,7 +152,7 @@ const HabitsPage = () => {
                   {isActive ? (
                     <>
                       <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--rank-alpha)', letterSpacing: '0.06em', fontVariantNumeric: 'tabular-nums' }}>{fmtElapsed(secs)}</span>
-                      <button className={styles.btnLog} onClick={() => handleStopTimer(h)} style={{ background: 'rgba(34,197,94,0.18)', borderColor: 'rgba(34,197,94,0.4)', color: 'var(--color-green)' }}>STOP</button>
+                      <button className={styles.btnLog} onClick={() => handleStopTimer(h)} style={{ background: rgbVar('--tier-green-rgb', 0.18), borderColor: rgbVar('--tier-green-rgb', 0.4), color: 'var(--color-green)' }}>STOP</button>
                     </>
                   ) : (
                     <>
@@ -160,7 +161,7 @@ const HabitsPage = () => {
                         type="number" min="1" max="480" placeholder="min"
                         value={manualMins[h.id] || ''}
                         onChange={e => setManualMins(prev => ({ ...prev, [h.id]: e.target.value }))}
-                        style={{ width: 52, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, color: '#fff', fontSize: '0.75rem', padding: '0.4rem 0.4rem', textAlign: 'center', fontFamily: 'inherit', colorScheme: 'dark' }}
+                        style={{ width: 52, background: rgbVar('--fg-rgb', 0.06), border: `1px solid ${rgbVar('--fg-rgb', 0.15)}`, borderRadius: 10, color: rgbVar('--fg-rgb'), fontSize: '0.75rem', padding: '0.4rem 0.4rem', textAlign: 'center', fontFamily: 'inherit', colorScheme: 'dark' }}
                       />
                       <button className={styles.btnLog} onClick={() => handleManualLog(h)} style={{ fontSize: '0.65rem' }}>LOG</button>
                     </>
@@ -176,7 +177,7 @@ const HabitsPage = () => {
                 </div>
               </div>
               {sessions.length > 0 && (
-                <div style={{ marginTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <div style={{ marginTop: '0.5rem', borderTop: `1px solid ${rgbVar('--fg-rgb', 0.06)}`, paddingTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                   {sessions.map(s => (
                     <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.62rem', color: 'var(--text-secondary)', letterSpacing: '0.06em' }}>
                       <span>{s.date}</span>
