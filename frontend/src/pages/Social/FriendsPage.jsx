@@ -4,6 +4,7 @@ import { useSocialStore } from '../../store/socialStore';
 import { useUserStore } from '../../store/userStore';
 import { supabase } from '../../services/supabaseClient';
 import { pullAllData } from '../../services/syncEngine';
+import { rgbVar } from '../../theme/palette';
 import styles from './Social.module.css';
 
 const isOnline = (lastSeen) =>
@@ -115,7 +116,7 @@ const FriendsPage = () => {
       </div>
 
       {msg && (
-        <div style={{ background: 'rgba(0,191,255,0.1)', border: '1px solid rgba(0,191,255,0.3)', borderRadius: 12, padding: '0.65rem 1rem', marginBottom: '1rem', fontSize: '0.78rem', fontWeight: 800, letterSpacing: '0.08em', color: 'var(--rank-alpha)' }}>
+        <div style={{ background: rgbVar('--accent-rgb', 0.1), border: `1px solid ${rgbVar('--accent-rgb', 0.3)}`, borderRadius: 12, padding: '0.65rem 1rem', marginBottom: '1rem', fontSize: '0.78rem', fontWeight: 800, letterSpacing: '0.08em', color: 'var(--rank-alpha)' }}>
           {msg}
         </div>
       )}
@@ -148,7 +149,7 @@ const FriendsPage = () => {
           </div>
           <button
             onClick={handleSendRequest} disabled={sending}
-            style={{ background: 'rgba(0,191,255,0.18)', border: '1px solid rgba(0,191,255,0.4)', color: 'var(--rank-alpha)', fontWeight: 800, fontSize: '0.72rem', letterSpacing: '0.12em', padding: '0.6rem 1.2rem', borderRadius: 20, cursor: 'pointer' }}
+            style={{ background: rgbVar('--accent-rgb', 0.18), border: `1px solid ${rgbVar('--accent-rgb', 0.4)}`, color: 'var(--rank-alpha)', fontWeight: 800, fontSize: '0.72rem', letterSpacing: '0.12em', padding: '0.6rem 1.2rem', borderRadius: 20, cursor: 'pointer' }}
           >{sending ? 'SENDING...' : 'SEND REQUEST'}</button>
         </div>
       )}
@@ -162,15 +163,15 @@ const FriendsPage = () => {
           {pendingReqs.map(req => {
             const p = req.profiles;
             return (
-              <div key={req.user_id} style={{ background: 'var(--glass-bg)', border: '1px solid rgba(255,230,0,0.2)', borderRadius: 14, padding: '1rem 1.25rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+              <div key={req.user_id} style={{ background: 'var(--glass-bg)', border: `1px solid ${rgbVar('--rank-sigma-rgb', 0.2)}`, borderRadius: 14, padding: '1rem 1.25rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                 <div style={{ flex: 1, fontWeight: 800, fontSize: '0.9rem', letterSpacing: '0.06em' }}>
                   {(p?.username || 'UNKNOWN').toUpperCase()}
                   <span style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', marginLeft: '0.5rem' }}>{p?.cypher_id}</span>
                 </div>
                 <button onClick={() => handleAccept(req.user_id)}
-                  style={{ background: 'rgba(34,197,94,0.18)', border: '1px solid rgba(34,197,94,0.4)', color: 'var(--color-green)', fontWeight: 800, fontSize: '0.68rem', padding: '0.4rem 0.9rem', borderRadius: 16, cursor: 'pointer' }}>✅ ACCEPT</button>
+                  style={{ background: rgbVar('--tier-green-rgb', 0.18), border: `1px solid ${rgbVar('--tier-green-rgb', 0.4)}`, color: 'var(--color-green)', fontWeight: 800, fontSize: '0.68rem', padding: '0.4rem 0.9rem', borderRadius: 16, cursor: 'pointer' }}>✅ ACCEPT</button>
                 <button onClick={() => handleReject(req.user_id)}
-                  style={{ background: 'rgba(255,49,49,0.12)', border: '1px solid rgba(255,49,49,0.3)', color: 'var(--color-red)', fontWeight: 800, fontSize: '0.68rem', padding: '0.4rem 0.9rem', borderRadius: 16, cursor: 'pointer' }}>❌ REJECT</button>
+                  style={{ background: rgbVar('--rank-slacking-rgb', 0.12), border: `1px solid ${rgbVar('--rank-slacking-rgb', 0.3)}`, color: 'var(--color-red)', fontWeight: 800, fontSize: '0.68rem', padding: '0.4rem 0.9rem', borderRadius: 16, cursor: 'pointer' }}>❌ REJECT</button>
               </div>
             );
           })}

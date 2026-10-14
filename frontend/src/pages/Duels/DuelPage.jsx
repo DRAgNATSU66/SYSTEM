@@ -5,6 +5,7 @@ import { useUserStore } from '../../store/userStore';
 import { useAuraStore } from '../../store/auraStore';
 import { supabase } from '../../services/supabaseClient';
 import { pullAllData } from '../../services/syncEngine';
+import { rgbVar } from '../../theme/palette';
 import styles from './Duels.module.css';
 
 const DuelPage = () => {
@@ -170,7 +171,7 @@ const DuelPage = () => {
       </div>
 
       {msg && (
-        <div style={{ background: 'rgba(0,191,255,0.1)', border: '1px solid rgba(0,191,255,0.3)', borderRadius: 12, padding: '0.7rem 1.1rem', marginBottom: '1.25rem', fontSize: '0.78rem', fontWeight: 800, letterSpacing: '0.08em', color: 'var(--rank-alpha)' }}>
+        <div style={{ background: rgbVar('--accent-rgb', 0.1), border: `1px solid ${rgbVar('--accent-rgb', 0.3)}`, borderRadius: 12, padding: '0.7rem 1.1rem', marginBottom: '1.25rem', fontSize: '0.78rem', fontWeight: 800, letterSpacing: '0.08em', color: 'var(--rank-alpha)' }}>
           {msg}
         </div>
       )}
@@ -191,14 +192,14 @@ const DuelPage = () => {
         {searchError && <p style={{ color: 'var(--color-red)', fontSize: '0.72rem', letterSpacing: '0.08em', marginBottom: '0.5rem' }}>{searchError}</p>}
 
         {targetProfile && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'rgba(255,230,0,0.06)', border: '1px solid rgba(255,230,0,0.2)', borderRadius: 14, padding: '1rem 1.25rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: rgbVar('--rank-sigma-rgb', 0.06), border: `1px solid ${rgbVar('--rank-sigma-rgb', 0.2)}`, borderRadius: 14, padding: '1rem 1.25rem', flexWrap: 'wrap' }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '0.08em' }}>{targetProfile.username?.toUpperCase()}</div>
               <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
                 {targetProfile.cypher_id} · {(targetProfile.total_aura_points || 0).toLocaleString()} AP
               </div>
             </div>
-            <button onClick={handleChallenge} className={styles.btnNewDuel} style={{ padding: '0.6rem 1.5rem', fontSize: '0.7rem', background: 'rgba(255,230,0,0.15)', borderColor: 'rgba(255,230,0,0.4)', color: 'var(--rank-sigma)' }}>
+            <button onClick={handleChallenge} className={styles.btnNewDuel} style={{ padding: '0.6rem 1.5rem', fontSize: '0.7rem', background: rgbVar('--rank-sigma-rgb', 0.15), borderColor: rgbVar('--rank-sigma-rgb', 0.4), color: 'var(--rank-sigma)' }}>
               ⚔ CHALLENGE ({parseInt(stakeInput) || 500} AP)
             </button>
           </div>
@@ -278,7 +279,7 @@ const DuelPage = () => {
           <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
             <input type="number" value={stakeInput} onChange={e => setStakeInput(e.target.value)}
               placeholder="STAKE AP" min="100" max={totalAuraPoints}
-              className={styles.stakeInput} style={{ textAlign: 'center', color: '#fff' }} />
+              className={styles.stakeInput} style={{ textAlign: 'center', color: rgbVar('--fg-rgb') }} />
             <button
               onClick={handleFindOpponent}
               disabled={queueSearching || !user?.id || !supabase}
