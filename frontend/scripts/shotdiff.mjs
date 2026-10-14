@@ -1,6 +1,6 @@
 // Pixel-diff two shot directories. Usage: node scripts/shotdiff.mjs <base> <new> [threshold]
 /* global process */
-import { readdir, readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readdir, readFile, writeFile, mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { PNG } from 'pngjs';
 import pixelmatch from 'pixelmatch';
@@ -8,11 +8,19 @@ import pixelmatch from 'pixelmatch';
 const [base, next, thr = '0.001'] = process.argv.slice(2);
 const threshold = Number(thr);
 let failed = 0;
+await rm(path.join(next, '_diff'), { recursive: true, force: true });
+const list = async (dir) => (await readdir(dir)).filter((f) => f.endsWith('.png'));
 
 for (const vp of ['desktop', 'mobile']) {
   const diffDir = path.join(next, '_diff', vp);
   await mkdir(diffDir, { recursive: true });
-  for (const file of (await readdir(path.join(base, vp))).filter((f) => f.endsWith('.png'))) {
+  let baseFiles;
+  try { baseFiles = await list(path.join(base, vp)); }
+  catch { console.error(`ERROR   base directory missing: ${path.join(base, vp)}`); process.exit(2); }
+  let nextFiles = [];
+  try { nextFiles = await list(path.join(next, vp)); } catch { /* reported as MISSING per file below */ }
+  for (const file of nextFiles.filter((f) => !baseFiles.includes(f))) { console.log(`EXTRA   ${vp}/${file}`); failed++; }
+  for (const file of baseFiles) {
     const a = PNG.sync.read(await readFile(path.join(base, vp, file)));
     let b;
     try { b = PNG.sync.read(await readFile(path.join(next, vp, file))); }
@@ -28,5 +36,5 @@ for (const vp of ['desktop', 'mobile']) {
     console.log(`${bad ? 'FAIL' : 'ok  '}    ${vp}/${file} ${(ratio * 100).toFixed(3)}%`);
   }
 }
-console.log(failed ? `${failed} route(s) over ${threshold * 100}%` : 'all routes within threshold');
+console.log(failed ? `${failed} failure(s) (threshold ${threshold * 100}%)` : 'all routes within threshold');
 process.exit(failed ? 1 : 0);

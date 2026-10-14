@@ -17,7 +17,7 @@ const FREEZE_CSS = '*,*::before,*::after{animation:none!important;transition:non
   + 'img[src*=".gif"]{visibility:hidden!important}'
   // .content-area is height:100vh + overflow-y:auto, so fullPage would only capture the viewport; un-clip it.
   + 'html,body,#root,.app-layout,.content-area{height:auto!important;min-height:0!important;max-height:none!important}.content-area{overflow-y:visible!important}html{scroll-behavior:auto!important}'
-  // ParticleBackground canvas animates per frame (frame-count dependent); hide it.
+  // Defensive only: the live app currently renders no <canvas> (ParticleBackground/GlobeStats are unimported), so this fixes no observed variance. Guards against a future per-frame canvas.
   + 'canvas{visibility:hidden!important}';
 
 process.env.VITE_DEMO_MODE = 'true';
@@ -29,7 +29,7 @@ const errors = {};
 try {
   for (const [vp, viewport] of Object.entries(VIEWPORTS)) {
     await mkdir(path.join(OUT, vp), { recursive: true });
-    const ctx = await browser.newContext({ viewport, deviceScaleFactor: 1, reducedMotion: 'reduce' });
+    const ctx = await browser.newContext({ viewport, deviceScaleFactor: 1, reducedMotion: 'reduce', timezoneId: 'UTC', locale: 'en-US' });
     const page = await ctx.newPage();
     // Playwright's clock.* freezes timers/rAF-visible time and leaves framer-motion stuck at opacity 0,
     // so shift Date only: Date.now() = FROZEN + elapsed (performance.now keeps ticking).
