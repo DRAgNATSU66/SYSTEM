@@ -168,8 +168,8 @@
 }
 .button:disabled { opacity: 0.45; cursor: not-allowed; }
 
-.error { width: 100%; padding: 0.75rem 1rem; background: rgba(255,49,49,0.08); border: 1px solid var(--rank-slacking); color: var(--rank-slacking); border-radius: 12px; margin-bottom: 0.5rem; font-size: 0.82rem; text-align: center; box-shadow: inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.06); }
-.successMsg { width: 100%; padding: 0.75rem 1rem; background: rgba(57,255,20,0.08); border: 1px solid var(--rank-sigma); color: var(--rank-sigma); border-radius: 12px; margin-bottom: 1rem; font-size: 0.85rem; text-align: center; box-shadow: inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.08); }
+.error { width: 100%; padding: 0.75rem 1rem; background: rgb(var(--rank-slacking-rgb) / 0.08); border: 1px solid var(--rank-slacking); color: var(--rank-slacking); border-radius: 12px; margin-bottom: 0.5rem; font-size: 0.82rem; text-align: center; box-shadow: inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.06); }
+.successMsg { width: 100%; padding: 0.75rem 1rem; background: rgb(var(--rank-omega-rgb) / 0.08); border: 1px solid var(--rank-sigma); color: var(--rank-sigma); border-radius: 12px; margin-bottom: 1rem; font-size: 0.85rem; text-align: center; box-shadow: inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.08); }
 
 .forgotLink { background: none; border: none; color: var(--text-secondary); font-size: 0.80rem; cursor: pointer; margin-top: 0.75rem; transition: color 0.28s cubic-bezier(0.4,0,0.2,1); font-family: var(--font-body); letter-spacing: 0.03em; min-height: auto; min-width: auto; }
 .forgotLink:hover { color: var(--rank-alpha); transform: none; }

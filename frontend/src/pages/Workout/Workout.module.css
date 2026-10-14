@@ -260,9 +260,9 @@
 
 /* LOG ALL [MUSCLE GROUP] — full-width green glass pill */
 .btnLogAllTop {
-  background: rgba(34,197,94,0.18);
+  background: rgb(var(--tier-green-rgb) / 0.18);
   color: var(--color-green);
-  border: 1px solid rgba(34,197,94,0.38);
+  border: 1px solid rgb(var(--tier-green-rgb) / 0.38);
   padding: 0.85rem 2rem;
   border-radius: var(--radius-pill);
   font-family: var(--font-display);
@@ -276,8 +276,8 @@
   box-shadow:
     inset 0 1px 0 rgb(var(--fg-rgb) / 0.45),
     inset 0 -1.5px 0 rgb(var(--shade-rgb) / 0.18),
-    0 4px 18px rgba(34,197,94,0.22),
-    0 0 0 1px rgba(34,197,94,0.18);
+    0 4px 18px rgb(var(--tier-green-rgb) / 0.22),
+    0 0 0 1px rgb(var(--tier-green-rgb) / 0.18);
   will-change: transform;
   position: relative;
   overflow: hidden;
@@ -301,7 +301,7 @@
   transform: translateY(-1px);
   box-shadow:
     inset 0 1px 0 rgb(var(--fg-rgb) / 0.55),
-    0 8px 28px rgba(34,197,94,0.50),
+    0 8px 28px rgb(var(--tier-green-rgb) / 0.50),
     0 0 0 1px var(--color-green);
   border-color: var(--color-green);
 }
@@ -309,9 +309,9 @@
 
 /* Small LOG ALL tag on muscle cards */
 .btnLogAll {
-  background: rgba(34,197,94,0.12);
+  background: rgb(var(--tier-green-rgb) / 0.12);
   color: var(--color-green);
-  border: 1px solid rgba(34,197,94,0.30);
+  border: 1px solid rgb(var(--tier-green-rgb) / 0.30);
   padding: 0.28rem 0.72rem;
   border-radius: var(--radius-pill);
   font-family: var(--font-display);
@@ -322,12 +322,12 @@
   transition: all var(--dur-mid) var(--ease-glass);
   min-height: auto;
   min-width: auto;
-  box-shadow: inset 0 1px 0 rgb(var(--fg-rgb) / 0.28), 0 2px 8px rgba(34,197,94,0.12);
+  box-shadow: inset 0 1px 0 rgb(var(--fg-rgb) / 0.28), 0 2px 8px rgb(var(--tier-green-rgb) / 0.12);
   position: relative;
   overflow: hidden;
   will-change: transform;
 }
-.btnLogAll:hover { background: var(--color-green); color: rgb(var(--shade-rgb)); transform: scale(1.04); box-shadow: 0 4px 14px rgba(34,197,94,0.40); }
+.btnLogAll:hover { background: var(--color-green); color: rgb(var(--shade-rgb)); transform: scale(1.04); box-shadow: 0 4px 14px rgb(var(--tier-green-rgb) / 0.40); }
 
 @media (max-width: 768px) {
   .container { padding: 1.25rem; }
@@ -402,10 +402,10 @@
   font-weight: 900;
   font-family: inherit;
   border-radius: var(--radius-pill);
-  background: linear-gradient(145deg, rgba(34,197,94,0.22) 0%, rgba(34,197,94,0.11) 100%);
-  border: 1px solid rgba(34,197,94,0.42);
+  background: linear-gradient(145deg, rgb(var(--tier-green-rgb) / 0.22) 0%, rgb(var(--tier-green-rgb) / 0.11) 100%);
+  border: 1px solid rgb(var(--tier-green-rgb) / 0.42);
   color: var(--color-green);
   cursor: default;
-  box-shadow: 0 3px 10px rgba(34,197,94,0.12), inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.22), inset 0 -1.5px 0 rgb(var(--shade-rgb) / 0.12);
+  box-shadow: 0 3px 10px rgb(var(--tier-green-rgb) / 0.12), inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.22), inset 0 -1.5px 0 rgb(var(--shade-rgb) / 0.12);
   flex-shrink: 0;
 }

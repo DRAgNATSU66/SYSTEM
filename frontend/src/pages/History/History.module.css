@@ -4,7 +4,7 @@
 .header h1 { font-family: var(--font-display); font-size: 2.2rem; color: rgb(var(--fg-rgb)); letter-spacing: 0.10em; text-shadow: 0 0 30px rgb(var(--fg-rgb) / 0.10); }
 .headerSub { color: var(--text-secondary); font-size: 0.82rem; margin-top: 0.4rem; letter-spacing: 0.04em; }
 .todaySummary { display: flex; gap: 1.25rem; margin-top: 0.85rem; flex-wrap: wrap; }
-.positive { color: var(--color-green); font-family: var(--font-display); font-weight: 900; white-space: nowrap; font-size: 0.82rem; letter-spacing: 0.06em; text-shadow: 0 0 12px rgba(34,197,94,0.28); }
+.positive { color: var(--color-green); font-family: var(--font-display); font-weight: 900; white-space: nowrap; font-size: 0.82rem; letter-spacing: 0.06em; text-shadow: 0 0 12px rgb(var(--tier-green-rgb) / 0.28); }
 .negative { color: var(--color-red); font-family: var(--font-display); font-weight: 900; white-space: nowrap; font-size: 0.82rem; letter-spacing: 0.06em; }
 .netPositive { color: var(--color-green); font-family: var(--font-display); font-weight: 800; font-size: 0.78rem; letter-spacing: 0.05em; }
 .netNegative { color: var(--color-red); font-family: var(--font-display); font-weight: 800; font-size: 0.78rem; letter-spacing: 0.05em; }

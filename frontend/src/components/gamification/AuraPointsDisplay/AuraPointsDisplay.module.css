@@ -61,7 +61,7 @@
   white-space: nowrap;
 }
 
-.positive { color: var(--rank-sigma); text-shadow: 0 0 12px rgba(255,230,0,0.22); }
+.positive { color: var(--rank-sigma); text-shadow: 0 0 12px rgb(var(--rank-sigma-rgb) / 0.22); }
 .negative { color: var(--rank-slacking); }
 
 .iconContainer {

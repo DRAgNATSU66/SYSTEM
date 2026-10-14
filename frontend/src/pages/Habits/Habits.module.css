@@ -94,8 +94,8 @@
 .btnArchive { background: transparent; border: none; color: var(--text-secondary); font-size: 0.68rem; font-weight: 800; cursor: pointer; text-decoration: underline; opacity: 0.55; min-height: auto; min-width: auto; transition: all 0.2s; }
 .btnArchive:hover { opacity: 1; color: rgb(var(--fg-rgb)); transform: none; }
 
-.btnDelete { background: transparent; border: none; color: rgba(255,49,49,0.28); font-size: 1.1rem; cursor: pointer; padding: 0.5rem; min-height: auto; min-width: auto; transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1); }
-.btnDelete:hover { color: #FF3131; transform: scale(1.20); }
+.btnDelete { background: transparent; border: none; color: rgb(var(--rank-slacking-rgb) / 0.28); font-size: 1.1rem; cursor: pointer; padding: 0.5rem; min-height: auto; min-width: auto; transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1); }
+.btnDelete:hover { color: rgb(var(--rank-slacking-rgb)); transform: scale(1.20); }
 
 @media (max-width: 600px) {
   .container { padding: 1.5rem 1rem; }

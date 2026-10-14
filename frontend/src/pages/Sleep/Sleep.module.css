@@ -57,7 +57,7 @@
 .progressFill::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%; background: linear-gradient(to bottom, rgb(var(--fg-rgb) / 0.32), transparent); border-radius: 3px; }
 
 .metricMeta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; min-width: 0; }
-.warning { font-size: 0.63rem; font-weight: 900; letter-spacing: 0.06em; padding: 0.28rem 0.75rem; border-radius: 8px; background: rgba(255,49,49,0.08); border: 1px solid var(--rank-slacking); color: var(--rank-slacking); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; box-shadow: inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.08); }
+.warning { font-size: 0.63rem; font-weight: 900; letter-spacing: 0.06em; padding: 0.28rem 0.75rem; border-radius: 8px; background: rgb(var(--rank-slacking-rgb) / 0.08); border: 1px solid var(--rank-slacking); color: var(--rank-slacking); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; box-shadow: inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.08); }
 .hint { font-size: 0.63rem; color: var(--text-secondary); font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .scoreBreakdown {

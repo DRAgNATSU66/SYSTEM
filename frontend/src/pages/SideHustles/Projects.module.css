@@ -102,9 +102,9 @@
 .btnArchive { width: 100%; background: rgb(var(--fg-rgb) / 0.03); border: 1px solid rgb(var(--fg-rgb) / 0.06); color: rgb(var(--fg-rgb) / 0.50); padding: 0.6rem; border-radius: 10px; font-size: 0.70rem; font-family: var(--font-display); font-weight: 800; cursor: pointer; transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1); }
 .btnArchive:hover { background: linear-gradient(145deg, rgb(var(--accent-rgb) / 0.14) 0%, rgb(var(--accent-rgb) / 0.07) 100%); color: var(--rank-alpha); border-color: rgb(var(--accent-rgb) / 0.36); transform: translateY(-1px); }
 
-.btnPurge { position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: rgba(255,49,49,0.28); font-size: 1rem; cursor: pointer; transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1); display: flex; align-items: center; justify-content: center; opacity: 0; min-height: auto; min-width: auto; }
+.btnPurge { position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: rgb(var(--rank-slacking-rgb) / 0.28); font-size: 1rem; cursor: pointer; transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1); display: flex; align-items: center; justify-content: center; opacity: 0; min-height: auto; min-width: auto; }
 .projectCard:hover .btnPurge { opacity: 1; }
-.btnPurge:hover { color: #FF3131; transform: scale(1.24); }
+.btnPurge:hover { color: rgb(var(--rank-slacking-rgb)); transform: scale(1.24); }
 
 .history {
   margin-top: 5rem;

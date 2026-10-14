@@ -5,6 +5,17 @@
   --accent-hi-rgb: 0 207 255;  /* #00CFFF */
   --fg-rgb: 255 255 255;
   --shade-rgb: 0 0 0;
+  /* rank / AP-tier channels; hex sources stay in src/index.css */
+  --rank-alpha-rgb: 0 207 255;     /* #00CFFF --rank-alpha (JS/phase-3 only; rgba stays on accent-hi) */
+  --rank-omega-rgb: 57 255 20;     /* #39FF14 --rank-omega */
+  --rank-sigma-rgb: 255 230 0;     /* #FFE600 --rank-sigma */
+  --rank-others-rgb: 144 238 144;  /* #90EE90 --rank-others */
+  --rank-slacking-rgb: 255 49 49;  /* #FF3131 --rank-slacking / --rank-lacking */
+  --rank-beta-rgb: 158 158 158;    /* #9E9E9E --rank-beta */
+  --tier-red-rgb: 239 68 68;       /* #EF4444 --color-red */
+  --tier-yellow-rgb: 234 179 8;    /* #EAB308 --color-yellow */
+  --tier-green-rgb: 34 197 94;     /* #22C55E --color-green */
+  --tier-blue-rgb: 59 130 246;     /* #3B82F6 --color-blue */
   --font-display: 'Outfit', sans-serif;
   --font-body: 'Inter', sans-serif;  /* verbatim from src/index.css:104 */
 }

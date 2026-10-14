@@ -56,7 +56,7 @@
   font-size: 0.88rem;
   font-weight: 800;
 }
-.up   { color: var(--color-green); text-shadow: 0 0 12px rgba(34,197,94,0.40); }
+.up   { color: var(--color-green); text-shadow: 0 0 12px rgb(var(--tier-green-rgb) / 0.40); }
 .down { color: var(--rank-slacking); }
 
 /* Segment control */

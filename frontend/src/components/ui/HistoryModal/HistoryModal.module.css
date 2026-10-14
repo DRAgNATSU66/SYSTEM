@@ -126,9 +126,9 @@
 }
 
 .btnDelete {
-  background: rgba(255, 49, 49, 0.08);
-  color: #FF3131;
-  border: 1px solid rgba(255, 49, 49, 0.28);
+  background: rgb(var(--rank-slacking-rgb) / 0.08);
+  color: rgb(var(--rank-slacking-rgb));
+  border: 1px solid rgb(var(--rank-slacking-rgb) / 0.28);
   padding: 0.4rem 0.8rem;
   border-radius: var(--radius-pill);
   font-size: 0.7rem;
@@ -137,14 +137,14 @@
   cursor: pointer;
   transition: all 0.2s;
   backdrop-filter: blur(8px);
-  box-shadow: 0 2px 8px rgba(255,49,49,0.08);
+  box-shadow: 0 2px 8px rgb(var(--rank-slacking-rgb) / 0.08);
 }
 
 .btnDelete:hover {
-  background: #FF3131;
+  background: rgb(var(--rank-slacking-rgb));
   color: rgb(var(--fg-rgb));
-  box-shadow: 0 4px 16px rgba(255,49,49,0.35);
-  border-color: #FF3131;
+  box-shadow: 0 4px 16px rgb(var(--rank-slacking-rgb) / 0.35);
+  border-color: rgb(var(--rank-slacking-rgb));
 }
 
 @keyframes fadeIn {
