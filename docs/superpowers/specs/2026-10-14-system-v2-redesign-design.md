@@ -1,7 +1,7 @@
-# SYSTEM "Seren" redesign — design spec
+# SYSTEM "SYSTEM v2" redesign — design spec
 
 - **Date:** 2026-10-14
-- **Branch:** `redesign/seren` (off `main` @ `204b565`; legacy UI tagged `ui-legacy`)
+- **Branch:** `redesign/system-v2` (off `main` @ `204b565`; legacy UI tagged `ui-legacy`)
 - **Status:** approach A and the foundation/shell section approved in chat. Section 4 (charts + new cards) uses the user's chosen features and references; the user reviews it in this document.
 - **Scope:** frontend only. The backend move to self-hosted Supabase is deferred.
 
@@ -37,7 +37,7 @@ Re-skin SYSTEM in the visual language of *SerenIQ* (George Railean, Dribbble sho
 - **Semantic tokens:** `--surface-0…3`, `--border-1/2`, `--text-1…3`, `--accent`, `--accent-deep`, `--accent-soft` (a translucent accent replacing the 356 `rgba(0,191,255,…)` literals at their alpha steps), `--series-1…5`, `--success/--warning/--danger`, `--radius-*`, `--font-display`, `--font-body`.
 - **Rank and AP-tier tokens** stay separate: `--rank-*` and `--tier-*`.
 - **One JS source for colours used in code:** `src/theme/palette.js` reads CSS variables at runtime through a `useThemeColors()` hook, for Recharts and inline styles. It replaces the four duplicate palettes (`constants/colors.js`, `constants/ranks.js`, `hooks/useRankResolver.js`, `utils/apColorLogic.js`) and `CalendarHeatmap`'s inline hex values.
-- **Two token sets** on `<html data-theme>`: `legacy` (today's values, pixel-identical) and `seren` (new, the default once shipped). The choice is stored in `uiStore`; the existing unused `theme` field gets repurposed.
+- **Two token sets** on `<html data-theme>`: `legacy` (today's values, pixel-identical) and `system` (new, the default once shipped). The choice is stored in `uiStore`; the existing unused `theme` field gets repurposed.
 - **Global-rule clean-up:**
   - Scope the forced `nowrap` + ellipsis on all `button` and `h1`–`h6` to opt-in classes, so new components don't inherit truncation.
   - Remove dead `App.css` and the unused `components/three/*`.
@@ -128,7 +128,7 @@ There is no unit-test framework in `frontend/package.json`. Verification is:
 1. `npm run build` and `npm run lint` pass after every phase. Lint has no new errors compared with the baseline count recorded in phase 1.
 2. A **Playwright screenshot harness** (`frontend/scripts/shots.mjs`): it visits every route in demo mode at 1440×900 and 390×844 and saves the screenshots.
    - The **token migration (phase 2) must be pixel-identical** to the phase-1 legacy baseline, with a per-route diff threshold of ≤0.1% pixels changed. Deviations are listed, not waved through.
-3. The Seren screens are reviewed by the user from the screenshots, with side-by-side legacy versus seren pairs.
+3. The SYSTEM v2 screens are reviewed by the user from the screenshots, with side-by-side legacy versus system pairs.
 4. New cards use pure helpers for volume aggregation, the tercile split and macro→ring progress, in `src/utils/bodyMap.js` and `src/utils/nutritionViz.js`. Each is checked with a small `node --test` file, so no new framework is needed.
 
 ## 7. Phases
@@ -138,7 +138,7 @@ There is no unit-test framework in `frontend/package.json`. Verification is:
 | 0 | Branch, legacy tag, LF normalisation | done: `f10d240` |
 | 1 | Demo mode + Playwright harness + legacy baseline screenshots | |
 | 2 | Token migration with zero visual change | parallel subagents by page group; pixel-diff gate |
-| 3 | Seren token set, theme switch in Settings, fonts | |
+| 3 | SYSTEM v2 token set, theme switch in Settings, fonts | |
 | 4 | Framed shell: frame, sidebar, top bar, Command dock | |
 | 5 | Chart theme + restyle of existing charts | |
 | 6 | New cards: BodyMap, Hydration, Food (+ `mealStore` mock) | |

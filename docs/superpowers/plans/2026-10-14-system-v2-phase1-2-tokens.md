@@ -1,4 +1,4 @@
-# Seren Redesign — Phases 1–2 (Demo Mode, Screenshot Gate, Token Migration) Implementation Plan
+# SYSTEM v2 Redesign — Phases 1–2 (Demo Mode, Screenshot Gate, Token Migration) Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -12,11 +12,11 @@
 
 **Tech Stack:** React 19, Vite 8, zustand 5 (persist), Recharts 3, plain CSS modules, Node 24 (`node --test`), `playwright-core` + `/usr/bin/google-chrome`, `pixelmatch` + `pngjs`.
 
-**Spec:** `docs/superpowers/specs/2026-10-14-seren-redesign-design.md` (sections 3.2, 5, 6, 7 — phases 1 and 2)
+**Spec:** `docs/superpowers/specs/2026-10-14-system-redesign-design.md` (sections 3.2, 5, 6, 7 — phases 1 and 2)
 
 ## Global Constraints
 
-- All work on branch `redesign/seren`. Legacy UI is tagged `ui-legacy` (`204b565`).
+- All work on branch `redesign/system-v2`. Legacy UI is tagged `ui-legacy` (`204b565`).
 - Demo mode is honoured **only when `import.meta.env.DEV`** — never active in a production build.
 - Phase 2 must be **pixel-identical** to the legacy baseline: per-route diff ≤ **0.1%** of pixels, at 1440×900 and 390×844, full-page.
 - Baseline as measured on 2026-10-14:
@@ -805,7 +805,7 @@ git commit -am "refactor(theme): tokenise inline colours — <group>"
 ```
 
 **Controller, after all three are done:**
-1. Merge the three branches into `redesign/seren`. They should not conflict, since the file sets are disjoint.
+1. Merge the three branches into `redesign/system-v2`. They should not conflict, since the file sets are disjoint.
 2. Add tokens for recurring unmapped values to `tokens.css`, with exact legacy values. Leave one-off values (brand GIF colours and similar) as literals.
 3. Run the full gate once more.
 
