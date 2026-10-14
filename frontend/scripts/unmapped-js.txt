@@ -1,0 +1,2 @@
+# file:line value -- JS colour literals with no identical token (Task 6)
+# (none: every literal in Task 6 files mapped to an existing token)

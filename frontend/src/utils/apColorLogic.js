@@ -17,15 +17,18 @@ export function getAPTier(ap) {
 }
 
 export function getAPColorHex(ap) {
-  if (ap >= 1500) return '#3B82F6';
-  if (ap >= 1000) return '#22C55E';
-  if (ap >= 500)  return '#EAB308';
-  return '#EF4444';
+  if (ap >= 1500) return 'var(--color-blue)';
+  if (ap >= 1000) return 'var(--color-green)';
+  if (ap >= 500)  return 'var(--color-yellow)';
+  return 'var(--color-red)';
 }
 
+// Tier tokens are hex, so 60% alpha via color-mix (same result as rgba(r,g,b,0.6)).
+const pale = (v) => `color-mix(in srgb, var(${v}) 60%, transparent)`;
+
 export function getAPColorPale(ap) {
-  if (ap >= 1500) return 'rgba(59, 130, 246, 0.6)';
-  if (ap >= 1000) return 'rgba(34, 197, 94, 0.6)';
-  if (ap >= 500)  return 'rgba(234, 179, 8, 0.6)';
-  return 'rgba(239, 68, 68, 0.6)';
+  if (ap >= 1500) return pale('--color-blue');
+  if (ap >= 1000) return pale('--color-green');
+  if (ap >= 500)  return pale('--color-yellow');
+  return pale('--color-red');
 }

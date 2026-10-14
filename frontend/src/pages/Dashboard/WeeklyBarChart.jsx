@@ -6,6 +6,7 @@ import {
 import { useAuraStore } from '../../store/auraStore';
 import { AURA_RULES } from '../../constants/auraPoints';
 import styles from './Dashboard.module.css';
+import { useThemeColors } from '../../theme/palette';
 
 const CustomTooltip = ({ active, payload, label, maxDaily }) => {
   if (active && payload && payload.length) {
@@ -23,6 +24,7 @@ const CustomTooltip = ({ active, payload, label, maxDaily }) => {
 };
 
 const WeeklyBarChart = () => {
+  const c = useThemeColors();
   const { auraHistory, dailyCategoryAP, multiplier } = useAuraStore();
 
   // Effective daily cap — lifts above 2000 when multiplier > 1.0
@@ -79,7 +81,7 @@ const WeeklyBarChart = () => {
       <div className={styles.chartWrapper}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 20, right: 0, bottom: 0, left: -20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke={c.alpha('--fg-rgb', 0.05)} vertical={false} />
             <XAxis
               dataKey="date"
               stroke="var(--text-secondary)"
@@ -95,12 +97,12 @@ const WeeklyBarChart = () => {
               axisLine={false}
               tickLine={false}
             />
-            <Tooltip content={<CustomTooltip maxDaily={MAX_DAILY} />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
+            <Tooltip content={<CustomTooltip maxDaily={MAX_DAILY} />} cursor={{ fill: c.alpha('--fg-rgb', 0.02) }} />
             <ReferenceLine
               y={MAX_DAILY}
-              stroke="rgba(0,191,255,0.25)"
+              stroke={c.alpha('--accent-rgb', 0.25)}
               strokeDasharray="4 4"
-              label={{ value: 'MAX', fill: 'rgba(0,191,255,0.5)', fontSize: 10, position: 'right' }}
+              label={{ value: 'MAX', fill: c.alpha('--accent-rgb', 0.5), fontSize: 10, position: 'right' }}
             />
             <Bar dataKey="score" fill="url(#colorUv)" radius={[4, 4, 0, 0]} maxBarSize={40} />
             <Line

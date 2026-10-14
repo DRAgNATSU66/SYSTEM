@@ -1,8 +1,10 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import styles from './DomainPieChart.module.css';
+import { useThemeColors } from '../../../theme/palette';
 
 const DomainPieChart = ({ value, label, color = 'var(--rank-alpha)' }) => {
+  const c = useThemeColors();
   const data = [
     { name: 'Progress', value: value },
     { name: 'Remaining', value: Math.max(0, 100 - value) }
@@ -26,7 +28,7 @@ const DomainPieChart = ({ value, label, color = 'var(--rank-alpha)' }) => {
               stroke="none"
             >
               <Cell fill={color} />
-              <Cell fill="rgba(255,255,255,0.05)" />
+              <Cell fill={c.alpha('--fg-rgb', 0.05)} />
             </Pie>
           </PieChart>
         </ResponsiveContainer>

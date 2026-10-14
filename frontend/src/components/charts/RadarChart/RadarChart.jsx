@@ -8,6 +8,7 @@ import { useAuraStore } from '../../../store/auraStore';
 import { NEURAL_PENTAGRAM_CAPS } from '../../../constants/neuralStats';
 import { getTodayStr } from '../../../utils/dateUtils';
 import styles from './RadarChart.module.css';
+import { useThemeColors } from '../../../theme/palette';
 
 const CustomTooltip = ({ active, payload }) => {
   const { bodyweight, bodyFat } = useWorkoutStore();
@@ -43,6 +44,7 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 const RadarChart = () => {
+  const c = useThemeColors();
   const { tasks, completions } = useTaskStore();
   const { dailyMetrics } = useMetricsStore();
   const { accumulatedIQ, accumulatedKnowledge } = useStudyStore();
@@ -123,29 +125,29 @@ const RadarChart = () => {
               {/* Radial gradient fill: luminous teal center → transparent edge
                   NO SVG filter on the Radar itself — CSS drop-shadow handles glow cleanly */}
               <radialGradient id="radarFill" cx="50%" cy="50%" r="50%">
-                <stop offset="0%"   stopColor="#00CFFF" stopOpacity="0.55" />
-                <stop offset="45%"  stopColor="#00CFFF" stopOpacity="0.22" />
-                <stop offset="100%" stopColor="#00CFFF" stopOpacity="0.03" />
+                <stop offset="0%"   stopColor={c.accentHi} stopOpacity="0.55" />
+                <stop offset="45%"  stopColor={c.accentHi} stopOpacity="0.22" />
+                <stop offset="100%" stopColor={c.accentHi} stopOpacity="0.03" />
               </radialGradient>
             </defs>
             <PolarGrid
-              stroke="rgba(255,255,255,0.09)"
+              stroke={c.alpha('--fg-rgb', 0.09)}
               gridType="polygon"
             />
             <PolarAngleAxis
               dataKey="subject"
-              tick={{ fill: 'rgba(255,255,255,0.82)', fontSize: 11, fontWeight: 900, fontFamily: 'Outfit', letterSpacing: '0.10em' }}
+              tick={{ fill: c.alpha('--fg-rgb', 0.82), fontSize: 11, fontWeight: 900, fontFamily: 'var(--font-display)', letterSpacing: '0.10em' }}
             />
             <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
             <Tooltip content={<CustomTooltip />} />
             <Radar
               name="SYSTEM"
               dataKey="A"
-              stroke="#00CFFF"
+              stroke={c.accentHi}
               strokeWidth={2}
               fill="url(#radarFill)"
               fillOpacity={1}
-              dot={{ r: 4, fill: '#00CFFF', stroke: 'rgba(0,0,0,0.5)', strokeWidth: 1.5 }}
+              dot={{ r: 4, fill: c.accentHi, stroke: c.alpha('--shade-rgb', 0.5), strokeWidth: 1.5 }}
             />
           </RechartsRadar>
         </ResponsiveContainer>

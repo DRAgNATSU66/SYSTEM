@@ -5,6 +5,7 @@ import {
 } from 'recharts';
 import { useAuraStore } from '../../store/auraStore';
 import styles from './APTrend.module.css';
+import { useThemeColors } from '../../theme/palette';
 
 const RANGES = [
   { label: '7D',  days: 7  },
@@ -27,6 +28,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const APTrendChart = () => {
+  const c = useThemeColors();
   const { auraHistory, dailyCategoryAP } = useAuraStore();
   const [range, setRange] = useState(14);
 
@@ -120,9 +122,9 @@ const APTrendChart = () => {
           <AreaChart data={data} margin={{ top: 10, right: 4, bottom: 0, left: -20 }}>
             <defs>
               <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   stopColor="#00CFFF" stopOpacity="0.40" />
-                <stop offset="50%"  stopColor="#00CFFF" stopOpacity="0.15" />
-                <stop offset="100%" stopColor="#00CFFF" stopOpacity="0.02" />
+                <stop offset="0%"   stopColor={c.accentHi} stopOpacity="0.40" />
+                <stop offset="50%"  stopColor={c.accentHi} stopOpacity="0.15" />
+                <stop offset="100%" stopColor={c.accentHi} stopOpacity="0.02" />
               </linearGradient>
               <filter id="lineGlow" x="-20%" y="-100%" width="140%" height="300%">
                 <feGaussianBlur stdDeviation="3" result="blur" />
@@ -132,28 +134,28 @@ const APTrendChart = () => {
                 </feMerge>
               </filter>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke={c.alpha('--fg-rgb', 0.04)} vertical={false} />
             <XAxis
               dataKey="date"
               ticks={ticks}
-              tick={{ fill: 'rgba(255,255,255,0.40)', fontSize: 11, fontFamily: 'Outfit' }}
+              tick={{ fill: c.alpha('--fg-rgb', 0.40), fontSize: 11, fontFamily: 'var(--font-display)' }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              tick={{ fill: 'rgba(255,255,255,0.30)', fontSize: 11, fontFamily: 'Outfit' }}
+              tick={{ fill: c.alpha('--fg-rgb', 0.30), fontSize: 11, fontFamily: 'var(--font-display)' }}
               axisLine={false}
               tickLine={false}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(0,207,255,0.2)', strokeWidth: 1 }} />
+            <Tooltip content={<CustomTooltip />} cursor={{ stroke: c.alpha('--accent-hi-rgb', 0.2), strokeWidth: 1 }} />
             <Area
               type="monotone"
               dataKey="score"
-              stroke="#00CFFF"
+              stroke={c.accentHi}
               strokeWidth={2}
               fill="url(#trendFill)"
               dot={false}
-              activeDot={{ r: 5, fill: '#00CFFF', stroke: 'rgba(0,207,255,0.5)', strokeWidth: 6 }}
+              activeDot={{ r: 5, fill: c.accentHi, stroke: c.alpha('--accent-hi-rgb', 0.5), strokeWidth: 6 }}
               filter="url(#lineGlow)"
             />
           </AreaChart>

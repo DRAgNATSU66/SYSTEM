@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useAuraStore } from '../../../store/auraStore';
 import { getAPColorHex } from '../../../utils/apColorLogic';
 import styles from './CalendarHeatmap.module.css';
+import { rgbVar } from '../../../theme/palette';
 
 const CalendarHeatmap = () => {
   const { auraHistory, dailyCategoryAP, todayEarned } = useAuraStore();
@@ -65,7 +66,7 @@ const CalendarHeatmap = () => {
               <div
                 key={i}
                 className={styles.cell}
-                style={{ backgroundColor: isZero ? 'rgba(255,255,255,0.05)' : getAPColorHex(d.score) }}
+                style={{ backgroundColor: isZero ? rgbVar('--fg-rgb', 0.05) : getAPColorHex(d.score) }}
                 title={`${d.dateStr}: ${d.score} AP`}
               />
             );
@@ -74,11 +75,11 @@ const CalendarHeatmap = () => {
       </div>
       <div className={styles.legend}>
         <span style={{ color: 'var(--text-secondary)', fontSize: '0.65rem' }}>Less</span>
-        <div className={styles.cell} style={{ backgroundColor: 'rgba(255,255,255,0.05)' }} />
-        <div className={styles.cell} style={{ backgroundColor: '#EF4444' }} />
-        <div className={styles.cell} style={{ backgroundColor: '#EAB308' }} />
-        <div className={styles.cell} style={{ backgroundColor: '#22C55E' }} />
-        <div className={styles.cell} style={{ backgroundColor: '#3B82F6' }} />
+        <div className={styles.cell} style={{ backgroundColor: rgbVar('--fg-rgb', 0.05) }} />
+        <div className={styles.cell} style={{ backgroundColor: 'var(--color-red)' }} />
+        <div className={styles.cell} style={{ backgroundColor: 'var(--color-yellow)' }} />
+        <div className={styles.cell} style={{ backgroundColor: 'var(--color-green)' }} />
+        <div className={styles.cell} style={{ backgroundColor: 'var(--color-blue)' }} />
         <span style={{ color: 'var(--text-secondary)', fontSize: '0.65rem' }}>More</span>
       </div>
     </div>
