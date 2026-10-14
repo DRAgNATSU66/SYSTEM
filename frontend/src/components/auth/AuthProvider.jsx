@@ -15,6 +15,7 @@ import { useCommandStore } from '../../store/commandStore';
 import { useSyncQueue } from '../../services/syncEngine';
 import { IS_DEMO } from '../../services/demoFlag';
 import { DEMO_USER, applyDemoState } from '../../services/demoMode';
+import { purgeDemoResidue } from '../../utils/demoResidue';
 
 export function AuthProvider({ children }) {
   const setUser = useUserStore(state => state.setUser);
@@ -36,6 +37,13 @@ export function AuthProvider({ children }) {
       setAuthLoading(false);
       return;
     }
+    // Leaving demo mode: wipe the fake data it persisted before anything can sync it to Supabase
+    try {
+      if (purgeDemoResidue(localStorage)) {
+        window.location.reload();
+        return;
+      }
+    } catch { /* storage unavailable: continue normal boot */ }
     if (!supabase) {
       // Supabase not configured — clear any stale persisted user and unblock routing
       clearUser();
