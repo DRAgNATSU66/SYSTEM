@@ -13,6 +13,8 @@ import { useStudyStore } from '../../store/studyStore';
 import { useSocialStore } from '../../store/socialStore';
 import { useCommandStore } from '../../store/commandStore';
 import { useSyncQueue } from '../../services/syncEngine';
+import { IS_DEMO } from '../../services/demoFlag';
+import { DEMO_USER, applyDemoState } from '../../services/demoMode';
 
 export function AuthProvider({ children }) {
   const setUser = useUserStore(state => state.setUser);
@@ -28,6 +30,12 @@ export function AuthProvider({ children }) {
   useEffect(() => { ensureCypherId(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    if (IS_DEMO) {
+      applyDemoState();
+      setUser(DEMO_USER);
+      setAuthLoading(false);
+      return;
+    }
     if (!supabase) {
       // Supabase not configured — clear any stale persisted user and unblock routing
       clearUser();
