@@ -23,7 +23,7 @@
 }
 
 .label {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   color: var(--text-secondary);
   font-size: 0.75rem;
   font-weight: 700;
@@ -36,7 +36,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #fff;
+  color: rgb(var(--fg-rgb));
 }
 
 .fireActive {

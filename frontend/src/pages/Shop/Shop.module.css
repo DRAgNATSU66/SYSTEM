@@ -13,20 +13,20 @@
 .headerLeft { flex: 1 1 auto; min-width: 0; }
 
 .headerLeft h1 {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 2rem;
   letter-spacing: 0.12em;
-  color: #fff;
+  color: rgb(var(--fg-rgb));
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-shadow: 0 0 30px rgba(255,255,255,0.10);
+  text-shadow: 0 0 30px rgb(var(--fg-rgb) / 0.10);
 }
 
 .subtitle {
   color: var(--text-secondary);
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-size: 0.85rem;
   margin-top: 0.5rem;
   letter-spacing: 0.05em;
@@ -40,7 +40,7 @@
   backdrop-filter: blur(36px) saturate(220%) brightness(1.04);
   -webkit-backdrop-filter: blur(36px) saturate(220%) brightness(1.04);
   border: 1px solid var(--glass-accent-border);
-  box-shadow: var(--glass-accent-shadow), 0 0 36px rgba(0,191,255,0.08);
+  box-shadow: var(--glass-accent-shadow), 0 0 36px rgb(var(--accent-rgb) / 0.08);
   padding: 1.25rem 1.5rem;
   border-radius: var(--radius-2xl);
   text-align: right;
@@ -50,8 +50,8 @@
 }
 
 .apLabel { font-size: 0.63rem; font-weight: 950; color: var(--text-secondary); letter-spacing: 0.22em; margin-bottom: 0.5rem; text-transform: uppercase; }
-.apValue { font-family: 'Outfit'; font-size: 1.75rem; font-weight: 800; color: var(--rank-alpha); margin-bottom: 0.25rem; text-shadow: 0 0 20px rgba(0,191,255,0.32); }
-.usdValue { font-size: 0.85rem; font-weight: 600; color: rgba(255, 255, 255, 0.48); }
+.apValue { font-family: var(--font-display); font-size: 1.75rem; font-weight: 800; color: var(--rank-alpha); margin-bottom: 0.25rem; text-shadow: 0 0 20px rgb(var(--accent-rgb) / 0.32); }
+.usdValue { font-size: 0.85rem; font-weight: 600; color: rgb(var(--fg-rgb) / 0.48); }
 
 .rewardGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
 
@@ -71,29 +71,29 @@
   will-change: transform;
 }
 .rewardCard:hover {
-  border-color: rgba(0,191,255,0.40);
+  border-color: rgb(var(--accent-rgb) / 0.40);
   transform: translateY(-7px);
   background: var(--glass-bg-hover);
-  box-shadow: 0 20px 56px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,191,255,0.22), inset 0 2px 0 rgba(255,255,255,0.22), inset 0 -2px 0 rgba(0,0,0,0.12);
+  box-shadow: 0 20px 56px rgb(var(--shade-rgb) / 0.45), 0 0 0 1px rgb(var(--accent-rgb) / 0.22), inset 0 2px 0 rgb(var(--fg-rgb) / 0.22), inset 0 -2px 0 rgb(var(--shade-rgb) / 0.12);
 }
 
-.rewardIcon { width: 100%; height: 160px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.22); border-bottom: 1px solid rgba(255,255,255,0.06); overflow: hidden; }
+.rewardIcon { width: 100%; height: 160px; display: flex; align-items: center; justify-content: center; background: rgb(var(--shade-rgb) / 0.22); border-bottom: 1px solid rgb(var(--fg-rgb) / 0.06); overflow: hidden; }
 .brandLogo { width: 100%; height: 100%; object-fit: cover; }
 
 .rewardInfo { padding: 1.25rem 1.5rem 0.5rem; }
-.rewardInfo h3 { font-family: 'Outfit'; font-size: 1.1rem; color: #fff; margin: 0 0 0.5rem 0; letter-spacing: 0.10em; }
-.rewardInfo p { font-family: 'Outfit'; font-size: 0.80rem; color: var(--text-secondary); margin: 0; }
+.rewardInfo h3 { font-family: var(--font-display); font-size: 1.1rem; color: rgb(var(--fg-rgb)); margin: 0 0 0.5rem 0; letter-spacing: 0.10em; }
+.rewardInfo p { font-family: var(--font-display); font-size: 0.80rem; color: var(--text-secondary); margin: 0; }
 
-.rewardCost { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding: 1.25rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.07); }
-.rewardCost span { font-family: 'Outfit'; font-weight: 800; color: var(--rank-alpha); font-size: 1rem; text-shadow: 0 0 14px rgba(0,191,255,0.26); }
+.rewardCost { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding: 1.25rem 1.5rem; border-top: 1px solid rgb(var(--fg-rgb) / 0.07); }
+.rewardCost span { font-family: var(--font-display); font-weight: 800; color: var(--rank-alpha); font-size: 1rem; text-shadow: 0 0 14px rgb(var(--accent-rgb) / 0.26); }
 
 .redeemBtn {
-  background: linear-gradient(145deg, rgba(0,191,255,0.22) 0%, rgba(0,191,255,0.12) 100%);
+  background: linear-gradient(145deg, rgb(var(--accent-rgb) / 0.22) 0%, rgb(var(--accent-rgb) / 0.12) 100%);
   color: var(--rank-alpha);
-  border: 1px solid rgba(0,191,255,0.40);
+  border: 1px solid rgb(var(--accent-rgb) / 0.40);
   padding: 0.65rem 1.35rem;
   border-radius: var(--radius-pill);
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-weight: 950;
   font-size: 0.75rem;
   letter-spacing: 0.10em;
@@ -101,20 +101,20 @@
   transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1);
   backdrop-filter: blur(12px) saturate(200%);
   -webkit-backdrop-filter: blur(12px) saturate(200%);
-  box-shadow: 0 3px 14px rgba(0,191,255,0.18), inset 0 2px 0 rgba(255,255,255,0.28), inset 0 -2px 0 rgba(0,0,0,0.12);
+  box-shadow: 0 3px 14px rgb(var(--accent-rgb) / 0.18), inset 0 2px 0 rgb(var(--fg-rgb) / 0.28), inset 0 -2px 0 rgb(var(--shade-rgb) / 0.12);
   will-change: transform;
 }
 .redeemBtn:hover:not(:disabled) {
   background: var(--rank-alpha);
-  color: #000;
+  color: rgb(var(--shade-rgb));
   border-color: var(--rank-alpha);
-  box-shadow: 0 6px 28px rgba(0,191,255,0.50), inset 0 2px 0 rgba(255,255,255,0.38);
+  box-shadow: 0 6px 28px rgb(var(--accent-rgb) / 0.50), inset 0 2px 0 rgb(var(--fg-rgb) / 0.38);
   transform: translateY(-2px) scale(1.03);
 }
 .redeemBtn:active:not(:disabled) { transform: translateY(1px) scale(0.96); transition: all 0.08s cubic-bezier(0.34,1.56,0.64,1); }
-.redeemBtn:disabled { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.08); cursor: not-allowed; box-shadow: none; }
+.redeemBtn:disabled { background: rgb(var(--fg-rgb) / 0.05); color: rgb(var(--fg-rgb) / 0.18); border-color: rgb(var(--fg-rgb) / 0.08); cursor: not-allowed; box-shadow: none; }
 
-.infoFooter { margin-top: 5rem; text-align: center; border-top: 1px dashed rgba(255,255,255,0.09); padding-top: 2rem; }
+.infoFooter { margin-top: 5rem; text-align: center; border-top: 1px dashed rgb(var(--fg-rgb) / 0.09); padding-top: 2rem; }
 .infoFooter p { font-size: 0.63rem; font-weight: 900; color: var(--text-secondary); letter-spacing: 0.22em; opacity: 0.50; }
 
 @media (max-width: 768px) {

@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgb(var(--shade-rgb) / 0.6);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   display: flex;
@@ -20,7 +20,7 @@
   background: rgba(10, 10, 14, 0.72);
   backdrop-filter: blur(40px) saturate(200%);
   -webkit-backdrop-filter: blur(40px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.13);
+  border: 1px solid rgb(var(--fg-rgb) / 0.13);
   border-radius: 24px;
   display: flex;
   flex-direction: column;
@@ -33,27 +33,27 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgb(var(--fg-rgb) / 0.08);
 }
 
 .header h2 {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   letter-spacing: 0.2em;
-  color: #fff;
+  color: rgb(var(--fg-rgb));
   margin: 0;
 }
 
 .btnClose {
   background: transparent;
   border: none;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgb(var(--fg-rgb) / 0.4);
   cursor: pointer;
   transition: 0.2s;
 }
 
 .btnClose:hover {
-  color: #fff;
+  color: rgb(var(--fg-rgb));
   transform: rotate(90deg);
 }
 
@@ -65,8 +65,8 @@
 
 .empty {
   text-align: center;
-  color: rgba(255, 255, 255, 0.3);
-  font-family: 'Outfit';
+  color: rgb(var(--fg-rgb) / 0.3);
+  font-family: var(--font-display);
   font-size: 0.9rem;
   letter-spacing: 0.1em;
   padding: 3rem 0;
@@ -82,18 +82,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgb(var(--fg-rgb) / 0.04);
   padding: 1.25rem;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  border: 1px solid rgb(var(--fg-rgb) / 0.09);
   transition: all 0.2s;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow: inset 0 1px 0 rgb(var(--fg-rgb) / 0.06);
 }
 
 .item:hover {
-  border-color: rgba(0, 191, 255, 0.35);
-  background: rgba(0, 191, 255, 0.05);
-  box-shadow: 0 4px 16px rgba(0,191,255,0.08), inset 0 1px 0 rgba(255,255,255,0.08);
+  border-color: rgb(var(--accent-rgb) / 0.35);
+  background: rgb(var(--accent-rgb) / 0.05);
+  box-shadow: 0 4px 16px rgb(var(--accent-rgb) / 0.08), inset 0 1px 0 rgb(var(--fg-rgb) / 0.08);
 }
 
 .info {
@@ -103,9 +103,9 @@
 }
 
 .info h3 {
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-size: 0.95rem;
-  color: #fff;
+  color: rgb(var(--fg-rgb));
   margin: 0 0 0.25rem 0;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -117,9 +117,9 @@
 
 .meta {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgb(var(--fg-rgb) / 0.4);
   margin: 0;
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -132,7 +132,7 @@
   padding: 0.4rem 0.8rem;
   border-radius: var(--radius-pill);
   font-size: 0.7rem;
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s;
@@ -142,7 +142,7 @@
 
 .btnDelete:hover {
   background: #FF3131;
-  color: #fff;
+  color: rgb(var(--fg-rgb));
   box-shadow: 0 4px 16px rgba(255,49,49,0.35);
   border-color: #FF3131;
 }

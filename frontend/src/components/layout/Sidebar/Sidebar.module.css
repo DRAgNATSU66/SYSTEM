@@ -4,8 +4,8 @@
   background: rgba(6,6,10,0.72);
   backdrop-filter: blur(48px) saturate(240%);
   -webkit-backdrop-filter: blur(48px) saturate(240%);
-  border-right: 1px solid rgba(255,255,255,0.09);
-  box-shadow: 2px 0 40px rgba(0,0,0,0.5), inset -1px 0 0 rgba(255,255,255,0.05), inset 0 1.5px 0 rgba(255,255,255,0.08);
+  border-right: 1px solid rgb(var(--fg-rgb) / 0.09);
+  box-shadow: 2px 0 40px rgb(var(--shade-rgb) / 0.5), inset -1px 0 0 rgb(var(--fg-rgb) / 0.05), inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.08);
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -23,10 +23,10 @@
 
 /* Expand/collapse button */
 .expandBtn {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.10);
+  background: rgb(var(--fg-rgb) / 0.05);
+  border: 1px solid rgb(var(--fg-rgb) / 0.10);
   color: var(--text-secondary);
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-size: 0.58rem;
   font-weight: 900;
   letter-spacing: 0.10em;
@@ -37,13 +37,13 @@
   margin-top: 0.25rem;
   min-height: auto;
   min-width: auto;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+  box-shadow: inset 0 1px 0 rgb(var(--fg-rgb) / 0.12);
 }
-.expandBtn:hover { background: rgba(0,191,255,0.10); color: var(--rank-alpha); border-color: rgba(0,191,255,0.30); transform: none; }
+.expandBtn:hover { background: rgb(var(--accent-rgb) / 0.10); color: var(--rank-alpha); border-color: rgb(var(--accent-rgb) / 0.30); transform: none; }
 
 .brand {
   padding: 2.5rem 1.5rem 2rem;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgb(var(--fg-rgb) / 0.07);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -56,7 +56,7 @@
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.20), transparent);
+  background: linear-gradient(90deg, transparent, rgb(var(--fg-rgb) / 0.20), transparent);
   pointer-events: none;
 }
 
@@ -65,27 +65,27 @@
   height: 76px;
   border-radius: 50%;
   overflow: hidden;
-  border: 1.5px solid rgba(0, 191, 255, 0.60);
+  border: 1.5px solid rgb(var(--accent-rgb) / 0.60);
   box-shadow:
-    0 0 24px rgba(0, 191, 255, 0.28),
-    0 0 8px rgba(0, 191, 255, 0.15),
-    inset 0 1px 0 rgba(255,255,255,0.20);
+    0 0 24px rgb(var(--accent-rgb) / 0.28),
+    0 0 8px rgb(var(--accent-rgb) / 0.15),
+    inset 0 1px 0 rgb(var(--fg-rgb) / 0.20);
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
   animation: glassGlow 4s ease-in-out infinite;
 }
 .logoContainer:hover {
-  box-shadow: 0 0 32px rgba(0,191,255,0.45), 0 0 12px rgba(0,191,255,0.25), inset 0 1px 0 rgba(255,255,255,0.30);
-  border-color: rgba(0,191,255,0.85);
+  box-shadow: 0 0 32px rgb(var(--accent-rgb) / 0.45), 0 0 12px rgb(var(--accent-rgb) / 0.25), inset 0 1px 0 rgb(var(--fg-rgb) / 0.30);
+  border-color: rgb(var(--accent-rgb) / 0.85);
 }
 .logo { width: 100%; height: 100%; object-fit: cover; filter: brightness(1.1) contrast(1.05); }
 
 .brandTitle {
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-size: 1.2rem;
   letter-spacing: 0.55em;
   margin: 0;
-  color: #fff;
-  text-shadow: 0 0 20px rgba(255,255,255,0.25);
+  color: rgb(var(--fg-rgb));
+  text-shadow: 0 0 20px rgb(var(--fg-rgb) / 0.25);
   font-weight: 600;
 }
 
@@ -98,7 +98,7 @@
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.55);
+    background: rgb(var(--shade-rgb) / 0.55);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     z-index: 999;
@@ -124,24 +124,24 @@
   will-change: transform;
 }
 .item:hover {
-  color: #fff;
-  background: rgba(255,255,255,0.06);
+  color: rgb(var(--fg-rgb));
+  background: rgb(var(--fg-rgb) / 0.06);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.28),
-    inset 0 -1px 0 rgba(0,0,0,0.08),
-    0 0 0 1px rgba(255,255,255,0.06);
+    inset 0 1px 0 rgb(var(--fg-rgb) / 0.28),
+    inset 0 -1px 0 rgb(var(--shade-rgb) / 0.08),
+    0 0 0 1px rgb(var(--fg-rgb) / 0.06);
   transform: translateX(2px);
 }
 
 .active {
-  color: #fff;
-  background: rgba(0,191,255,0.10);
+  color: rgb(var(--fg-rgb));
+  background: rgb(var(--accent-rgb) / 0.10);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.42),
-    inset 0 -1px 0 rgba(0,0,0,0.08),
-    0 0 0 1px rgba(0,191,255,0.16),
-    0 0 16px rgba(0,191,255,0.10);
-  border: 1px solid rgba(0,191,255,0.22);
+    inset 0 1px 0 rgb(var(--fg-rgb) / 0.42),
+    inset 0 -1px 0 rgb(var(--shade-rgb) / 0.08),
+    0 0 0 1px rgb(var(--accent-rgb) / 0.16),
+    0 0 16px rgb(var(--accent-rgb) / 0.10);
+  border: 1px solid rgb(var(--accent-rgb) / 0.22);
 }
 .active::before {
   content: '';
@@ -153,7 +153,7 @@
   height: 60%;
   background: var(--rank-alpha);
   border-radius: 0 3px 3px 0;
-  box-shadow: 0 0 12px var(--rank-alpha), 0 0 24px rgba(0,191,255,0.4);
+  box-shadow: 0 0 12px var(--rank-alpha), 0 0 24px rgb(var(--accent-rgb) / 0.4);
 }
 
 .icon { margin-right: 0.9rem; display: flex; align-items: center; opacity: 0.85; }
@@ -175,41 +175,41 @@
 }
 .playBtn:hover {
   color: var(--rank-alpha);
-  background: rgba(0,191,255,0.10);
+  background: rgb(var(--accent-rgb) / 0.10);
   transform: scale(1.15);
 }
 .playBtn.active { color: var(--rank-alpha); }
 
 .progressFlyout {
   padding: 0.9rem 1.5rem;
-  background: linear-gradient(170deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.025) 100%);
-  border-top: 1px solid rgba(255,255,255,0.06);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(170deg, rgb(var(--fg-rgb) / 0.055) 0%, rgb(var(--fg-rgb) / 0.025) 100%);
+  border-top: 1px solid rgb(var(--fg-rgb) / 0.06);
+  border-bottom: 1px solid rgb(var(--fg-rgb) / 0.06);
   margin: 0.15rem 0;
   width: 100%;
   transition: 0.3s;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.08);
+  box-shadow: inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.08);
 }
 .linearProgressContainer { display: flex; flex-direction: column; gap: 0.45rem; }
 .progressHeader { display: flex; justify-content: space-between; align-items: center; }
 .progressLabel { font-size: 0.53rem; font-weight: 950; color: var(--text-secondary); letter-spacing: 0.12em; text-transform: uppercase; }
-.progressValue { font-size: 0.63rem; font-weight: 800; color: #fff; font-family: 'Outfit'; }
+.progressValue { font-size: 0.63rem; font-weight: 800; color: rgb(var(--fg-rgb)); font-family: var(--font-display); }
 
 .progressBarBg {
   height: 4px;
-  background: rgba(255,255,255,0.07);
+  background: rgb(var(--fg-rgb) / 0.07);
   border-radius: 2px;
   overflow: hidden;
   position: relative;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.45), inset 0 -0.5px 0 rgba(255,255,255,0.04);
+  box-shadow: inset 0 1px 3px rgb(var(--shade-rgb) / 0.45), inset 0 -0.5px 0 rgb(var(--fg-rgb) / 0.04);
 }
 .progressBarFill {
   height: 100%;
   border-radius: 2px;
   transition: width 0.7s cubic-bezier(0.34, 1.20, 0.64, 1);
-  box-shadow: 0 0 10px rgba(0, 191, 255, 0.4);
+  box-shadow: 0 0 10px rgb(var(--accent-rgb) / 0.4);
   position: relative;
   background-size: 200% 100%;
 }
@@ -218,7 +218,7 @@
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 50%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.32), transparent);
+  background: linear-gradient(to bottom, rgb(var(--fg-rgb) / 0.32), transparent);
   border-radius: 2px;
 }
 

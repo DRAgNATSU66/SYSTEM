@@ -12,22 +12,22 @@
   transition: background var(--transition-normal), border-color var(--transition-normal);
 }
 .card:hover { background: var(--glass-bg-hover); border-color: var(--glass-border-hover); }
-.info h3 { color: #fff; margin-bottom: 0.25rem; }
-.badge { font-size: 0.65rem; background: rgba(255,255,255,0.07); color: var(--text-secondary); padding: 0.2rem 0.6rem; border-radius: var(--radius-pill); font-weight: 700; border: 1px solid rgba(255,255,255,0.1); }
+.info h3 { color: rgb(var(--fg-rgb)); margin-bottom: 0.25rem; }
+.badge { font-size: 0.65rem; background: rgb(var(--fg-rgb) / 0.07); color: var(--text-secondary); padding: 0.2rem 0.6rem; border-radius: var(--radius-pill); font-weight: 700; border: 1px solid rgb(var(--fg-rgb) / 0.1); }
 .form { display: flex; gap: 0.5rem; align-items: center; }
 .input {
   width: 80px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgb(var(--fg-rgb) / 0.05);
+  border: 1px solid rgb(var(--fg-rgb) / 0.12);
   padding: 0.5rem;
   border-radius: var(--radius-md);
-  color: #fff;
-  font-family: 'Outfit';
+  color: rgb(var(--fg-rgb));
+  font-family: var(--font-display);
   font-weight: 800;
   text-align: center;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.25);
+  box-shadow: inset 0 2px 4px rgb(var(--shade-rgb) / 0.25);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-.input:focus { outline: none; border-color: rgba(0,191,255,0.55); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 0 0 3px rgba(0,191,255,0.12); }
-.btnLog { background: rgba(0,191,255,0.15); color: var(--rank-alpha); border: 1px solid rgba(0,191,255,0.4); padding: 0.5rem 1rem; border-radius: var(--radius-pill); font-weight: 800; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(8px); box-shadow: 0 2px 10px rgba(0,191,255,0.12), inset 0 1px 0 rgba(255,255,255,0.15); }
-.btnLog:hover { background: var(--rank-alpha); color: #000; box-shadow: 0 4px 20px rgba(0,191,255,0.4); border-color: var(--rank-alpha); transform: translateY(-1px); }
+.input:focus { outline: none; border-color: rgb(var(--accent-rgb) / 0.55); box-shadow: inset 0 2px 4px rgb(var(--shade-rgb) / 0.2), 0 0 0 3px rgb(var(--accent-rgb) / 0.12); }
+.btnLog { background: rgb(var(--accent-rgb) / 0.15); color: var(--rank-alpha); border: 1px solid rgb(var(--accent-rgb) / 0.4); padding: 0.5rem 1rem; border-radius: var(--radius-pill); font-weight: 800; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(8px); box-shadow: 0 2px 10px rgb(var(--accent-rgb) / 0.12), inset 0 1px 0 rgb(var(--fg-rgb) / 0.15); }
+.btnLog:hover { background: var(--rank-alpha); color: rgb(var(--shade-rgb)); box-shadow: 0 4px 20px rgb(var(--accent-rgb) / 0.4); border-color: var(--rank-alpha); transform: translateY(-1px); }

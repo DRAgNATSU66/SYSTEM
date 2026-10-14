@@ -7,12 +7,12 @@
   background: rgba(6, 6, 10, 0.60);
   backdrop-filter: blur(48px) saturate(240%);
   -webkit-backdrop-filter: blur(48px) saturate(240%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgb(var(--fg-rgb) / 0.08);
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.08),
-    0 4px 32px rgba(0,0,0,0.30),
-    inset 0 1.5px 0 rgba(255,255,255,0.10),
-    inset 0 -1px 0 rgba(0,0,0,0.10);
+    0 1px 0 rgb(var(--fg-rgb) / 0.08),
+    0 4px 32px rgb(var(--shade-rgb) / 0.30),
+    inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.10),
+    inset 0 -1px 0 rgb(var(--shade-rgb) / 0.10);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -34,10 +34,10 @@
   will-change: transform;
 }
 .hamburger:hover {
-  color: #fff;
-  background: linear-gradient(170deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.05) 100%);
-  border-color: rgba(255,255,255,0.13);
-  box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.08);
+  color: rgb(var(--fg-rgb));
+  background: linear-gradient(170deg, rgb(var(--fg-rgb) / 0.10) 0%, rgb(var(--fg-rgb) / 0.05) 100%);
+  border-color: rgb(var(--fg-rgb) / 0.13);
+  box-shadow: inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.12), inset 0 -1px 0 rgb(var(--shade-rgb) / 0.08);
   transform: scale(1.08);
 }
 .hamburger:active {
@@ -50,13 +50,13 @@
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid rgba(0,191,255,0.35);
-  box-shadow: 0 0 16px rgba(0,191,255,0.22), inset 0 1px 0 rgba(255,255,255,0.15);
+  border: 1px solid rgb(var(--accent-rgb) / 0.35);
+  box-shadow: 0 0 16px rgb(var(--accent-rgb) / 0.22), inset 0 1px 0 rgb(var(--fg-rgb) / 0.15);
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 .brandIcon:hover {
-  box-shadow: 0 0 24px rgba(0,191,255,0.40), inset 0 1px 0 rgba(255,255,255,0.25);
-  border-color: rgba(0,191,255,0.65);
+  box-shadow: 0 0 24px rgb(var(--accent-rgb) / 0.40), inset 0 1px 0 rgb(var(--fg-rgb) / 0.25);
+  border-color: rgb(var(--accent-rgb) / 0.65);
 }
 
 .left {
@@ -66,7 +66,7 @@
 }
 
 .date {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.82rem;
   font-weight: 800;
   color: var(--text-secondary);
@@ -74,10 +74,10 @@
 }
 
 .playerName {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.88rem;
   font-weight: 200;
-  color: #fff;
+  color: rgb(var(--fg-rgb));
   letter-spacing: 0.22rem;
   text-transform: uppercase;
   overflow: hidden;
@@ -85,7 +85,7 @@
   white-space: nowrap;
   min-width: 0;
   max-width: 200px;
-  text-shadow: 0 0 20px rgba(255,255,255,0.15);
+  text-shadow: 0 0 20px rgb(var(--fg-rgb) / 0.15);
 }
 
 .right {
@@ -95,31 +95,31 @@
 }
 
 .scoreContainer {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255,255,255,0.06);
+  background: rgb(var(--fg-rgb) / 0.06);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
   padding: 0.4rem 0.9rem;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255,255,255,0.10);
+  border: 1px solid rgb(var(--fg-rgb) / 0.10);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.42),
-    inset 0 -1px 0 rgba(255,255,255,0.06),
-    0 0 0 1px rgba(255,255,255,0.06),
-    0 4px 12px rgba(0,0,0,0.28);
+    inset 0 1px 0 rgb(var(--fg-rgb) / 0.42),
+    inset 0 -1px 0 rgb(var(--fg-rgb) / 0.06),
+    0 0 0 1px rgb(var(--fg-rgb) / 0.06),
+    0 4px 12px rgb(var(--shade-rgb) / 0.28);
   transition: all var(--dur-mid) var(--ease-glass);
 }
 .scoreContainer:hover {
-  background: rgba(255,255,255,0.10);
-  border-color: rgba(255,255,255,0.16);
+  background: rgb(var(--fg-rgb) / 0.10);
+  border-color: rgb(var(--fg-rgb) / 0.16);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.50),
-    inset 0 -1px 0 rgba(255,255,255,0.08),
-    0 0 0 1px rgba(255,255,255,0.10),
-    0 6px 18px rgba(0,0,0,0.34);
+    inset 0 1px 0 rgb(var(--fg-rgb) / 0.50),
+    inset 0 -1px 0 rgb(var(--fg-rgb) / 0.08),
+    0 0 0 1px rgb(var(--fg-rgb) / 0.10),
+    0 6px 18px rgb(var(--shade-rgb) / 0.34);
   transform: translateY(-1px);
 }
 
@@ -132,7 +132,7 @@
 }
 
 .scoreValue {
-  color: #fff;
+  color: rgb(var(--fg-rgb));
   font-size: 1.05rem;
   font-weight: 800;
   white-space: nowrap;
@@ -145,21 +145,21 @@
   padding: 0.4rem 1rem;
   border-radius: var(--radius-pill);
   border: 1px solid var(--badge-color);
-  background: linear-gradient(170deg, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.35) 100%);
+  background: linear-gradient(170deg, rgb(var(--shade-rgb) / 0.20) 0%, rgb(var(--shade-rgb) / 0.35) 100%);
   backdrop-filter: blur(20px) saturate(200%);
   -webkit-backdrop-filter: blur(20px) saturate(200%);
   box-shadow:
-    0 2px 16px rgba(0,0,0,0.28),
-    inset 0 1.5px 0 rgba(255,255,255,0.13),
-    inset 0 -1px 0 rgba(0,0,0,0.12);
+    0 2px 16px rgb(var(--shade-rgb) / 0.28),
+    inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.13),
+    inset 0 -1px 0 rgb(var(--shade-rgb) / 0.12);
   transition: all 0.22s cubic-bezier(0.34, 1.20, 0.64, 1);
   will-change: transform;
 }
 .rankBadge:hover {
   transform: translateY(-1px) scale(1.02);
   box-shadow:
-    0 4px 20px rgba(0,0,0,0.35),
-    inset 0 1.5px 0 rgba(255,255,255,0.18),
+    0 4px 20px rgb(var(--shade-rgb) / 0.35),
+    inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.18),
     0 0 16px color-mix(in srgb, var(--badge-color) 30%, transparent);
 }
 
@@ -172,7 +172,7 @@
 }
 
 .rankTitle {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -183,7 +183,7 @@
 
 @keyframes pulse {
   0%   { transform: scale(1);   box-shadow: 0 0 0 0 var(--badge-color); }
-  50%  { transform: scale(1.4); box-shadow: 0 0 0 5px rgba(0,0,0,0); }
+  50%  { transform: scale(1.4); box-shadow: 0 0 0 5px rgb(var(--shade-rgb) / 0); }
   100% { transform: scale(1);   box-shadow: 0 0 0 0 transparent; }
 }
 

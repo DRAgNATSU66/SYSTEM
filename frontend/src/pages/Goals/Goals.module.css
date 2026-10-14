@@ -1,6 +1,6 @@
 .container { padding: 2rem; max-width: 1000px; margin: 0 auto; overflow-x: hidden; }
 .header { margin-bottom: 3rem; min-width: 0; }
-.header h1 { font-family: 'Outfit'; font-size: 2.5rem; color: #fff; letter-spacing: 0.10em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 0 30px rgba(255,255,255,0.10); }
+.header h1 { font-family: var(--font-display); font-size: 2.5rem; color: rgb(var(--fg-rgb)); letter-spacing: 0.10em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 0 30px rgb(var(--fg-rgb) / 0.10); }
 .header p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary); font-size: 0.85rem; }
 .headerTop { display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; }
 
@@ -13,50 +13,50 @@
 .input {
   flex: 1;
   min-width: 120px;
-  background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%);
-  border: 1px solid rgba(255,255,255,0.13);
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.06);
+  background: linear-gradient(145deg, rgb(var(--fg-rgb) / 0.08) 0%, rgb(var(--fg-rgb) / 0.04) 100%);
+  border: 1px solid rgb(var(--fg-rgb) / 0.13);
+  box-shadow: inset 0 2px 6px rgb(var(--shade-rgb) / 0.28), inset 0 1px 0 rgb(var(--fg-rgb) / 0.06);
   padding: 1rem;
   border-radius: 14px;
-  color: #fff;
+  color: rgb(var(--fg-rgb));
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
-.input:focus { outline: none; border-color: rgba(0,191,255,0.55); background: rgba(0,191,255,0.06); box-shadow: inset 0 2px 6px rgba(0,0,0,0.20), 0 0 0 3px rgba(0,191,255,0.14); }
+.input:focus { outline: none; border-color: rgb(var(--accent-rgb) / 0.55); background: rgb(var(--accent-rgb) / 0.06); box-shadow: inset 0 2px 6px rgb(var(--shade-rgb) / 0.20), 0 0 0 3px rgb(var(--accent-rgb) / 0.14); }
 
 .btnAdd {
-  background: linear-gradient(145deg, rgba(0,191,255,0.22) 0%, rgba(0,191,255,0.12) 100%);
+  background: linear-gradient(145deg, rgb(var(--accent-rgb) / 0.22) 0%, rgb(var(--accent-rgb) / 0.12) 100%);
   color: var(--rank-alpha);
   padding: 1rem 2rem;
   border-radius: var(--radius-pill);
-  border: 1px solid rgba(0,191,255,0.40);
+  border: 1px solid rgb(var(--accent-rgb) / 0.40);
   font-weight: 900;
   cursor: pointer;
   flex-shrink: 0;
   backdrop-filter: blur(16px) saturate(200%);
   -webkit-backdrop-filter: blur(16px) saturate(200%);
-  box-shadow: 0 4px 16px rgba(0,191,255,0.18), inset 0 2px 0 rgba(255,255,255,0.28), inset 0 -2px 0 rgba(0,0,0,0.12);
+  box-shadow: 0 4px 16px rgb(var(--accent-rgb) / 0.18), inset 0 2px 0 rgb(var(--fg-rgb) / 0.28), inset 0 -2px 0 rgb(var(--shade-rgb) / 0.12);
   transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1);
   will-change: transform;
 }
-.btnAdd:hover { background: var(--rank-alpha); color: #000; box-shadow: 0 8px 28px rgba(0,191,255,0.50), inset 0 2px 0 rgba(255,255,255,0.38); border-color: var(--rank-alpha); transform: translateY(-2px) scale(1.02); }
+.btnAdd:hover { background: var(--rank-alpha); color: rgb(var(--shade-rgb)); box-shadow: 0 8px 28px rgb(var(--accent-rgb) / 0.50), inset 0 2px 0 rgb(var(--fg-rgb) / 0.38); border-color: var(--rank-alpha); transform: translateY(-2px) scale(1.02); }
 .btnAdd:active { transform: translateY(1px) scale(0.96); transition: all 0.08s cubic-bezier(0.34,1.56,0.64,1); }
 
 .btnHistory {
-  background: linear-gradient(145deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 100%);
-  color: #fff;
+  background: linear-gradient(145deg, rgb(var(--fg-rgb) / 0.10) 0%, rgb(var(--fg-rgb) / 0.04) 100%);
+  color: rgb(var(--fg-rgb));
   padding: 1rem 2rem;
   border-radius: var(--radius-pill);
-  border: 1px solid rgba(255,255,255,0.14);
+  border: 1px solid rgb(var(--fg-rgb) / 0.14);
   font-weight: 900;
   cursor: pointer;
   transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.20), inset 0 2px 0 rgba(255,255,255,0.18), inset 0 -2px 0 rgba(0,0,0,0.12);
+  box-shadow: 0 4px 14px rgb(var(--shade-rgb) / 0.20), inset 0 2px 0 rgb(var(--fg-rgb) / 0.18), inset 0 -2px 0 rgb(var(--shade-rgb) / 0.12);
   flex-shrink: 0;
   will-change: transform;
 }
-.btnHistory:hover { background: linear-gradient(145deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.08) 100%); border-color: rgba(255,255,255,0.28); box-shadow: 0 8px 24px rgba(0,0,0,0.28), inset 0 2px 0 rgba(255,255,255,0.26); transform: translateY(-2px) scale(1.02); }
+.btnHistory:hover { background: linear-gradient(145deg, rgb(var(--fg-rgb) / 0.16) 0%, rgb(var(--fg-rgb) / 0.08) 100%); border-color: rgb(var(--fg-rgb) / 0.28); box-shadow: 0 8px 24px rgb(var(--shade-rgb) / 0.28), inset 0 2px 0 rgb(var(--fg-rgb) / 0.26); transform: translateY(-2px) scale(1.02); }
 .btnHistory:active { transform: translateY(1px) scale(0.96); transition: all 0.08s cubic-bezier(0.34,1.56,0.64,1); }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
@@ -73,8 +73,8 @@
   transition: all 0.28s cubic-bezier(0.34,1.20,0.64,1);
   will-change: transform;
 }
-.card:hover { transform: translateY(-6px); border-color: rgba(34,197,94,0.48); box-shadow: 0 20px 56px rgba(0,0,0,0.45), 0 0 24px rgba(34,197,94,0.12), inset 0 2px 0 rgba(255,255,255,0.22), inset 0 -2px 0 rgba(0,0,0,0.12); }
-.card h3 { font-family: 'Outfit'; margin-bottom: 1rem; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card:hover { transform: translateY(-6px); border-color: rgba(34,197,94,0.48); box-shadow: 0 20px 56px rgb(var(--shade-rgb) / 0.45), 0 0 24px rgba(34,197,94,0.12), inset 0 2px 0 rgb(var(--fg-rgb) / 0.22), inset 0 -2px 0 rgb(var(--shade-rgb) / 0.12); }
+.card h3 { font-family: var(--font-display); margin-bottom: 1rem; color: rgb(var(--fg-rgb)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bounty { font-size: 0.80rem; font-weight: 800; color: var(--color-green); margin-bottom: 1.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 0 16px rgba(34,197,94,0.30); }
 .completed { opacity: 0.58; border-color: rgba(59,130,246,0.28); }
 
@@ -87,14 +87,14 @@
   color: var(--color-green);
   font-weight: 900;
   cursor: pointer;
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-size: 0.80rem;
   letter-spacing: 0.08em;
   transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1);
-  box-shadow: inset 0 2px 0 rgba(255,255,255,0.24), inset 0 -1.5px 0 rgba(0,0,0,0.10);
+  box-shadow: inset 0 2px 0 rgb(var(--fg-rgb) / 0.24), inset 0 -1.5px 0 rgb(var(--shade-rgb) / 0.10);
   will-change: transform;
 }
-.btnComplete:hover { background: var(--color-green); color: #000; box-shadow: 0 6px 20px rgba(34,197,94,0.45), inset 0 2px 0 rgba(255,255,255,0.35); border-color: var(--color-green); transform: translateY(-2px) scale(1.01); }
+.btnComplete:hover { background: var(--color-green); color: rgb(var(--shade-rgb)); box-shadow: 0 6px 20px rgba(34,197,94,0.45), inset 0 2px 0 rgb(var(--fg-rgb) / 0.35); border-color: var(--color-green); transform: translateY(-2px) scale(1.01); }
 .btnComplete:active { transform: translateY(1px) scale(0.97); transition: all 0.08s cubic-bezier(0.34,1.56,0.64,1); }
 
 .btnDelete { position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 0.68rem; min-height: auto; min-width: auto; transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1); opacity: 0.55; }
@@ -108,4 +108,4 @@
   .btnAdd, .btnHistory { width: 100%; text-align: center; }
   .card:hover { transform: none; }
 }
-.dateInput { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius-pill, 50px); color: #fff; font-family: inherit; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; padding: 0.75rem 1rem; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: inset 0 2px 0 rgba(255,255,255,0.08), inset 0 -1.5px 0 rgba(0,0,0,0.10); transition: border-color 0.2s; color-scheme: dark; } .dateInput:focus { outline: none; border-color: rgba(0,191,255,0.50); box-shadow: 0 0 0 3px rgba(0,191,255,0.12), inset 0 2px 0 rgba(255,255,255,0.08); }
+.dateInput { background: rgb(var(--fg-rgb) / 0.06); border: 1px solid rgb(var(--fg-rgb) / 0.15); border-radius: var(--radius-pill, 50px); color: rgb(var(--fg-rgb)); font-family: inherit; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; padding: 0.75rem 1rem; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: inset 0 2px 0 rgb(var(--fg-rgb) / 0.08), inset 0 -1.5px 0 rgb(var(--shade-rgb) / 0.10); transition: border-color 0.2s; color-scheme: dark; } .dateInput:focus { outline: none; border-color: rgb(var(--accent-rgb) / 0.50); box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / 0.12), inset 0 2px 0 rgb(var(--fg-rgb) / 0.08); }

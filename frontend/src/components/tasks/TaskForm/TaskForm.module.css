@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.65);
+  background: rgb(var(--shade-rgb) / 0.65);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   z-index: 100;
@@ -14,76 +14,76 @@
   background: linear-gradient(145deg, rgba(10,10,20,0.80) 0%, rgba(8,8,16,0.72) 100%);
   backdrop-filter: blur(48px) saturate(240%) brightness(1.04);
   -webkit-backdrop-filter: blur(48px) saturate(240%) brightness(1.04);
-  border: 1px solid rgba(255,255,255,0.14);
+  border: 1px solid rgb(var(--fg-rgb) / 0.14);
   padding: 2.5rem;
   border-radius: var(--radius-2xl);
   width: 90%;
   max-width: 420px;
   box-shadow:
-    0 28px 80px rgba(0,0,0,0.70),
-    0 8px 32px rgba(0,0,0,0.30),
-    inset 0 2px 0 rgba(255,255,255,0.18),
-    inset 0 -2px 0 rgba(0,0,0,0.16),
-    inset 1px 0 0 rgba(255,255,255,0.08),
-    inset -1px 0 0 rgba(0,0,0,0.06);
+    0 28px 80px rgb(var(--shade-rgb) / 0.70),
+    0 8px 32px rgb(var(--shade-rgb) / 0.30),
+    inset 0 2px 0 rgb(var(--fg-rgb) / 0.18),
+    inset 0 -2px 0 rgb(var(--shade-rgb) / 0.16),
+    inset 1px 0 0 rgb(var(--fg-rgb) / 0.08),
+    inset -1px 0 0 rgb(var(--shade-rgb) / 0.06);
   position: relative;
   overflow: hidden;
 }
-.modal h2 { font-family: 'Outfit'; color: #fff; margin-bottom: 1.5rem; letter-spacing: 0.06em; font-size: 1.2rem; }
+.modal h2 { font-family: var(--font-display); color: rgb(var(--fg-rgb)); margin-bottom: 1.5rem; letter-spacing: 0.06em; font-size: 1.2rem; }
 
 .form { display: flex; flex-direction: column; gap: 1rem; }
 .row { display: flex; gap: 1rem; }
 
 .input {
-  background: linear-gradient(145deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%);
-  border: 1px solid rgba(255,255,255,0.13);
+  background: linear-gradient(145deg, rgb(var(--fg-rgb) / 0.07) 0%, rgb(var(--fg-rgb) / 0.03) 100%);
+  border: 1px solid rgb(var(--fg-rgb) / 0.13);
   padding: 0.85rem;
   border-radius: 14px;
-  color: #fff;
+  color: rgb(var(--fg-rgb));
   font-family: inherit;
   width: 100%;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow: inset 0 2px 6px rgb(var(--shade-rgb) / 0.28), inset 0 1px 0 rgb(var(--fg-rgb) / 0.06);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
 }
-.input:focus { outline: none; border-color: rgba(0,191,255,0.55); background: rgba(0,191,255,0.07); box-shadow: inset 0 2px 6px rgba(0,0,0,0.20), 0 0 0 3px rgba(0,191,255,0.16); }
+.input:focus { outline: none; border-color: rgb(var(--accent-rgb) / 0.55); background: rgb(var(--accent-rgb) / 0.07); box-shadow: inset 0 2px 6px rgb(var(--shade-rgb) / 0.20), 0 0 0 3px rgb(var(--accent-rgb) / 0.16); }
 
 .actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem; }
 
 .btnCancel {
-  background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%);
+  background: linear-gradient(145deg, rgb(var(--fg-rgb) / 0.08) 0%, rgb(var(--fg-rgb) / 0.04) 100%);
   color: var(--text-secondary);
-  border: 1px solid rgba(255,255,255,0.13);
+  border: 1px solid rgb(var(--fg-rgb) / 0.13);
   cursor: pointer;
   padding: 0.6rem 1.25rem;
   border-radius: var(--radius-pill);
   backdrop-filter: blur(12px);
   transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1);
-  box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.08);
-  font-family: 'Outfit';
+  box-shadow: inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.12), inset 0 -1px 0 rgb(var(--shade-rgb) / 0.08);
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 0.80rem;
   letter-spacing: 0.06em;
   will-change: transform;
 }
-.btnCancel:hover { background: linear-gradient(145deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.08) 100%); color: #fff; border-color: rgba(255,255,255,0.24); transform: scale(1.02); }
+.btnCancel:hover { background: linear-gradient(145deg, rgb(var(--fg-rgb) / 0.14) 0%, rgb(var(--fg-rgb) / 0.08) 100%); color: rgb(var(--fg-rgb)); border-color: rgb(var(--fg-rgb) / 0.24); transform: scale(1.02); }
 .btnCancel:active { transform: scale(0.96); transition: all 0.08s cubic-bezier(0.34,1.56,0.64,1); }
 
 .btnSubmit {
-  background: linear-gradient(145deg, rgba(0,191,255,0.24) 0%, rgba(0,191,255,0.14) 100%);
+  background: linear-gradient(145deg, rgb(var(--accent-rgb) / 0.24) 0%, rgb(var(--accent-rgb) / 0.14) 100%);
   color: var(--rank-alpha);
   font-weight: 800;
-  border: 1px solid rgba(0,191,255,0.42);
+  border: 1px solid rgb(var(--accent-rgb) / 0.42);
   cursor: pointer;
   padding: 0.6rem 1.5rem;
   border-radius: var(--radius-pill);
   backdrop-filter: blur(16px) saturate(200%);
   -webkit-backdrop-filter: blur(16px) saturate(200%);
-  box-shadow: 0 3px 14px rgba(0,191,255,0.20), inset 0 2px 0 rgba(255,255,255,0.28), inset 0 -2px 0 rgba(0,0,0,0.12);
+  box-shadow: 0 3px 14px rgb(var(--accent-rgb) / 0.20), inset 0 2px 0 rgb(var(--fg-rgb) / 0.28), inset 0 -2px 0 rgb(var(--shade-rgb) / 0.12);
   transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1);
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-size: 0.80rem;
   letter-spacing: 0.08em;
   will-change: transform;
 }
-.btnSubmit:hover { background: var(--rank-alpha); color: #000; box-shadow: 0 6px 24px rgba(0,191,255,0.50), inset 0 2px 0 rgba(255,255,255,0.38); border-color: var(--rank-alpha); transform: translateY(-2px) scale(1.02); }
+.btnSubmit:hover { background: var(--rank-alpha); color: rgb(var(--shade-rgb)); box-shadow: 0 6px 24px rgb(var(--accent-rgb) / 0.50), inset 0 2px 0 rgb(var(--fg-rgb) / 0.38); border-color: var(--rank-alpha); transform: translateY(-2px) scale(1.02); }
 .btnSubmit:active { transform: translateY(1px) scale(0.96); transition: all 0.08s cubic-bezier(0.34,1.56,0.64,1); }

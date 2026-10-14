@@ -10,7 +10,7 @@
     "shots": "node scripts/shots.mjs",
     "shotdiff": "node scripts/shotdiff.mjs",
     "preview": "vite preview",
-    "test": "node --test \"src/**/__tests__/*.test.js\""
+    "test": "node --test \"src/**/__tests__/*.test.js\" \"scripts/__tests__/*.test.mjs\""
   },
   "dependencies": {
     "@react-three/fiber": "^9.5.0",

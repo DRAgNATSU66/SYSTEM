@@ -1,6 +1,6 @@
 .container { padding: 4rem 2rem; max-width: 1000px; margin: 0 auto; text-align: center; }
 .header { margin-bottom: 5rem; }
-.header h1 { font-family: 'Outfit'; font-size: 3rem; color: #fff; letter-spacing: 0.20em; text-shadow: 0 0 40px rgba(255,255,255,0.12); }
+.header h1 { font-family: var(--font-display); font-size: 3rem; color: rgb(var(--fg-rgb)); letter-spacing: 0.20em; text-shadow: 0 0 40px rgb(var(--fg-rgb) / 0.12); }
 
 .activeDuels { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 2rem; margin-bottom: 4rem; justify-content: center; }
 .empty { grid-column: 1 / -1; text-align: center; color: var(--text-secondary); font-size: 0.9rem; padding: 2rem; }
@@ -11,53 +11,53 @@
   -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(1.04);
   padding: 2.5rem;
   border-radius: var(--radius-2xl);
-  border: 1px solid rgba(0,191,255,0.30);
+  border: 1px solid rgb(var(--accent-rgb) / 0.30);
   box-shadow:
-    0 12px 40px rgba(0,0,0,0.40),
-    0 0 48px rgba(0,191,255,0.07),
-    inset 0 2px 0 rgba(255,255,255,0.22),
-    inset 0 -2px 0 rgba(0,0,0,0.14);
+    0 12px 40px rgb(var(--shade-rgb) / 0.40),
+    0 0 48px rgb(var(--accent-rgb) / 0.07),
+    inset 0 2px 0 rgb(var(--fg-rgb) / 0.22),
+    inset 0 -2px 0 rgb(var(--shade-rgb) / 0.14);
   transition: all 0.28s cubic-bezier(0.34,1.20,0.64,1);
   will-change: transform;
 }
 .duelCard:hover {
-  border-color: rgba(0,191,255,0.50);
+  border-color: rgb(var(--accent-rgb) / 0.50);
   transform: translateY(-5px);
   box-shadow:
-    0 20px 56px rgba(0,0,0,0.50),
-    0 0 56px rgba(0,191,255,0.12),
-    inset 0 2px 0 rgba(255,255,255,0.26),
-    inset 0 -2px 0 rgba(0,0,0,0.14);
+    0 20px 56px rgb(var(--shade-rgb) / 0.50),
+    0 0 56px rgb(var(--accent-rgb) / 0.12),
+    inset 0 2px 0 rgb(var(--fg-rgb) / 0.26),
+    inset 0 -2px 0 rgb(var(--shade-rgb) / 0.14);
 }
 
 .duelInfo { margin-bottom: 2rem; }
-.versus { font-family: 'Outfit'; font-size: 0.70rem; color: var(--rank-slacking); font-weight: 900; letter-spacing: 0.32em; margin-bottom: 0.5rem; text-shadow: 0 0 12px rgba(255,49,49,0.30); }
-.duelInfo h3 { font-size: 1.5rem; font-family: 'Outfit'; color: #fff; margin: 0 0 1rem 0; }
+.versus { font-family: var(--font-display); font-size: 0.70rem; color: var(--rank-slacking); font-weight: 900; letter-spacing: 0.32em; margin-bottom: 0.5rem; text-shadow: 0 0 12px rgba(255,49,49,0.30); }
+.duelInfo h3 { font-size: 1.5rem; font-family: var(--font-display); color: rgb(var(--fg-rgb)); margin: 0 0 1rem 0; }
 .stake { font-size: 0.80rem; font-weight: 800; color: var(--rank-sigma); letter-spacing: 0.10em; text-shadow: 0 0 14px rgba(255,230,0,0.24); }
 
 .progressRow { display: flex; align-items: center; gap: 1rem; margin-top: 1rem; }
 .progressLabel { width: 80px; font-size: 0.58rem; font-weight: 900; color: var(--text-secondary); text-align: left; letter-spacing: 0.08em; text-transform: uppercase; }
-.bar { flex: 1; height: 8px; background: rgba(255,255,255,0.08); border-radius: var(--radius-pill); overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
-.fill { height: 100%; background: var(--rank-alpha); border-radius: var(--radius-pill); position: relative; box-shadow: 0 0 10px rgba(0,191,255,0.40); }
-.fill::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%; background: linear-gradient(to bottom, rgba(255,255,255,0.32), transparent); border-radius: var(--radius-pill); }
+.bar { flex: 1; height: 8px; background: rgb(var(--fg-rgb) / 0.08); border-radius: var(--radius-pill); overflow: hidden; box-shadow: inset 0 2px 4px rgb(var(--shade-rgb) / 0.40), inset 0 1px 0 rgb(var(--fg-rgb) / 0.04); border: 1px solid rgb(var(--fg-rgb) / 0.08); }
+.fill { height: 100%; background: var(--rank-alpha); border-radius: var(--radius-pill); position: relative; box-shadow: 0 0 10px rgb(var(--accent-rgb) / 0.40); }
+.fill::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%; background: linear-gradient(to bottom, rgb(var(--fg-rgb) / 0.32), transparent); border-radius: var(--radius-pill); }
 
 .btnNewDuel {
   padding: 1.25rem 3rem;
-  background: linear-gradient(145deg, rgba(0,191,255,0.18) 0%, rgba(0,191,255,0.09) 100%);
-  border: 1px solid rgba(0,191,255,0.40);
+  background: linear-gradient(145deg, rgb(var(--accent-rgb) / 0.18) 0%, rgb(var(--accent-rgb) / 0.09) 100%);
+  border: 1px solid rgb(var(--accent-rgb) / 0.40);
   color: var(--rank-alpha);
   border-radius: var(--radius-pill);
   font-weight: 900;
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   letter-spacing: 0.20em;
   cursor: pointer;
   transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1);
   backdrop-filter: blur(16px) saturate(200%);
   -webkit-backdrop-filter: blur(16px) saturate(200%);
-  box-shadow: 0 4px 20px rgba(0,191,255,0.14), inset 0 2px 0 rgba(255,255,255,0.24), inset 0 -2px 0 rgba(0,0,0,0.12);
+  box-shadow: 0 4px 20px rgb(var(--accent-rgb) / 0.14), inset 0 2px 0 rgb(var(--fg-rgb) / 0.24), inset 0 -2px 0 rgb(var(--shade-rgb) / 0.12);
   will-change: transform;
 }
-.btnNewDuel:hover { background: var(--rank-alpha); color: #000; box-shadow: 0 10px 44px rgba(0,191,255,0.55), inset 0 2px 0 rgba(255,255,255,0.38); border-color: var(--rank-alpha); transform: translateY(-3px) scale(1.03); }
+.btnNewDuel:hover { background: var(--rank-alpha); color: rgb(var(--shade-rgb)); box-shadow: 0 10px 44px rgb(var(--accent-rgb) / 0.55), inset 0 2px 0 rgb(var(--fg-rgb) / 0.38); border-color: var(--rank-alpha); transform: translateY(-3px) scale(1.03); }
 .btnNewDuel:active { transform: translateY(1px) scale(0.96); transition: all 0.08s cubic-bezier(0.34,1.56,0.64,1); }
 
 @media (max-width: 768px) {
@@ -78,4 +78,4 @@
   .duelInfo h3 { font-size: 1.1rem; }
   .btnNewDuel { padding: 1rem; font-size: 0.75rem; }
 }
-.btnAccept { padding: 0.65rem 1.5rem; background: linear-gradient(145deg,rgba(34,197,94,0.20) 0%,rgba(34,197,94,0.10) 100%); border: 1px solid rgba(34,197,94,0.40); color: var(--color-green); font-weight: 900; font-family: inherit; font-size: 0.72rem; letter-spacing: 0.12em; border-radius: var(--radius-pill); cursor: pointer; backdrop-filter: blur(16px) saturate(200%); -webkit-backdrop-filter: blur(16px) saturate(200%); box-shadow: 0 4px 16px rgba(34,197,94,0.14), inset 0 2px 0 rgba(255,255,255,0.22), inset 0 -2px 0 rgba(0,0,0,0.12); transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1); will-change: transform; } .btnAccept:hover { background: var(--color-green); color: #000; box-shadow: 0 8px 28px rgba(34,197,94,0.50); transform: translateY(-2px) scale(1.03); } .btnAccept:active { transform: translateY(1px) scale(0.96); } .btnReject { padding: 0.65rem 1.5rem; background: linear-gradient(145deg,rgba(255,49,49,0.18) 0%,rgba(255,49,49,0.09) 100%); border: 1px solid rgba(255,49,49,0.35); color: var(--color-red); font-weight: 900; font-family: inherit; font-size: 0.72rem; letter-spacing: 0.12em; border-radius: var(--radius-pill); cursor: pointer; backdrop-filter: blur(16px) saturate(200%); -webkit-backdrop-filter: blur(16px) saturate(200%); box-shadow: 0 4px 16px rgba(255,49,49,0.10), inset 0 2px 0 rgba(255,255,255,0.18), inset 0 -2px 0 rgba(0,0,0,0.12); transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1); will-change: transform; } .btnReject:hover { background: var(--color-red); color: #fff; box-shadow: 0 8px 28px rgba(255,49,49,0.45); transform: translateY(-2px) scale(1.03); } .btnReject:active { transform: translateY(1px) scale(0.96); } .challengeSection { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.5rem; margin-bottom: 2rem; } .challengeInput { flex: 1; min-width: 140px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: #fff; font-size: 0.8rem; font-family: inherit; padding: 0.65rem 1rem; letter-spacing: 0.1em; transition: border-color 0.2s; } .challengeInput:focus { outline: none; border-color: rgba(0,191,255,0.5); } .stakeInput { width: 100px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: #fff; font-size: 0.8rem; font-family: inherit; padding: 0.65rem 0.75rem; text-align: center; transition: border-color 0.2s; } .stakeInput:focus { outline: none; border-color: rgba(255,230,0,0.5); } .incomingCard { background: var(--glass-bg); border: 1px solid rgba(255,230,0,0.22); border-radius: 20px; padding: 1.75rem; margin-bottom: 1rem; }
+.btnAccept { padding: 0.65rem 1.5rem; background: linear-gradient(145deg,rgba(34,197,94,0.20) 0%,rgba(34,197,94,0.10) 100%); border: 1px solid rgba(34,197,94,0.40); color: var(--color-green); font-weight: 900; font-family: inherit; font-size: 0.72rem; letter-spacing: 0.12em; border-radius: var(--radius-pill); cursor: pointer; backdrop-filter: blur(16px) saturate(200%); -webkit-backdrop-filter: blur(16px) saturate(200%); box-shadow: 0 4px 16px rgba(34,197,94,0.14), inset 0 2px 0 rgb(var(--fg-rgb) / 0.22), inset 0 -2px 0 rgb(var(--shade-rgb) / 0.12); transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1); will-change: transform; } .btnAccept:hover { background: var(--color-green); color: rgb(var(--shade-rgb)); box-shadow: 0 8px 28px rgba(34,197,94,0.50); transform: translateY(-2px) scale(1.03); } .btnAccept:active { transform: translateY(1px) scale(0.96); } .btnReject { padding: 0.65rem 1.5rem; background: linear-gradient(145deg,rgba(255,49,49,0.18) 0%,rgba(255,49,49,0.09) 100%); border: 1px solid rgba(255,49,49,0.35); color: var(--color-red); font-weight: 900; font-family: inherit; font-size: 0.72rem; letter-spacing: 0.12em; border-radius: var(--radius-pill); cursor: pointer; backdrop-filter: blur(16px) saturate(200%); -webkit-backdrop-filter: blur(16px) saturate(200%); box-shadow: 0 4px 16px rgba(255,49,49,0.10), inset 0 2px 0 rgb(var(--fg-rgb) / 0.18), inset 0 -2px 0 rgb(var(--shade-rgb) / 0.12); transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1); will-change: transform; } .btnReject:hover { background: var(--color-red); color: rgb(var(--fg-rgb)); box-shadow: 0 8px 28px rgba(255,49,49,0.45); transform: translateY(-2px) scale(1.03); } .btnReject:active { transform: translateY(1px) scale(0.96); } .challengeSection { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.5rem; margin-bottom: 2rem; } .challengeInput { flex: 1; min-width: 140px; background: rgb(var(--fg-rgb) / 0.06); border: 1px solid rgb(var(--fg-rgb) / 0.15); border-radius: 12px; color: rgb(var(--fg-rgb)); font-size: 0.8rem; font-family: inherit; padding: 0.65rem 1rem; letter-spacing: 0.1em; transition: border-color 0.2s; } .challengeInput:focus { outline: none; border-color: rgb(var(--accent-rgb) / 0.5); } .stakeInput { width: 100px; background: rgb(var(--fg-rgb) / 0.06); border: 1px solid rgb(var(--fg-rgb) / 0.15); border-radius: 12px; color: rgb(var(--fg-rgb)); font-size: 0.8rem; font-family: inherit; padding: 0.65rem 0.75rem; text-align: center; transition: border-color 0.2s; } .stakeInput:focus { outline: none; border-color: rgba(255,230,0,0.5); } .incomingCard { background: var(--glass-bg); border: 1px solid rgba(255,230,0,0.22); border-radius: 20px; padding: 1.75rem; margin-bottom: 1rem; }

@@ -1,27 +1,27 @@
 .container { padding: 2rem; max-width: 900px; margin: 0 auto; }
 
 .header { margin-bottom: 2rem; }
-.header h1 { font-family: 'Outfit'; font-size: 2.2rem; color: #fff; letter-spacing: 0.10em; text-shadow: 0 0 30px rgba(255,255,255,0.10); }
+.header h1 { font-family: var(--font-display); font-size: 2.2rem; color: rgb(var(--fg-rgb)); letter-spacing: 0.10em; text-shadow: 0 0 30px rgb(var(--fg-rgb) / 0.10); }
 .headerSub { color: var(--text-secondary); font-size: 0.82rem; margin-top: 0.4rem; letter-spacing: 0.04em; }
 .todaySummary { display: flex; gap: 1.25rem; margin-top: 0.85rem; flex-wrap: wrap; }
-.positive { color: var(--color-green); font-family: 'Outfit'; font-weight: 900; white-space: nowrap; font-size: 0.82rem; letter-spacing: 0.06em; text-shadow: 0 0 12px rgba(34,197,94,0.28); }
-.negative { color: var(--color-red); font-family: 'Outfit'; font-weight: 900; white-space: nowrap; font-size: 0.82rem; letter-spacing: 0.06em; }
-.netPositive { color: var(--color-green); font-family: 'Outfit'; font-weight: 800; font-size: 0.78rem; letter-spacing: 0.05em; }
-.netNegative { color: var(--color-red); font-family: 'Outfit'; font-weight: 800; font-size: 0.78rem; letter-spacing: 0.05em; }
+.positive { color: var(--color-green); font-family: var(--font-display); font-weight: 900; white-space: nowrap; font-size: 0.82rem; letter-spacing: 0.06em; text-shadow: 0 0 12px rgba(34,197,94,0.28); }
+.negative { color: var(--color-red); font-family: var(--font-display); font-weight: 900; white-space: nowrap; font-size: 0.82rem; letter-spacing: 0.06em; }
+.netPositive { color: var(--color-green); font-family: var(--font-display); font-weight: 800; font-size: 0.78rem; letter-spacing: 0.05em; }
+.netNegative { color: var(--color-red); font-family: var(--font-display); font-weight: 800; font-size: 0.78rem; letter-spacing: 0.05em; }
 
 /* ── Info bar ────────────────────────────────────────────────── */
 .limitNotice {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  background: rgba(0,191,255,0.06);
-  border: 1px solid rgba(0,191,255,0.18);
+  background: rgb(var(--accent-rgb) / 0.06);
+  border: 1px solid rgb(var(--accent-rgb) / 0.18);
   border-radius: 12px;
   padding: 0.7rem 1rem;
   margin-bottom: 1.5rem;
   font-size: 0.78rem;
   color: var(--text-secondary);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 0 rgb(var(--fg-rgb) / 0.08);
 }
 .limitNotice strong { color: var(--rank-alpha); }
 .limitIcon { font-size: 1rem; color: var(--rank-alpha); flex-shrink: 0; }
@@ -52,23 +52,23 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.95rem 1.5rem;
-  background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+  background: linear-gradient(145deg, rgb(var(--fg-rgb) / 0.08) 0%, rgb(var(--fg-rgb) / 0.03) 100%);
   border: none;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgb(var(--fg-rgb) / 0.06);
   cursor: default;
   gap: 1rem;
   flex-wrap: wrap;
   text-align: left;
   min-height: auto;
   /* override global button min-height */
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.14);
+  box-shadow: inset 0 1px 0 rgb(var(--fg-rgb) / 0.14);
 }
 .dateHeaderClickable {
   cursor: pointer;
   transition: background var(--dur-mid) var(--ease-glass);
 }
 .dateHeaderClickable:hover {
-  background: linear-gradient(145deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.06) 100%);
+  background: linear-gradient(145deg, rgb(var(--fg-rgb) / 0.13) 0%, rgb(var(--fg-rgb) / 0.06) 100%);
 }
 /* No transform on the day header — it's a full-width row */
 .dateHeaderClickable:hover,
@@ -81,7 +81,7 @@
   min-width: 0;
 }
 .dateBadge {
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-size: 0.72rem;
   font-weight: 900;
   color: var(--text-secondary);
@@ -89,10 +89,10 @@
   white-space: nowrap;
 }
 .expandHint {
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-size: 0.60rem;
   font-weight: 700;
-  color: rgba(0,191,255,0.60);
+  color: rgb(var(--accent-rgb) / 0.60);
   letter-spacing: 0.08em;
   transition: color 0.2s;
 }
@@ -117,7 +117,7 @@
 .dateEntries {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid rgba(255,255,255,0.05);
+  border-top: 1px solid rgb(var(--fg-rgb) / 0.05);
   /* Smooth expand animation */
   animation: expandIn 0.22s var(--ease-glass) both;
 }
@@ -132,11 +132,11 @@
   align-items: center;
   gap: 0.9rem;
   padding: 0.62rem 1.5rem;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgb(var(--fg-rgb) / 0.04);
   transition: background 0.15s ease, padding-left 0.15s ease;
 }
 .entry:last-child { border-bottom: none; }
-.entry:hover { background: rgba(255,255,255,0.035); padding-left: 2rem; }
+.entry:hover { background: rgb(var(--fg-rgb) / 0.035); padding-left: 2rem; }
 
 .entryDot {
   width: 6px;
@@ -147,10 +147,10 @@
 }
 /* Category label — bold, coloured */
 .entryCategory {
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-size: 0.76rem;
   font-weight: 900;
-  color: rgba(255,255,255,0.88);
+  color: rgb(var(--fg-rgb) / 0.88);
   letter-spacing: 0.06em;
   white-space: nowrap;
   flex-shrink: 0;
@@ -169,7 +169,7 @@
 /* Legacy/fallback */
 .reason {
   flex: 1;
-  color: rgba(255,255,255,0.78);
+  color: rgb(var(--fg-rgb) / 0.78);
   font-size: 0.82rem;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -189,4 +189,4 @@
   line-height: 1.5;
   font-style: italic;
 }
-.legacyIcon { color: rgba(0,191,255,0.60); flex-shrink: 0; font-style: normal; }
+.legacyIcon { color: rgb(var(--accent-rgb) / 0.60); flex-shrink: 0; font-style: normal; }

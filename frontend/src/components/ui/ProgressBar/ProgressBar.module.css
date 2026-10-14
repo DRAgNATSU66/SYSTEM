@@ -14,7 +14,7 @@
 }
 
 .label {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.75rem;
   font-weight: 950;
   color: var(--text-secondary);
@@ -27,22 +27,22 @@
 }
 
 .value {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 900;
-  color: #fff;
+  color: rgb(var(--fg-rgb));
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .track {
   width: 100%;
-  background: rgba(255, 255, 255, 0.07);
+  background: rgb(var(--fg-rgb) / 0.07);
   border-radius: var(--radius-pill);
   overflow: hidden;
   position: relative;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 2px 4px rgb(var(--shade-rgb) / 0.4);
+  border: 1px solid rgb(var(--fg-rgb) / 0.08);
 }
 
 .fill {
@@ -56,6 +56,6 @@
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 50%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.28), transparent);
+  background: linear-gradient(to bottom, rgb(var(--fg-rgb) / 0.28), transparent);
   border-radius: var(--radius-pill) var(--radius-pill) 0 0;
 }

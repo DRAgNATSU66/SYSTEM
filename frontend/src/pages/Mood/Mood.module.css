@@ -1,8 +1,8 @@
 .container { padding: 2rem; max-width: 800px; margin: 0 auto; overflow-x: hidden; }
 .header { text-align: center; margin-bottom: 3.5rem; min-width: 0; }
-.header h1 { font-family: 'Outfit'; font-size: 2.5rem; color: #fff; letter-spacing: 0.10em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 0 30px rgba(255,255,255,0.10); }
+.header h1 { font-family: var(--font-display); font-size: 2.5rem; color: rgb(var(--fg-rgb)); letter-spacing: 0.10em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 0 30px rgb(var(--fg-rgb) / 0.10); }
 .headerTop { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem; min-width: 0; }
-.subtitle { color: var(--text-secondary); font-family: 'Outfit'; font-size: 0.80rem; margin-top: 0.5rem; letter-spacing: 0.05em; min-width: 0; }
+.subtitle { color: var(--text-secondary); font-family: var(--font-display); font-size: 0.80rem; margin-top: 0.5rem; letter-spacing: 0.05em; min-width: 0; }
 .overallProgress { width: 300px; max-width: 100%; margin-top: 1rem; min-width: 0; }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.85rem; }
@@ -20,79 +20,79 @@
   text-align: center;
   will-change: transform;
 }
-.face:hover { transform: translateY(-6px) scale(1.02); border-color: var(--mood-color, var(--glass-border-hover)); box-shadow: 0 16px 48px rgba(0,0,0,0.35), inset 0 2px 0 rgba(255,255,255,0.22), inset 0 -2px 0 rgba(0,0,0,0.12); }
+.face:hover { transform: translateY(-6px) scale(1.02); border-color: var(--mood-color, var(--glass-border-hover)); box-shadow: 0 16px 48px rgb(var(--shade-rgb) / 0.35), inset 0 2px 0 rgb(var(--fg-rgb) / 0.22), inset 0 -2px 0 rgb(var(--shade-rgb) / 0.12); }
 .active {
   border-color: var(--mood-color);
-  background: linear-gradient(145deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.40) 100%);
+  background: linear-gradient(145deg, rgb(var(--shade-rgb) / 0.30) 0%, rgb(var(--shade-rgb) / 0.40) 100%);
   box-shadow:
-    0 8px 32px rgba(0,0,0,0.45),
+    0 8px 32px rgb(var(--shade-rgb) / 0.45),
     inset 0 0 24px var(--mood-color),
-    inset 0 2px 0 rgba(255,255,255,0.22),
-    inset 0 -2px 0 rgba(0,0,0,0.14);
+    inset 0 2px 0 rgb(var(--fg-rgb) / 0.22),
+    inset 0 -2px 0 rgb(var(--shade-rgb) / 0.14);
 }
 
-.val { font-family: 'Outfit'; font-size: 2.5rem; font-weight: 900; color: #fff; margin-bottom: 0.5rem; }
+.val { font-family: var(--font-display); font-size: 2.5rem; font-weight: 900; color: rgb(var(--fg-rgb)); margin-bottom: 0.5rem; }
 .label { font-size: 0.58rem; font-weight: 800; color: var(--mood-color); letter-spacing: 0.12em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .noteForm {
   margin-top: 2rem;
-  background: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  background: linear-gradient(145deg, rgb(var(--fg-rgb) / 0.06) 0%, rgb(var(--fg-rgb) / 0.02) 100%);
   backdrop-filter: var(--glass-blur-light);
   -webkit-backdrop-filter: var(--glass-blur-light);
-  border: 1px solid var(--mood-color, rgba(255,255,255,0.12));
+  border: 1px solid var(--mood-color, rgb(var(--fg-rgb) / 0.12));
   border-radius: var(--radius-2xl);
   padding: 1.5rem;
-  box-shadow: 0 8px 28px rgba(0,0,0,0.22), inset 0 2px 0 rgba(255,255,255,0.12), inset 0 -2px 0 rgba(0,0,0,0.10);
+  box-shadow: 0 8px 28px rgb(var(--shade-rgb) / 0.22), inset 0 2px 0 rgb(var(--fg-rgb) / 0.12), inset 0 -2px 0 rgb(var(--shade-rgb) / 0.10);
 }
-.noteFormTitle { font-family: 'Outfit'; font-size: 0.78rem; font-weight: 900; color: var(--mood-color, #FFD700); letter-spacing: 0.15em; margin: 0 0 1rem 0; }
-.noteInput { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; color: #fff; font-family: 'Outfit'; font-size: 0.9rem; padding: 0.75rem 1rem; resize: vertical; box-sizing: border-box; box-shadow: inset 0 2px 6px rgba(0,0,0,0.24); transition: border-color 0.2s, box-shadow 0.2s; }
-.noteInput:focus { outline: none; border-color: var(--mood-color, var(--rank-alpha)); box-shadow: inset 0 2px 6px rgba(0,0,0,0.20), 0 0 0 3px color-mix(in srgb, var(--mood-color, var(--rank-alpha)) 20%, transparent); }
+.noteFormTitle { font-family: var(--font-display); font-size: 0.78rem; font-weight: 900; color: var(--mood-color, #FFD700); letter-spacing: 0.15em; margin: 0 0 1rem 0; }
+.noteInput { width: 100%; background: rgb(var(--fg-rgb) / 0.05); border: 1px solid rgb(var(--fg-rgb) / 0.09); border-radius: 12px; color: rgb(var(--fg-rgb)); font-family: var(--font-display); font-size: 0.9rem; padding: 0.75rem 1rem; resize: vertical; box-sizing: border-box; box-shadow: inset 0 2px 6px rgb(var(--shade-rgb) / 0.24); transition: border-color 0.2s, box-shadow 0.2s; }
+.noteInput:focus { outline: none; border-color: var(--mood-color, var(--rank-alpha)); box-shadow: inset 0 2px 6px rgb(var(--shade-rgb) / 0.20), 0 0 0 3px color-mix(in srgb, var(--mood-color, var(--rank-alpha)) 20%, transparent); }
 
 .noteActions { display: flex; gap: 0.75rem; margin-top: 1rem; }
 
 .btnLogMood {
   background: var(--mood-color, var(--rank-alpha));
-  color: #000;
+  color: rgb(var(--shade-rgb));
   border: none;
   padding: 0.7rem 1.5rem;
   border-radius: 12px;
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-weight: 900;
   font-size: 0.75rem;
   letter-spacing: 0.10em;
   cursor: pointer;
   transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.20), inset 0 2px 0 rgba(255,255,255,0.30);
+  box-shadow: 0 4px 16px rgb(var(--shade-rgb) / 0.20), inset 0 2px 0 rgb(var(--fg-rgb) / 0.30);
   will-change: transform;
 }
-.btnLogMood:hover { filter: brightness(1.18); transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 24px rgba(0,0,0,0.30), inset 0 2px 0 rgba(255,255,255,0.38); }
+.btnLogMood:hover { filter: brightness(1.18); transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 24px rgb(var(--shade-rgb) / 0.30), inset 0 2px 0 rgb(var(--fg-rgb) / 0.38); }
 .btnLogMood:active { transform: translateY(1px) scale(0.96); transition: all 0.08s cubic-bezier(0.34,1.56,0.64,1); }
 
 .btnCancel {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.14);
+  border: 1px solid rgb(var(--fg-rgb) / 0.14);
   color: var(--text-secondary);
   padding: 0.7rem 1.2rem;
   border-radius: 12px;
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   cursor: pointer;
   transition: all 0.22s cubic-bezier(0.34,1.20,0.64,1);
-  box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.10);
+  box-shadow: inset 0 1.5px 0 rgb(var(--fg-rgb) / 0.10);
 }
-.btnCancel:hover { border-color: rgba(255,255,255,0.30); color: #fff; background: rgba(255,255,255,0.06); transform: translateY(-1px); }
+.btnCancel:hover { border-color: rgb(var(--fg-rgb) / 0.30); color: rgb(var(--fg-rgb)); background: rgb(var(--fg-rgb) / 0.06); transform: translateY(-1px); }
 
 .sectionLabel {
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-size: 0.66rem;
   font-weight: 900;
   color: var(--rank-alpha);
   letter-spacing: 0.28em;
   margin: 0;
   text-transform: uppercase;
-  text-shadow: 0 0 14px rgba(0,191,255,0.28);
+  text-shadow: 0 0 14px rgb(var(--accent-rgb) / 0.28);
 }
 
 /* ── Shared info-card header (label + decorative line) ───────── */
@@ -106,7 +106,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: linear-gradient(to right, rgba(0,191,255,0.20), transparent);
+  background: linear-gradient(to right, rgb(var(--accent-rgb) / 0.20), transparent);
 }
 
 /* ── Neural Wave glass card ───────────────────────────────────── */
@@ -126,9 +126,9 @@
   display: block;
   width: 100%;
   border-radius: 10px;
-  background: rgba(0,191,255,0.025);
-  border: 1px solid rgba(0,191,255,0.08);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  background: rgb(var(--accent-rgb) / 0.025);
+  border: 1px solid rgb(var(--accent-rgb) / 0.08);
+  box-shadow: inset 0 1px 0 rgb(var(--fg-rgb) / 0.06);
   overflow: hidden;
 }
 
@@ -152,18 +152,18 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: rgb(var(--fg-rgb) / 0.04);
+  border: 1px solid rgb(var(--fg-rgb) / 0.07);
   padding: 0.75rem 1rem;
   border-radius: 12px;
   flex-wrap: wrap;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 0 rgb(var(--fg-rgb) / 0.08);
   transition: background 0.18s ease, border-color 0.18s ease;
 }
-.historyEntry:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.13); }
+.historyEntry:hover { background: rgb(var(--fg-rgb) / 0.07); border-color: rgb(var(--fg-rgb) / 0.13); }
 
 .historyDate {
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-size: 0.70rem;
   color: var(--text-secondary);
   min-width: 92px;
@@ -172,7 +172,7 @@
 
 /* Coloured pill badge */
 .historyPill {
-  font-family: 'Outfit';
+  font-family: var(--font-display);
   font-size: 0.60rem;
   font-weight: 900;
   letter-spacing: 0.12em;
@@ -180,12 +180,12 @@
   border-radius: var(--radius-pill);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18);
+  box-shadow: inset 0 1px 0 rgb(var(--fg-rgb) / 0.18);
   white-space: nowrap;
 }
 
 .historyNote { flex: 1; font-size: 0.78rem; color: var(--text-secondary); font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.historyScore { font-family: 'Outfit'; font-weight: 900; font-size: 0.92rem; color: #fff; margin-left: auto; white-space: nowrap; }
+.historyScore { font-family: var(--font-display); font-weight: 900; font-size: 0.92rem; color: rgb(var(--fg-rgb)); margin-left: auto; white-space: nowrap; }
 
 @media (max-width: 768px) {
   .container { padding: 1.5rem; }
