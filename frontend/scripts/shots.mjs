@@ -12,9 +12,13 @@ const ROUTES = ['/', '/command', '/habits', '/workout', '/study', '/nutrition', 
   '/sidehustles', '/social', '/duels', '/leaderboard', '/history', '/calendar', '/shop', '/settings'];
 const VIEWPORTS = { desktop: { width: 1440, height: 900 }, mobile: { width: 390, height: 844 } };
 const FROZEN = new Date('2026-10-14T10:30:00Z');
-const FREEZE_CSS = '*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}'
+const FREEZE_CSS = '*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important;will-change:auto!important}'
   // Animated GIFs (shop logos) ignore reduced-motion and vary frame to frame; hide, keep layout.
-  + 'img[src*=".gif"]{visibility:hidden!important}';
+  + 'img[src*=".gif"]{visibility:hidden!important}'
+  // .content-area is height:100vh + overflow-y:auto, so fullPage would only capture the viewport; un-clip it.
+  + 'html,body,#root,.app-layout,.content-area{height:auto!important;min-height:0!important;max-height:none!important}.content-area{overflow-y:visible!important}html{scroll-behavior:auto!important}'
+  // ParticleBackground canvas animates per frame (frame-count dependent); hide it.
+  + 'canvas{visibility:hidden!important}';
 
 process.env.VITE_DEMO_MODE = 'true';
 const server = await createServer({ server: { port: PORT, strictPort: true }, logLevel: 'error' });
@@ -52,6 +56,12 @@ try {
         return arr;
       };
     }, FROZEN.getTime());
+    // Mobile: sidebar defaults to open (uiStore, persisted); seed it closed so shots show the page.
+    if (vp === 'mobile') {
+      await page.addInitScript(() => {
+        localStorage.setItem('antigravity-ui-store', JSON.stringify({ state: { sidebarOpen: false, theme: 'dark', offlineMode: false, cloudSync: true }, version: 0 }));
+      });
+    }
     let current = '';
     page.on('pageerror', (e) => (errors[`${vp}${current}`] ??= []).push(String(e.message || e)));
     // Warm-up: first navigation in a cold context/dev server (vite transforms, web fonts) renders differently.
@@ -66,6 +76,8 @@ try {
         await document.fonts.ready;
         await Promise.all([...document.images].map((i) => (i.complete ? null : new Promise((r) => { i.onload = i.onerror = r; }))));
       });
+      // Reset any scroll (autofocus / smooth-scroll residue) so every capture starts from the top.
+      await page.evaluate(() => { document.activeElement?.blur?.(); window.scrollTo(0, 0); });
       await page.waitForTimeout(2000);
       const slug = route === '/' ? 'dashboard' : route.slice(1);
       await page.screenshot({ path: path.join(OUT, vp, `${slug}.png`), fullPage: true });
