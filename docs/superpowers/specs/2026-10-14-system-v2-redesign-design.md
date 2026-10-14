@@ -1,4 +1,4 @@
-# SYSTEM "SYSTEM v2" redesign — design spec
+# SYSTEM v2 redesign — design spec
 
 - **Date:** 2026-10-14
 - **Branch:** `redesign/system-v2` (off `main` @ `204b565`; legacy UI tagged `ui-legacy`)
@@ -19,6 +19,10 @@ Re-skin SYSTEM in the visual language of *SerenIQ* (George Railean, Dribbble sho
 | Rank colours | Keep rank identity (Alpha cyan, Omega green, Sigma yellow, Slacking red…) but **desaturate** to sit with the mint/orchid palette. Used only on rank badges, rank cards and the leaderboard. |
 | Right panel | **Command agent dock** — a compact version of the existing Command page. |
 | New features | Hydration card; a food card styled like the hydration card; a muscle body map for workouts (reference: front/back "BodyMap — Your workout focus" screenshot from the user). |
+| Naming (2026-10-15) | The app is **SYSTEM**. "Seren" was only a working codename taken from the SerenIQ reference, and it is retired. The new theme is `data-theme="system"`, the old one is `legacy`, and the branch is `redesign/system-v2`. |
+| AI assistant (2026-10-15) | The in-app AI, previously "Core", is now named **Alishka**. This covers the Command page, the right-hand dock, placeholders and status text. "Daily Core" (the AP category and nav section) is a different concept and keeps its name. |
+| Chart series colours (2026-10-15) | `#3988FF` blue, `#27A884` green, `#B65FCB` orchid. They replace the sampled mint `#7CCEA7` and orchid `#E79DEB`, which failed the dark-surface palette check (lightness band and chroma floor). The user approved them from the preview PNG. |
+| Look (2026-10-15) | The user approved `docs/superpowers/system-v2-preview.png` as the target look for the whole app. |
 
 ## 3. Foundation and shell
 
@@ -128,7 +132,7 @@ There is no unit-test framework in `frontend/package.json`. Verification is:
 1. `npm run build` and `npm run lint` pass after every phase. Lint has no new errors compared with the baseline count recorded in phase 1.
 2. A **Playwright screenshot harness** (`frontend/scripts/shots.mjs`): it visits every route in demo mode at 1440×900 and 390×844 and saves the screenshots.
    - The **token migration (phase 2) must be pixel-identical** to the phase-1 legacy baseline, with a per-route diff threshold of ≤0.1% pixels changed. Deviations are listed, not waved through.
-3. The SYSTEM v2 screens are reviewed by the user from the screenshots, with side-by-side legacy versus system pairs.
+3. The SYSTEM v2 screens are reviewed by the user from the screenshots, with side-by-side legacy versus SYSTEM v2 pairs.
 4. New cards use pure helpers for volume aggregation, the tercile split and macro→ring progress, in `src/utils/bodyMap.js` and `src/utils/nutritionViz.js`. Each is checked with a small `node --test` file, so no new framework is needed.
 
 ## 7. Phases
