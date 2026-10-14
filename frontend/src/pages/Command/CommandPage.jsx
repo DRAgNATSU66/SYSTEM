@@ -12,6 +12,7 @@ import { useMetricsStore } from '../../store/metricsStore';
 import { useGoalStore, useProjectStore, useHobbyStore } from '../../store/assetStores';
 import { useSocialStore } from '../../store/socialStore';
 import { supabase } from '../../services/supabaseClient';
+import { rgbVar } from '../../theme/palette';
 import styles from './Command.module.css';
 
 const HF_AGENT = import.meta.env.VITE_CORE_AGENT_URL || 'https://DRAgNATSU66-system-agent.hf.space';
@@ -75,11 +76,11 @@ const CommandPage = () => {
       const stats = [
         { type: 'permanent', label: 'USER_BIOMETRIC_AUTH:', value: 'SUCCESS', valColor: '#00FF41' },
         { type: 'permanent', label: 'PLAYER_IDENTIFIED_:', value: profile.profile_name || 'NATSU', valColor: '#D300C5' },
-        { type: 'permanent', label: 'PLAYER_LVL:', value: profile.rank_tier || 'SIGMA', valColor: '#00BFFF' },
+        { type: 'permanent', label: 'PLAYER_LVL:', value: profile.rank_tier || 'SIGMA', valColor: rgbVar('--accent-rgb') },
         { type: 'permanent', label: 'CURRENT_PLAYER_AP:', value: totalAuraPoints, valColor: 'var(--rank-alpha)' },
         { type: 'permanent', label: 'LIFETIME_PLAYER_AP_EARNED:', value: auraHistory.reduce((acc, h) => acc + (h.net > 0 ? h.net : 0), 0), valColor: '#FFD700' },
-        { type: 'permanent', label: 'AP_SPENT:', value: Math.abs(auraHistory.reduce((acc, h) => acc + (h.net < 0 ? h.net : 0), 0)), valColor: '#FF3131' },
-        { type: 'permanent', label: 'PENALTIES_COUNT:', value: penaltyLog.length, valColor: '#FF3131' },
+        { type: 'permanent', label: 'AP_SPENT:', value: Math.abs(auraHistory.reduce((acc, h) => acc + (h.net < 0 ? h.net : 0), 0)), valColor: 'var(--rank-slacking)' },
+        { type: 'permanent', label: 'PENALTIES_COUNT:', value: penaltyLog.length, valColor: 'var(--rank-slacking)' },
       ];
       stats.forEach((s, i) => setTimeout(() => addEntry(s), (i + 1) * 100));
     }

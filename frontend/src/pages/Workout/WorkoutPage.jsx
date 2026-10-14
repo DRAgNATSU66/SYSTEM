@@ -9,6 +9,7 @@ import { workoutService } from '../../services/workoutService';
 import { pushChange } from '../../services/syncEngine';
 import { getTodayStr } from '../../utils/dateUtils';
 import { calculateVO2Max } from '../../utils/vo2MaxCalculator';
+import { rgbVar } from '../../theme/palette';
 import styles from './Workout.module.css';
 
 // ─── Day-of-week workout schedule ────────────────────────────────────────────
@@ -434,7 +435,7 @@ const WorkoutPage = () => {
                 value={bodyweight || ''}
                 onChange={e => setBodyweight(e.target.value)}
                 placeholder="kg"
-                style={{ width: 60, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, color: '#fff', fontSize: '0.8rem', fontWeight: 700, padding: '0.4rem 0.5rem', textAlign: 'center', fontFamily: 'inherit' }}
+                style={{ width: 60, background: rgbVar('--fg-rgb', 0.06), border: `1px solid ${rgbVar('--fg-rgb', 0.15)}`, borderRadius: 10, color: rgbVar('--fg-rgb'), fontSize: '0.8rem', fontWeight: 700, padding: '0.4rem 0.5rem', textAlign: 'center', fontFamily: 'inherit' }}
               />
               <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 700 }}>KG</span>
               <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '0.1em', marginLeft: '0.5rem' }}>BF%</span>
@@ -443,7 +444,7 @@ const WorkoutPage = () => {
                 value={bodyFat || ''}
                 onChange={e => setBodyFat(e.target.value)}
                 placeholder="%"
-                style={{ width: 52, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, color: 'var(--rank-sigma)', fontSize: '0.8rem', fontWeight: 700, padding: '0.4rem 0.5rem', textAlign: 'center', fontFamily: 'inherit' }}
+                style={{ width: 52, background: rgbVar('--fg-rgb', 0.06), border: `1px solid ${rgbVar('--fg-rgb', 0.15)}`, borderRadius: 10, color: 'var(--rank-sigma)', fontSize: '0.8rem', fontWeight: 700, padding: '0.4rem 0.5rem', textAlign: 'center', fontFamily: 'inherit' }}
               />
               <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 700 }}>%</span>
             </div>

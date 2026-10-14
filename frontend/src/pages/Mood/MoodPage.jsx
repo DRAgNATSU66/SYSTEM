@@ -6,9 +6,11 @@ import { useAuraStore } from '../../store/auraStore';
 import { useUserStore } from '../../store/userStore';
 import { metricsService } from '../../services/metricsService';
 import { getTodayStr } from '../../utils/dateUtils';
+import { useThemeColors } from '../../theme/palette';
 import styles from './Mood.module.css';
 
 const MoodPage = () => {
+  const colors = useThemeColors();
   const { dailyMetrics, logMetrics } = useMetricsStore();
   const { addCategoryAP, checkAndUpdateStreak, resetDailyIfNeeded } = useAuraStore();
   const { user } = useUserStore();
@@ -139,8 +141,8 @@ const MoodPage = () => {
           >
             <defs>
               <linearGradient id="waveAreaFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   stopColor="#00CFFF" stopOpacity="0.20" />
-                <stop offset="100%" stopColor="#00CFFF" stopOpacity="0.00" />
+                <stop offset="0%"   stopColor={colors.accentHi} stopOpacity="0.20" />
+                <stop offset="100%" stopColor={colors.accentHi} stopOpacity="0.00" />
               </linearGradient>
               <filter id="waveGlow" x="-10%" y="-100%" width="120%" height="300%">
                 <feGaussianBlur stdDeviation="2.5" result="blur" />
@@ -157,7 +159,7 @@ const MoodPage = () => {
               <path
                 d={wavePath}
                 fill="none"
-                stroke="#00CFFF"
+                stroke={colors.accentHi}
                 strokeWidth="2"
                 strokeLinecap="round"
                 filter="url(#waveGlow)"
@@ -170,7 +172,7 @@ const MoodPage = () => {
               return (
                 <g key={i}>
                   <circle cx={pt.x} cy={pt.y} r="6" fill={nodeFace.color} opacity="0.20" />
-                  <circle cx={pt.x} cy={pt.y} r="3.5" fill={nodeFace.color} stroke="rgba(0,0,0,0.6)" strokeWidth="1" />
+                  <circle cx={pt.x} cy={pt.y} r="3.5" fill={nodeFace.color} stroke={colors.alpha('--shade-rgb', 0.6)} strokeWidth="1" />
                 </g>
               );
             })}
