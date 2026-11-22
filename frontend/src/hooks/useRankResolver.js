@@ -2,11 +2,10 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../services/supabaseClient';
 import { useAuraStore } from '../store/auraStore';
 import { useUserStore } from '../store/userStore';
-import { cssVar } from '../theme/palette';
 
 // Named rank tiers for top 3 positions (matches DB rank_tier names)
 const TOP_RANK_NAMES = ['IM HIM', 'ALPHA & OMEGA', 'SIGMA'];
-// Resolved from tokens at call time (kept as hex strings: RankBadge appends hex alpha like `${c}40`).
+// Returned as var() strings so the badge follows the active theme without re-reading CSS.
 const TOP_RANK_VARS = ['--rank-alpha', '--rank-omega', '--rank-sigma'];
 
 /**
@@ -20,7 +19,7 @@ export const useRankResolver = () => {
   const { totalAuraPoints } = useAuraStore();
   const { user } = useUserStore();
   const [rankLabel, setRankLabel]   = useState('Calculating...');
-  const [rankColor, setRankColor]   = useState(() => cssVar('--rank-beta'));
+  const [rankColor, setRankColor]   = useState(() => 'var(--rank-beta)');
   const [rankPosition, setRankPosition] = useState(null);
 
   useEffect(() => {
@@ -29,11 +28,11 @@ export const useRankResolver = () => {
     const resolve = async () => {
       // Fallback: offline AP-threshold resolution based on live AP
       const offlineResolve = () => {
-        if (totalAuraPoints >= 9999) { setRankLabel('IM HIM');        setRankColor(cssVar('--rank-alpha')); setRankPosition(1); }
-        else if (totalAuraPoints >= 5000) { setRankLabel('ALPHA & OMEGA'); setRankColor(cssVar('--rank-omega')); setRankPosition(2); }
-        else if (totalAuraPoints >= 2000) { setRankLabel('SIGMA');          setRankColor(cssVar('--rank-sigma')); setRankPosition(3); }
-        else if (totalAuraPoints <= 0) { setRankLabel('BETA');          setRankColor(cssVar('--rank-slacking')); setRankPosition(null); }
-        else { setRankLabel(`#${Math.max(4, Math.ceil(10000 / Math.max(1, totalAuraPoints)))}`); setRankColor(cssVar('--rank-beta')); setRankPosition(null); }
+        if (totalAuraPoints >= 9999) { setRankLabel('IM HIM');        setRankColor('var(--rank-alpha)'); setRankPosition(1); }
+        else if (totalAuraPoints >= 5000) { setRankLabel('ALPHA & OMEGA'); setRankColor('var(--rank-omega)'); setRankPosition(2); }
+        else if (totalAuraPoints >= 2000) { setRankLabel('SIGMA');          setRankColor('var(--rank-sigma)'); setRankPosition(3); }
+        else if (totalAuraPoints <= 0) { setRankLabel('BETA');          setRankColor('var(--rank-slacking)'); setRankPosition(null); }
+        else { setRankLabel(`#${Math.max(4, Math.ceil(10000 / Math.max(1, totalAuraPoints)))}`); setRankColor('var(--rank-beta)'); setRankPosition(null); }
       };
 
       if (!supabase || !user?.id) {
@@ -58,15 +57,15 @@ export const useRankResolver = () => {
         // Always check live AP first — 0 AP = BETA regardless of position
         if (totalAuraPoints <= 0) {
           setRankLabel('BETA');
-          setRankColor(cssVar('--rank-slacking'));
+          setRankColor('var(--rank-slacking)');
           setRankPosition(null);
         } else if (position >= 1 && position <= 3) {
           setRankLabel(TOP_RANK_NAMES[position - 1]);
-          setRankColor(cssVar(TOP_RANK_VARS[position - 1]));
+          setRankColor(`var(${TOP_RANK_VARS[position - 1]})`);
           setRankPosition(position);
         } else if (position > 3) {
           setRankLabel(`#${position}`);
-          setRankColor(cssVar('--rank-beta'));
+          setRankColor('var(--rank-beta)');
           setRankPosition(position);
         } else {
           offlineResolve();

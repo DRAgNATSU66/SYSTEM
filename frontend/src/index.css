@@ -2,27 +2,8 @@
 @import './theme/tokens.css';
 
 :root {
-  /* Core Colors */
-  --bg-base: #0a0a0c;
-  --bg-surface: #141417;
-  --bg-surface-hover: #1c1c20;
+  /* Theme colours (surfaces, secondary text, rank + AP-tier) live in theme/tokens.css */
   --text-primary: rgb(var(--fg-rgb));
-  --text-secondary: #9e9e9e;
-  
-  /* Rank Colors */
-  --rank-alpha: #00CFFF;  /* IM HIM — 1st, electric blue */
-  --rank-omega: #39FF14;  /* ALPHA & OMEGA — 2nd, electric green */
-  --rank-sigma: #FFE600;  /* SIGMA — 3rd, electric yellow */
-  --rank-others: #90EE90; /* Ranked > 3 — pale green */
-  --rank-lacking: #FF3131; /* RANKING... / unranked — electric red */
-  --rank-slacking: #FF3131; /* Alias for slacking states */
-  --rank-beta: #9E9E9E;   /* Neutral fallback */
-
-  /* AP Tier Colors */
-  --color-red: #EF4444;
-  --color-yellow: #EAB308;
-  --color-green: #22C55E;
-  --color-blue: #3B82F6;
 
   /* Radii */
   --radius-sm: 4px;

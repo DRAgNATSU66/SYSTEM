@@ -4,6 +4,8 @@
 import { createServer } from 'vite';
 import { chromium } from 'playwright-core';
 import { mkdir, writeFile } from 'node:fs/promises';
+import { PNG } from 'pngjs';
+import pixelmatch from 'pixelmatch';
 import path from 'node:path';
 
 const OUT = path.resolve(process.argv[2] || '.shots/current');
@@ -25,6 +27,23 @@ const server = await createServer({ server: { port: PORT, strictPort: true }, lo
 await server.listen();
 const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox', '--font-render-hinting=none', '--disable-gpu', '--disable-lcd-text', '--disable-font-subpixel-positioning', '--force-color-profile=srgb'] });
 const errors = {};
+const unstable = [];
+
+// A fixed wait sometimes caught /command and /shop mid-settle (still changing at 2.0s, stable by
+// 2.4–2.8s). Re-shoot every 400ms until two consecutive shots match at the same pixelmatch
+// threshold shotdiff uses (0.1 also ignores the ≤3-level backdrop-filter dither that differs per frame).
+async function settledShot(page, { interval = 400, maxTries = 15 } = {}) {
+  let prev = await page.screenshot({ fullPage: true });
+  for (let i = 0; i < maxTries; i++) {
+    await page.waitForTimeout(interval);
+    const cur = await page.screenshot({ fullPage: true });
+    const a = PNG.sync.read(prev), b = PNG.sync.read(cur);
+    if (a.width === b.width && a.height === b.height
+      && pixelmatch(a.data, b.data, null, a.width, a.height, { threshold: 0.1 }) === 0) return { buf: cur, stable: true };
+    prev = cur;
+  }
+  return { buf: prev, stable: false };
+}
 
 try {
   for (const [vp, viewport] of Object.entries(VIEWPORTS)) {
@@ -80,7 +99,9 @@ try {
       await page.evaluate(() => { document.activeElement?.blur?.(); window.scrollTo(0, 0); });
       await page.waitForTimeout(2000);
       const slug = route === '/' ? 'dashboard' : route.slice(1);
-      await page.screenshot({ path: path.join(OUT, vp, `${slug}.png`), fullPage: true });
+      const shot = await settledShot(page);
+      await writeFile(path.join(OUT, vp, `${slug}.png`), shot.buf);
+      if (!shot.stable) unstable.push(`${vp}${route}`);
     }
     await ctx.close();
   }
@@ -92,4 +113,5 @@ try {
 await writeFile(path.join(OUT, 'errors.json'), JSON.stringify(errors, null, 2));
 const n = Object.keys(errors).length;
 console.log(`shots → ${OUT} (${n} route(s) with page errors)`);
+if (unstable.length) console.log(`warning: never settled (captured last frame): ${unstable.join(', ')}`);
 process.exit(n ? 1 : 0);

@@ -234,3 +234,44 @@ This entry **supersedes** parts of QNA-003 and QNA-004, as listed below. The ori
 
 **Q5. What residual risk is known?**
 React StrictMode runs effects twice, and only in dev. The first run purges and calls `reload()`. The second run sees no marker, so if a real Supabase session exists it can start `getSession` → `handleUserLogin` → `pullAllData` with the still-in-memory demo stores during the sub-second window before the page unloads. This is dev-only and needs both an existing session and that race. It is parked as the first fix of phase 3: a module-level "reloading" guard of about 2 lines.
+
+---
+
+## QNA-006 — Phase 3 prerequisites: purge before mount, theme-token load order, settle-until-stable shots
+
+- **Date:** 2026-11-22
+- **Commit:** not yet committed. Working tree on `redesign/system-v2`, base `99d8456`.
+- **Files (7):** `frontend/src/main.jsx`, `frontend/src/components/auth/AuthProvider.jsx`, `frontend/src/theme/tokens.css`, `frontend/src/index.css`, `frontend/src/hooks/useRankResolver.js`, `frontend/src/components/layout/Header/RankBadge.jsx`, `frontend/scripts/shots.mjs`
+
+**Q1. What changed, mechanically?**
+- **Purge before mount.** `purgeDemoResidue(localStorage)` moved from the `AuthProvider` effect to `main.jsx`, before `createRoot().render()`. If it purges, the page calls `location.reload()` and React never mounts on that load. `AuthProvider` no longer imports it.
+- **Token load order.** `tokens.css` is now the only home of theme-dependent values. `--bg-base`, `--bg-surface`, `--bg-surface-hover` and `--text-secondary` moved there from `index.css` (hex unchanged). `--rank-*` and `--color-{red,yellow,green,blue}` are now `rgb(var(--…-rgb))` built from the existing channel tokens (the same values, e.g. `rgb(0 207 255)` = `#00CFFF`). Theme blocks use `:root[data-theme="…"]` (specificity 0,2,0), so they beat the plain `:root` (0,1,0) rules in `index.css` whatever the source order.
+- **Rank colours as `var()`.** `useRankResolver` returns `'var(--rank-*)'` strings instead of reading hex once with `cssVar()`. `RankBadge` swapped `${c}40` / `${c}20` (hex-alpha append, which is invalid on a `var()` or `rgb()` string) for `color-mix(in srgb, c 25.1% / 12.55%, transparent)`, the exact equivalents of 0x40/255 and 0x20/255.
+- **Shots.** `shots.mjs` no longer captures once after a fixed 2 s. `settledShot()` re-shoots every 400 ms until two consecutive frames have 0 differing pixels at pixelmatch `threshold: 0.1` (the same as `shotdiff`), with a cap of 15 tries. Routes that never settle are printed as a warning.
+
+**Q2. Why these, over the rejected alternatives?**
+- *Purge:* the roadmap proposed a module-level "reloading" flag inside `AuthProvider`. Moving the purge before mount is no longer and removes the whole class of problem: nothing renders, so no effect, StrictMode double-run or later-added hook can act on the doomed load.
+- *Tokens:* the alternative was re-ordering imports so the theme file loads last. That is fragile: any future `:root` rule appended to `index.css` would silently win again. Specificity does not depend on order.
+- *Rank var():* re-reading hex on theme change (memoising on `uiStore.theme`) would work but adds a JS dependency on the theme switch. A `var()` string follows the cascade with no JS.
+- *Shots:* the alternative of a longer fixed wait slows every route and still guesses. Settle-until-stable waits only as long as each route needs.
+
+**Q3. Blast radius if wrong?**
+- Purge: if `IS_DEMO` were mis-set in production, nothing new happens. The same purge ran before, just later. If `localStorage` throws, the `try/catch` falls through to a normal render.
+- Tokens: any consumer that parsed `--rank-*` as hex would break. `grep` found none: `useThemeColors().rank*` / tier fields have no consumers, and `RankBadge` was the only hex-alpha append on a rank colour.
+- Pre-existing and left alone (it would change legacy pixels): `ProgressBar.jsx:19` builds `` `${color}44` `` on `'var(--rank-alpha)'`, which is invalid CSS, so that glow has never rendered.
+
+**Q4. Verification, as measured**
+- `npm test`: 24/24 pass. `eslint` on the 5 changed JS/JSX files plus `shots.mjs`: clean. `npm run build`: passes.
+- **Gate vs legacy baseline:** all 34 routes within threshold, max 0.005% (mobile).
+- **Exact bytes vs the unchanged code shot today** (`git stash` control, same Chrome): all 17 desktop routes byte-identical. 6 mobile routes differ, but two runs of the *same* new code also differ on mobile at the same magnitudes (e.g. `command` 30,885 vs 30,881 px, max channel delta 60). This is run-to-run noise, not the change.
+- **Purge (demo boot → non-demo boot, same origin, Playwright, all `*.supabase.co` requests aborted locally):** with a fake unsigned session in `sb-…-auth-token` and a demo-owned queue item, **both old and new code made 0 Supabase calls during the purge load**. All 26 calls came after the reload (the normal boot). The QNA-005 Q5 race **did not reproduce**. The change is preventive and does not fix an observed leak.
+- **Mobile noise anatomy:** 29,137 of 31,881 differing px on `command` are 1–3 levels inside `backdrop-filter` glass (software blur is not bit-exact between loads), which pixelmatch 0.1 already ignores. `/command` and `/shop` were still changing 2.0 s after load (38–39 px) and stable by 2.4–2.8 s.
+- **Shots after fix:** two concurrent runs (CPU contention), both with 0 never-settled routes. s1↔s2, legacy↔s1 and legacy↔s2 all within threshold, max 0.005%. The earlier 0.179–0.376% flakes did not occur today with either the old or new script, so the fix is shown harmless, not shown to cure that specific flake.
+
+**Q5. Defence: "You changed the rank colours to rgb() — how do you know the legacy look is identical?"**
+- `rgb(0 207 255)` and `#00CFFF` are the same sRGB triple. The colour-mix percentages are 64/255 and 32/255 to four digits.
+- Desktop is byte-identical to the unchanged code, not merely within threshold. Mobile differs only by the noise that two identical runs also show.
+
+*Correction to my own in-session reasoning (not a prior entry):* I first claimed child effects (`useCloudSync`) could flush before the `AuthProvider` purge. QNA-005 Q3 already showed this can't happen (`ProtectedRoute` renders null while `authLoading`), and the measured 0 calls agree.
+
+*Noted, not fixed:* in dev, the `/command` boot log prints every line twice (StrictMode double-runs the typewriter effect in `CommandPage.jsx`). This is pre-existing.
